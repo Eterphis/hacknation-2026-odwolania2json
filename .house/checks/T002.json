@@ -1,0 +1,42 @@
+{
+  "task": "T002",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 600
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred C:/Users/jasiu/workspace/uzp-data/dane --gold C:/Users/jasiu/workspace/uzp-data/dane",
+        "expect": "score >= 0.9999",
+        "text": null,
+        "timeout": 300
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "mkdir -p .acc/empty && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred .acc/empty --gold C:/Users/jasiu/workspace/uzp-data/dane --cases 41-60",
+        "expect": "score: 0(\\.0+)?\\s*$",
+        "text": null,
+        "timeout": 300
+      },
+      {
+        "id": "AC-4",
+        "kind": "run",
+        "run": "rm -rf .acc/p1 && mkdir -p .acc/p1/przyklad_01 && cp C:/Users/jasiu/workspace/uzp-data/dane/przyklad_01/odwolanie.json C:/Users/jasiu/workspace/uzp-data/dane/przyklad_01/pelnomocnictwo.json .acc/p1/przyklad_01/ && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred .acc/p1 --gold C:/Users/jasiu/workspace/uzp-data/dane --cases 01",
+        "expect": "score: 0\\.896[0-9]*\\s*$",
+        "text": null,
+        "timeout": 300
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T11:59:41+01:00",
+  "results": {}
+}
