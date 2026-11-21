@@ -16,6 +16,16 @@ how to finish). You are a **worker**: no `house merge`, no edits to `.house/` on
 - New since your last tasks (read them): `.house/reports/T004.md` incl. "Review fixes",
   `.house/reports/review-T004.md`, `.house/reports/T011.md` (UI restyle, merged), `.house/DECISIONS.md` D-012.
 
+## 0b. Engine status (T004 merged on main, review approved with minor findings)
+Fix these on the way when your task touches them (generic, small, unit-tested; full list in
+`.house/reports/review-T004.md`):
+- `nip:?\s*(?P<v>\d[\d -]{8,12}\d)` in odwolanie.yaml and pelnomocnictwo.yaml has no right boundary and can run into
+  the next number on the line ("NIP 1234567890 00-950 Warszawa" → 12 digits): T005 and T006 each fix their own recipe.
+- `lookup` folds (lowercases) trigger regexes, so `\W \S \D \B` flip meaning: avoid those escapes in dictionary
+  triggers, or fold only literal text (strategies.py) if you need them.
+- Labels on lines with word boxes have no word boundaries (a short label can match inside a word); a `[]` path whose
+  `all: true` strategy finds nothing falls through to a non-`all` strategy and writes a literal `[]` key.
+
 ## 1. Tasks (run in parallel only if your limit allows; otherwise in this order)
 
 ### T005 — przelew + pelnomocnictwo recipes to held-out F1 (critical)
