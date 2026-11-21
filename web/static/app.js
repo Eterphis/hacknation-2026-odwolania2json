@@ -4,6 +4,7 @@ const SVGNS = "http://www.w3.org/2000/svg";
 const el = (tag, attrs = {}, ...kids) => {
   const n = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
+    if (v == null) continue;  // absent attribute, not the string "null"
     if (k === "class") n.className = v;
     else if (k === "text") n.textContent = v;
     else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
@@ -29,8 +30,8 @@ modeSwitch.addEventListener("ct-switch", (e) => window.ColdTrace.setTheme(e.deta
 /* ---- Kit pieces ---- */
 const via = (kind) => el("i", { class: "ct-v" + (kind ? " ct-v--" + kind : ""), "aria-hidden": "true" });
 const tag = (kind, text) => el("span", { class: "ct-tag" + (kind ? " ct-tag--" + kind : "") }, via(kind), text);
-const key = (text, { kind = "", id, onclick, icon } = {}) =>
-  el("button", { type: "button", class: "ct-btn" + (kind ? " ct-btn--" + kind : ""), id: id || null, onclick },
+const key = (text, { kind = "", id, onclick, icon, title } = {}) =>
+  el("button", { type: "button", class: "ct-btn" + (kind ? " ct-btn--" + kind : ""), id: id || null, onclick, title: title || null, "aria-label": title || null },
     el("span", { class: "ct-btn__face" }, icon || null, text));
 const icon = (d) => {
   const s = document.createElementNS(SVGNS, "svg");
@@ -193,7 +194,7 @@ function docCard(d, idx) {
   } }, copyFace);
   const jsonPane = el("div", { class: "pane", id: id + "-json", role: "tabpanel", "aria-labelledby": id + "-t2", hidden: "" },
     el("div", { class: "tools" }, copyBtn,
-      key("Pobierz " + d.output_name, { kind: "ground", icon: icon("M12,4 V16 M7,11 L12,16 L17,11 M4,15 V20 H20 V15"),
+      key("Pobierz JSON", { title: "Pobierz " + d.output_name, kind: "ground", icon: icon("M12,4 V16 M7,11 L12,16 L17,11 M4,15 V20 H20 V15"),
         onclick: () => saveBlob(d.output_name, new Blob([jsonText + "\n"], { type: "application/json" })) })),
     el("div", { class: "ct-frame ct-frame--well json-box" }, el("pre", { class: "json ct-bar", tabindex: "0", role: "region", "aria-label": "JSON pliku " + d.output_name, text: jsonText })));
   const evPane = el("div", { class: "pane", id: id + "-ev", role: "tabpanel", "aria-labelledby": id + "-t1" }, evidenceTable(d.evidence));

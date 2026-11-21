@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./recipes:/app/recipes:ro          # edit recipes without rebuilding (hot reload)
+      - ./recipes:/app/recipes             # writable: the class editor saves here; hot reload without rebuilding
       - ./dictionaries:/app/dictionaries:ro
     environment:
       ODW2JSON_PROFILE: ${ODW2JSON_PROFILE:-ocr}     # text | ocr (docs/PROFILES.md)

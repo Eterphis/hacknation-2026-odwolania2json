@@ -175,4 +175,4 @@
 .try-out { margin-top: var(--ct-bank); }
 .try-out:empty { display: none; }
 .ct-h { margin-top: var(--ct-pad); }
-@media (max-width: 560px) { #view-classes .hero .ct-display { font-size: clamp(32px, 11.5vw, 72px); overflow-wrap: anywhere; } }
+@media (max-width: 560px) { #view-classes .hero .ct-display { font-size: clamp(22px, 8vw, 72px); }  /* "dokumentów" in Anybody wide must fit 375 - 2 gutters without breaking mid-word */ }
