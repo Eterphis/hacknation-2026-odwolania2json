@@ -10,13 +10,13 @@ relations:
     b: {class: odwolanie, path: "Odwolujacy[*].nip"}
     compare: digits
     validator: nip
-    repair: true
+    repair: false   # off (D-021): documents may be inconsistent and gold transcribes each document as written
   - name: "pelnomocnictwo.mocodawca.krs in odwolanie.Odwolujacy.krs"
     a: {class: pelnomocnictwo, path: "mocodawca[*].data.krs"}
     b: {class: odwolanie, path: "Odwolujacy[*].krs"}
     compare: digits
     validator: krs
-    repair: true
+    repair: false   # off (D-021): documents may be inconsistent and gold transcribes each document as written
   - name: "pelnomocnictwo.mocodawca.nazwa in odwolanie.Odwolujacy.nazwa"
     a: {class: pelnomocnictwo, path: "mocodawca[*].data.nazwa"}
     b: {class: odwolanie, path: "Odwolujacy[*].nazwa"}
