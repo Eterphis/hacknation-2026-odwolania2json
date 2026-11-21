@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 
 from odw2json.ingest import PdfIngestor
-from odw2json.ingest.preprocess import PREPROCESSORS, preprocess_image
+from odw2json.ingest.preprocess import PREPROCESSORS, merge_lines, needs_retry, preprocess_image
 
 SCAN = Path("C:/Users/jasiu/workspace/uzp-data/dane/skany/odwolania/0005/0005.pdf")
 
@@ -45,6 +45,51 @@ class PreprocessImageTests(unittest.TestCase):
         self.assertIn("levels", PREPROCESSORS)
 
 
+class MergeTests(unittest.TestCase):
+    def test_needs_retry(self):
+        shaky = [("x", (0, i * 10, 50, i * 10 + 8), 0.6) for i in range(5)]
+        self.assertTrue(needs_retry(shaky))
+        self.assertFalse(needs_retry(shaky[:4]))
+        self.assertFalse(needs_retry([("x", (0, 0, 5, 5), 0.99)] * 50))
+
+    def test_better_cleaned_line_replaces_shaky_one(self):
+        base = [("ok line", (0, 0, 100, 20), 0.99), ("Z e ien", (0, 30, 100, 50), 0.7)]
+        cleaned = [("ok line!", (0, 1, 100, 21), 0.99), ("ZP/12/2026", (0, 31, 100, 51), 0.98)]
+        out = merge_lines(base, cleaned)
+        self.assertEqual(sorted(t for t, _, _ in out), ["ZP/12/2026", "ok line"])
+
+    def test_cleaned_line_not_better_is_ignored(self):
+        base = [("so so", (0, 0, 100, 20), 0.7)]
+        self.assertEqual(merge_lines(base, [("worse", (0, 0, 100, 20), 0.6)]), base)
+
+    def test_lost_line_is_added_but_neighbour_overlap_is_not_a_match(self):
+        base = [("a", (0, 0, 100, 40), 0.99)]
+        out = merge_lines(base, [("b", (0, 60, 100, 90), 0.9), ("c", (0, 30, 100, 70), 0.9)])
+        self.assertEqual({t for t, _, _ in out}, {"a", "b", "c"})
+
+
+class AutoModeTests(unittest.TestCase):
+    def test_auto_retries_only_shaky_pages(self):
+        import types
+        calls = []
+
+        class B:
+            def __init__(self, conf):
+                self.conf = conf
+
+            def ocr(self, image):
+                calls.append(1)
+                return [("x", (0, i * 10, 50, i * 10 + 8), self.conf) for i in range(6)]
+
+        ing = PdfIngestor(backend=B(0.99), config={"ingest": {"cache": False}})
+        ing._read(Image.new("RGB", (50, 80), "white"))
+        self.assertEqual(len(calls), 1)
+        calls.clear()
+        ing = PdfIngestor(backend=B(0.6), config={"ingest": {"cache": False}})
+        ing._read(Image.new("RGB", (50, 80), "white"))
+        self.assertEqual(len(calls), 2)
+
+
 class FakeBackend:
     def __init__(self):
         self.sizes = []
@@ -69,8 +114,8 @@ class WiringTests(unittest.TestCase):
             b2.ingest(str(SCAN))
             self.assertTrue(fb.sizes)  # not served from the 'none' cache
 
-    def test_default_is_levels(self):
-        self.assertEqual(PdfIngestor(backend=FakeBackend()).preprocess, "levels")
+    def test_default_is_auto(self):
+        self.assertEqual(PdfIngestor(backend=FakeBackend()).preprocess, "auto")
 
     def test_env_overrides_config(self):
         import os

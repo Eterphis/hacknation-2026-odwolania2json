@@ -1,5 +1,9 @@
 """Page-image cleaning before OCR (config ``ingest.preprocess``).
 
+Modes: ``none`` (off), ``levels`` (always clean), ``auto`` (default): read the page as is; only when many lines
+come back with low confidence (show-through, faint print) read it a second time cleaned and keep, line by line,
+the better reading. Always-on ``levels`` costs diacritics on clean pages (measured: scan F1 0.9639 -> 0.8546).
+
 ``levels``: grayscale, then a levels stretch that maps everything lighter than ~140 to white and everything
 darker than ~40 to black. Light show-through from the back of a page (grey, mirrored text) goes to white while
 dark print stays; the detector no longer merges the ghost text into the printed lines. The black point adapts
@@ -28,13 +32,51 @@ def _levels(image: Any) -> Any:
     return Image.fromarray(out.astype(np.uint8)).convert("RGB")
 
 
+GOOD_CONF = 0.8     # a line at or above this is trusted as read
+RETRY_LINES = 5     # a page with this many shaky lines (conf < GOOD_CONF) gets a second, cleaned pass
+
+
+def needs_retry(lines: list, good: float = GOOD_CONF, count: int = RETRY_LINES) -> bool:
+    """True when a page looks like show-through / faint print: many lines read with low confidence."""
+    return sum(1 for _, _, c in lines if c < good) >= count
+
+
+def _same_line(a: tuple, b: tuple) -> float:
+    """Vertical IoU of two boxes that also overlap horizontally (0 when they sit side by side)."""
+    if min(a[2], b[2]) <= max(a[0], b[0]):
+        return 0.0
+    inter = min(a[3], b[3]) - max(a[1], b[1])
+    if inter <= 0:
+        return 0.0
+    return inter / (max(a[3], b[3]) - min(a[1], b[1]))
+
+
+def merge_lines(base: list, cleaned: list, good: float = GOOD_CONF) -> list:
+    """Keep trusted baseline lines; a cleaned line replaces the shaky baseline lines it overlaps if it reads better.
+
+    Cleaned lines that overlap nothing in the baseline (text the first pass lost) are added. A cleaned line that
+    touches a trusted baseline line is dropped. Both inputs are lists of (text, box, conf).
+    """
+    out = list(base)
+    for line in cleaned:
+        hits = [i for i, b in enumerate(out) if _same_line(line[1], b[1]) > 0.5]
+        if any(out[i][2] >= good for i in hits):
+            continue
+        if not hits:
+            out.append(line)
+        elif line[2] > max(out[i][2] for i in hits):
+            keep = [b for i, b in enumerate(out) if i not in hits]
+            out = keep + [line]
+    return out
+
+
 PREPROCESSORS: dict[str, Callable[[Any], Any]] = {"levels": _levels}
-NAMES = ["none", *PREPROCESSORS]
+NAMES = ["none", "auto", *PREPROCESSORS]
 
 
 def preprocess_image(image: Any, name: str) -> Any:
-    """Return the cleaned PIL RGB image; ``none`` returns the input untouched."""
-    if name == "none":
+    """Return the cleaned PIL RGB image; ``none`` (and ``auto``, which cleans only on retry) return the input."""
+    if name in ("none", "auto"):
         return image
     try:
         return PREPROCESSORS[name](image)

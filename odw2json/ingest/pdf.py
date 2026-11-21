@@ -11,10 +11,10 @@ from odw2json.model import Document, Page, Word
 
 from .layout import build_text, is_garbage_text
 from .ocr import OcrBackend, OcrLine, get_backend
-from .preprocess import NAMES as PREPROCESS_NAMES, preprocess_image
+from .preprocess import NAMES as PREPROCESS_NAMES, merge_lines, needs_retry, preprocess_image
 
 DEFAULT_DPI = 200
-DEFAULT_PREPROCESS = "levels"
+DEFAULT_PREPROCESS = "auto"
 DEFAULT_MIN_CONF = 0.6  # OCR lines below this are noise (e.g. black redaction bars read as 'n on nn')
 MAX_SIDE_PX = 2400  # cap the rendered bitmap (a 150-dpi A4 scan is already 1240 pt wide)
 _CACHE_VERSION = 2
@@ -123,12 +123,21 @@ class PdfIngestor:
             image = page.render(scale=scale).to_pil().convert("RGB")
         finally:
             page.close()
-        image = preprocess_image(image, self.preprocess)
-        words = lines_to_words(self.backend.ocr(image), scale, self.min_conf)
+        lines = self._read(image)
+        words = lines_to_words(lines, scale, self.min_conf)
         # map by the real pixel/point ratio so rounding of the bitmap size never shifts boxes
         words = _clamp(words, width, height)
         self._cache_write(key, words)
         return words
+
+    def _read(self, image) -> list[OcrLine]:
+        mode = self.preprocess
+        if mode == "levels":
+            return self.backend.ocr(preprocess_image(image, "levels"))
+        lines = self.backend.ocr(image)
+        if mode == "auto" and needs_retry(lines):
+            lines = merge_lines(lines, self.backend.ocr(preprocess_image(image, "levels")))
+        return lines
 
     def _cache_key(self, pdf_path, index: int) -> str | None:
         if self.cache_dir is None:
