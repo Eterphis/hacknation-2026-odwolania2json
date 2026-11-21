@@ -144,6 +144,7 @@ def process_input(input_dir, output_dir, ingestor=None, classifier=None, extract
     n = 1 if injected else max(1, min(int(workers or 1), len(jobs)))
     builder = builder or partial(factory.build_components, profile)
     if n > 1:
+        os.environ.setdefault("ODW2JSON_OCR_THREADS", str(max(1, (os.cpu_count() or 2) // n)))  # inherited by workers
         done = _run_pool([p for _, p in jobs], n, builder)
     else:
         if injected:
