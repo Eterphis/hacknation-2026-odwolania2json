@@ -49,7 +49,8 @@ class KeywordClassifier:
             + 1.0 * ("na rachunek" in t or "rachunek nadawcy" in t or "rachunek obciążany" in t)
             + 1.0 * ("dane nadawcy" in t)
             + 0.5 * ("kwota" in t),
-            "pelnomocnictwo": 2.0 * ("pełnomocnictw" in shead or "pelnomocnictw" in shead),
+            "pelnomocnictwo": 2.0 * ("pełnomocnictw" in shead or "pelnomocnictw" in shead)
+            + 2.0 * ("pełnomocnictw" in squashed[:80]),  # a title right at the top
         }
         best = max(self.PRIORITY, key=lambda k: scores[k])  # max keeps the first of equals
         if scores[best] < 2:
