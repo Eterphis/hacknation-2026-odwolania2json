@@ -73,9 +73,7 @@ class EngineListTests(unittest.TestCase):
         self.assertEqual([o["imie_nazwisko"] for o in out["osoby"]], ["Jan Kowalski", "Ewa Lis"])
 
     def test_empty_dedupe_option_still_folds_diacritics(self):
-        out = run("lista
-Szymon Zawadżki (adw.)
-Szymon Zawadzki (adw.)")
+        out = run("lista\nSzymon Zawadżki (adw.)\nSzymon Zawadzki (adw.)")
         self.assertEqual([o["imie_nazwisko"] for o in out["osoby"]], ["Szymon Zawadzki"])
 
     def test_attach_reads_a_value_after_each_item_only(self):
