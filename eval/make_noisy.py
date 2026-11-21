@@ -17,9 +17,12 @@ import os
 import shutil
 import sys
 from pathlib import Path
+import time as _time
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
+
+_FIXED_DATE = _time.gmtime(1767225600)  # 2026-01-01 UTC; Pillow wants struct_time
 
 DEFAULT_SEED = 20260101
 DEFAULT_DPI = 200
@@ -117,7 +120,8 @@ def noisy_pdf(src: Path, dst: Path, dpi: int = DEFAULT_DPI, seed: int = DEFAULT_
     imgs = [degrade_image(p, _rng(seed, f"{src.parent.name}/{src.name}/{i}")) for i, p in enumerate(pages)]
     dst.parent.mkdir(parents=True, exist_ok=True)
     first, rest = imgs[0], imgs[1:]
-    first.save(dst, format="PDF", save_all=True, append_images=rest, resolution=float(dpi))
+    first.save(dst, format="PDF", save_all=True, append_images=rest, resolution=float(dpi),
+               creationDate=_FIXED_DATE, modDate=_FIXED_DATE)  # fixed metadata: byte-reproducible output
     return len(imgs)
 
 
