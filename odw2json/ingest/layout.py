@@ -10,7 +10,8 @@ MIN_LETTER_RATIO = 0.6
 MAX_BAD_RATIO = 0.05
 _LINE_OVERLAP = 0.5  # a word joins a line when it overlaps the line's y-range by this share of the smaller height
 _BLOCK_GAP = 1.0  # blank line when the gap between lines exceeds this many median line heights
-_CID = re.compile(r"\(cid:\d+\)")
+_DECORATION = frozenset("-_.=*~|+—–…")
+_CID =re.compile(r"\(cid:\d+\)")
 
 
 def _overlap(a0: float, a1: float, b0: float, b1: float) -> float:
@@ -78,5 +79,8 @@ def is_garbage_text(text: str) -> bool:
     bad = sum(1 for c in compact if c == "\ufffd" or (ord(c) < 32) or 0xE000 <= ord(c) <= 0xF8FF) + cid
     if bad / len(compact) > MAX_BAD_RATIO:
         return True
-    letters = sum(1 for c in compact if c.isalnum())
-    return letters / len(compact) < MIN_LETTER_RATIO
+    # rules and signature lines ("-----", ".....", "_____") are layout, not content: leave them out of the ratio
+    body = [c for c in compact if c not in _DECORATION]
+    if len(body) < MIN_CHARS // 2:
+        return True
+    return sum(1 for c in body if c.isalnum()) / len(body) < MIN_LETTER_RATIO

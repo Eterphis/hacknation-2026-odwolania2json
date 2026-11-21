@@ -47,6 +47,11 @@ class GarbageTests(unittest.TestCase):
     def test_good_text(self):
         self.assertFalse(is_garbage_text("Zamawiający wnosi odwołanie od czynności " * 3))
 
+    def test_rules_and_dotted_lines_are_not_garbage(self):
+        txt = "CREDIT MERIDIAN\nPOTWIERDZENIE PRZELEWU\n" + "-" * 80 + "\nKwota: 1 200,00 PLN\n" + "." * 60
+        self.assertFalse(is_garbage_text(txt))
+        self.assertFalse(is_garbage_text("adw. Leszek Jabłoński\n" + "." * 50))
+
     def test_replacement_chars(self):
         self.assertTrue(is_garbage_text("\ufffd\ufffd\ufffd\ufffd abc \ufffd\ufffd\ufffd\ufffd " * 10))
 
