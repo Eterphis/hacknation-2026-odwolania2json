@@ -136,7 +136,7 @@ class RecipeEngine:
         existing = _get(item, f["path"])
         if spec.get("merge") and isinstance(existing, list) and existing:
             dedupers = {g["path"].partition("[]")[0]: (g["path"].partition("[]")[2].lstrip("."), g["dedupe"])
-                        for g in f["fields"] if g.get("dedupe") and "[]" in g["path"]}
+                        for g in f["fields"] if g.get("dedupe") is not None and "[]" in g["path"]}
             for i, sub in enumerate(items):  # extra blocks join the last existing item
                 target = existing[min(i, len(existing) - 1)]
                 for k, v in sub.items():
@@ -190,7 +190,7 @@ class RecipeEngine:
                     if v is not None and v not in seen:
                         seen.add(v)
                         found.append((v, c))
-                if found and f.get("dedupe"):  # the same person read twice (capitals, one OCR letter)
+                if found and f.get("dedupe") is not None:  # the same person read twice (capitals, one OCR letter)
                     found = dedupe_items(found, f["dedupe"].get("fuzzy", 0))
                 if found:
                     head, _, tail = path.partition("[]")

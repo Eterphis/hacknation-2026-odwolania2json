@@ -72,6 +72,12 @@ class EngineListTests(unittest.TestCase):
         out = run("lista\nJan Kowalski (adw.)\nJAN KOWALSKI (adw.)\nEwa Lis (r. pr.)")
         self.assertEqual([o["imie_nazwisko"] for o in out["osoby"]], ["Jan Kowalski", "Ewa Lis"])
 
+    def test_empty_dedupe_option_still_folds_diacritics(self):
+        out = run("lista
+Szymon Zawadżki (adw.)
+Szymon Zawadzki (adw.)")
+        self.assertEqual([o["imie_nazwisko"] for o in out["osoby"]], ["Szymon Zawadzki"])
+
     def test_attach_reads_a_value_after_each_item_only(self):
         out = run("lista\nJan Kowalski (adw., nr wpisu W-1, PESEL: 44051401359)\nEwa Lis (r. pr.) bez numeru")
         self.assertEqual(out["osoby"][0]["pesel"], "44051401359")
