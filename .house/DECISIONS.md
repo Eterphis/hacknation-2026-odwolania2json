@@ -122,3 +122,10 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** skany to najlepsza miara prawdziwego testu; czas i RAM na laptopie oceniającego wymagają równoległości i pomiaru; elastyczność to 50% finału.
 - **Kto:** coordinator (prośba człowieka: „sync, potem plan i ruszaj z falą”)
 - **Data:** 2026-11-21 19:30
+
+## D-020 Zmiana kryteriów T003
+
+- **Decyzja:** nowe kryteria akceptacji T003: AC-1 (run), AC-2 (run), AC-3 (run), AC-4 (run)
+- **Dlaczego:** UZP upstream 84cc976 added negatives to dane/ (196 PDFs instead of 180, one image-only negative without words); count and boxed thresholds made data-robust, D-017
+- **Kto:** coordinator
+- **Data:** 2026-11-21 17:44
