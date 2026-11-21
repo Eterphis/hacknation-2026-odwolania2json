@@ -35,25 +35,25 @@
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": ".INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 422 Unprocessable Entity\"\nINFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 400 Bad Request\"\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/zip \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/zip \"HTTP/1.1 400 Bad Request\"\n............\n----------------------------------------------------------------------\nRan 82 tests in 30.013s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-21T12:36:59+01:00",
-      "commit": "a4dc6034b093d7e01a0374e3e574b206873f4b9c"
+      "output_tail": ".INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 422 Unprocessable Entity\"\nINFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 400 Bad Request\"\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/zip \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/zip \"HTTP/1.1 400 Bad Request\"\n............\n----------------------------------------------------------------------\nRan 83 tests in 29.964s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T13:05:34+01:00",
+      "commit": "4d829fae7a915ebdcb2eb82c701222ddc79cb1bf"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
       "output_tail": "copied 180 pdfs to .acc\\input\n60 cases, 180 pdfs, 180 json written, 0 rejected/failed\nok: 180 files",
-      "ran_at": "2026-11-21T12:37:30+01:00",
-      "commit": "a4dc6034b093d7e01a0374e3e574b206873f4b9c"
+      "ran_at": "2026-11-21T13:06:06+01:00",
+      "commit": "4d829fae7a915ebdcb2eb82c701222ddc79cb1bf"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T12:37:30+01:00",
-      "commit": "a4dc6034b093d7e01a0374e3e574b206873f4b9c"
+      "ran_at": "2026-11-21T13:06:06+01:00",
+      "commit": "4d829fae7a915ebdcb2eb82c701222ddc79cb1bf"
     }
   }
 }
