@@ -30,6 +30,7 @@ docker compose run --rm cli            # .\input -> .\output
 python -m venv .venv && . .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python -m odw2json --input input --output output  # --recipes <katalog> dla własnych receptur
+python -m odw2json --profile text --workers 4      # profil i liczba procesów, patrz docs/PROFILES.md
 python -m web --port 8000                         # interfejs webowy
 ```
 
@@ -68,6 +69,7 @@ python -m eval.score --pred output --gold <katalog z wzorcowymi JSON> --cases 41
 
 ## Dokumentacja
 - [Architektura](docs/ARCHITECTURE.md): moduły, przepływ danych, decyzje, punkty rozszerzeń.
+- [Profile, równoległość i pomiar kosztu](docs/PROFILES.md): `--profile`, `--workers`, `python -m eval.bench`.
 - [Dodawanie klasy dokumentu](docs/ADDING_A_DOCUMENT_CLASS.md): samouczek i pełny opis receptur.
 - [Komponenty zewnętrzne i licencje](docs/EXTERNAL_COMPONENTS.md): wyłącznie licencje permisywne, bez AGPL/GPL.
 

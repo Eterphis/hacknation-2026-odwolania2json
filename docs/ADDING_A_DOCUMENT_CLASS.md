@@ -60,6 +60,31 @@ Nowy lub zmieniony plik w `recipes/` silnik wczytuje przy następnym dokumencie,
 
 4. **Pomiar jakości** (gdy są wzorcowe JSON-y): `python -m eval.score --pred output --gold <wzorce> --report raport.md`.
 
+## Przez interfejs
+
+Te same pliki można utworzyć bez edytora tekstu: `python -m web` (albo `start.bat web`), zakładka **Klasy dokumentów**.
+
+1. **Nowa klasa z szablonu** wstawia komentowany szablon (`recipes/_template.yaml.example`): sygnały klasyfikacji,
+   dwa pola i po jednym przykładzie każdej strategii. Zmień `class:` (małe litery, cyfry, podkreślenie) i wzorce.
+   Po prawej jest szkielet wyniku (JSON), plik wskazany w `output_schema:`; **Szkielet z pól** buduje go z listy pól.
+2. **Sprawdź** uruchamia ten sam walidator co silnik. Błąd ma linię i ścieżkę w pliku (np.
+   `linia 34 · fields/1/strategies/1/labels`, zły wzorzec regularny, nieznany normalizator, brakujący słownik);
+   kliknięcie błędu ustawia kursor w tej linii, numer linii w marginesie świeci na miedziano.
+3. **Wypróbuj na PDF** wysyła szkic i wybrane pliki PDF na serwer i pokazuje, bez zapisywania: wyniki wszystkich klas
+   (razem ze szkicem), tabelę pól z dowodem (strona, fragment, reguła, pewność) i JSON. Pola wyciągane są też wtedy,
+   gdy wygrała inna klasa, żeby można było poprawić sygnały.
+4. **Zapisz** zapisuje `recipes/<klasa>.yaml` (atomowo; poprzednia wersja zostaje jako `<klasa>.yaml.bak`) oraz plik
+   szkieletu. Następny wgrany dokument i `python -m odw2json` używają nowej klasy bez restartu. **Usuń** (z
+   potwierdzeniem) przenosi plik do `<klasa>.yaml.bak`; trzech klas zadania UZP (`odwolanie`, `pelnomocnictwo`,
+   `przelew`) nie można usunąć z interfejsu.
+
+![Edytor klasy: błąd wzorca w linii 34](screenshots/class-editor-night-error.jpg)
+![Wypróbowanie na PDF, telefon, tryb dzienny](screenshots/class-try-mobile-daylight.jpg)
+
+Na serwerze demonstracyjnym ustaw `ODW2JSON_READONLY_RECIPES=1`: lista, podgląd, sprawdzanie i próba działają,
+zapis i usuwanie zwracają komunikat „tylko do odczytu". Te same operacje są w API (`GET /api/recipes`,
+`GET /api/recipes/{nazwa}`, `POST /api/recipes/validate`, `POST /api/recipes/try`, `PUT` i `DELETE /api/recipes/{nazwa}`).
+
 ## Słowniki
 `dictionaries/<nazwa>.yaml`: `entries: [{id, label, triggers: [...]}]`. Strategia `lookup` zwraca wpis, którego
 fraza (wyrażenie regularne, spacja = dowolny odstęp) występuje w zakresie **najwcześniej**. Przykład:

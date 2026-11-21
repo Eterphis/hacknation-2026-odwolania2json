@@ -58,9 +58,13 @@ class PdfIngestor:
             type(backend).__name__ if backend is not None
             else os.environ.get("ODW2JSON_OCR") or ((config or {}).get("ocr") or {}).get("backend") or "rapidocr"
         )
+        # profiles switch OCR off (`ocr: {enabled: false}`): pages without text then stay empty
+        self.ocr_enabled = bool(((config or {}).get("ocr") or {}).get("enabled", True))
         self.cache_dir: Path | None = None
-        if cfg.get("cache", True):
-            self.cache_dir = Path(cfg.get("cache_dir") or Path(tempfile.gettempdir()) / "odw2json-ocr-cache")
+        use_cache = cfg.get("cache", True) and os.environ.get("ODW2JSON_OCR_CACHE") != "0"
+        if use_cache:
+            self.cache_dir = Path(os.environ.get("ODW2JSON_OCR_CACHE_DIR") or cfg.get("cache_dir")
+                                  or Path(tempfile.gettempdir()) / "odw2json-ocr-cache")
 
     @property
     def backend(self) -> OcrBackend:
@@ -81,6 +85,9 @@ class PdfIngestor:
                     words = self._text_words(pl)
                     text = build_text(words)
                     if is_garbage_text(text):
+                        if not self.ocr_enabled:
+                            pages.append(Page(i + 1, width, height, [], "", "text"))
+                            continue
                         if pdfium_doc is None:
                             import pypdfium2
 

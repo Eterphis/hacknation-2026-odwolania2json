@@ -28,9 +28,10 @@ flowchart LR
 | `odw2json/model.py` | Kontrakt między modułami: `Word`, `Page`, `Document`, `Classification`, `Evidence`, `Extraction` oraz protokoły `Ingestor`, `Classifier`, `Extractor`. |
 | `odw2json/ingest/` | `pdf.py`: tekst i słowa z ramkami z warstwy tekstowej PDF (pdfplumber). Strony bez tekstu idą do OCR (`ocr.py`, domyślnie RapidOCR na ONNX Runtime, render stron przez pypdfium2). `layout.py` składa słowa w linie i bloki w kolejności czytania. |
 | `odw2json/engine/` | `RecipeEngine`: klasyfikator i ekstraktor sterowany wyłącznie plikami receptur. `recipes.py` wczytuje i waliduje YAML (`recipes/recipe.schema.json`), `strategies.py` zawiera strategie wyszukiwania wartości, `normalise.py` normalizatory i walidatory, a `text.py` udostępnia tekst bez polskich znaków z zachowaniem przesunięć. |
-| `odw2json/pipeline.py`, `cli.py` | Przetwarza `input/<sprawa>/*.pdf` i zapisuje `output/<sprawa>/<nazwa>.json`. Dokument odrzucony nie dostaje pliku. |
+| `odw2json/pipeline.py`, `cli.py` | Przetwarza `input/<sprawa>/*.pdf` i zapisuje `output/<sprawa>/<nazwa>.json` (dokument odrzucony dostaje `{}`). `--workers N`: pula procesów po dokumentach, wynik identyczny jak przy 1. |
+| `odw2json/profiles.py`, `profiles/*.yaml` | Profile przetwarzania (`text`, `ocr`; miejsce na `llm`): który ingestor i które opcje buduje fabryka. Opis: [PROFILES.md](PROFILES.md). |
 | `odw2json/write.py` | Uzupełnia wynik szkieletem `schemas/<klasa>.json` (brakujące pola = `null`) i zapisuje JSON (UTF-8). |
-| `odw2json/factory.py` | Domyślne komponenty: ingestor z T003 i jeden współdzielony `RecipeEngine`. Tu się podmienia implementacje. |
+| `odw2json/factory.py` | Domyślne komponenty: ingestor (wg profilu) i jeden współdzielony `RecipeEngine`. Tu się podmienia implementacje. |
 | `recipes/`, `dictionaries/` | Konfiguracja klas dokumentów: sygnały klasyfikacji, sekcje, pola i strategie, słowniki kodów (np. `czynnosc_powod`). |
 | `schemas/` | Szkielety wyjściowego JSON dla każdej klasy (kolejność i komplet pól jak u UZP). |
 | `web/` | FastAPI + statyczny interfejs (identyfikacja Cold Trace). Pozwala wgrać PDF-y sprawy i zobaczyć klasę, wynik, JSON i tabelę dowodów z pewnością każdego pola, a także pobrać ZIP. |
