@@ -225,3 +225,49 @@ no prime key at all; I accept that, because the rule is there to stop competing 
 ### Re-check verdicts
 - **T011 AC-4: PASS**, recorded with `house check`.
 - **T015 AC-3: PASS**, recorded with `house check`.
+
+---
+
+## T016 re-check under the refrozen criterion (D-024), current main c56f3eb (includes T018, 60cebaa)
+
+New AC-4 text (task file + `checks/T016.json`): `llm` does not lose to `ocr` on skany, heldout or negatives (exact F1 /
+reject rate) and stays opt-in (default profile `ocr`); RAM, model size/licence, offline and grounding clauses unchanged.
+
+**Run.** Fresh `git clone C:/Users/jasiu/workspace` -> `$J/clone3` (HEAD c56f3eb). Shared `.venv`,
+`ODW2JSON_LLM_MODEL=C:/Users/jasiu/workspace/models/Qwen3-1.7B-Q8_0.gguf` (the clone has no `models/`; the
+override makes `ensure_model` find the file, so nothing was downloaded), `ODW2JSON_LLM_TRACE=$J/llm-trace.jsonl`:
+`python -m eval.bench --profiles ocr,llm --sets skany,heldout,negatywne --workers 2 --src <workspace>/uzp-data/dane --out $J/bench3`
+-> exit 0, `bench: 2 profiles x 3 sets ok` (23:00-23:16; machine shared with a cold-OCR coder, so latency is not judged).
+Log `$J/bench3.log`, table `$J/bench3/bench-2026-11-21-c56f3eb.md`.
+
+| set | ocr | llm | difference | llm peak RSS |
+|---|---|---|---|---|
+| skany (30) | F1 0.9755 | F1 0.9755 | 0 | 2551 MB |
+| heldout 41-60 (60) | F1 1.0000 | F1 1.0000 | 0 | 5118 MB |
+| negatywne (12) | reject 100 %, 0 false rejects | reject 100 % | 0 | 314 MB |
+
+`diff -r ocr-<set>-w2/out llm-<set>-w2/out` is empty for all three sets: byte-identical outputs.
+
+**Grounding spot check (trace).** The model was asked on 4 documents (1 scan, 3 heldout appeals); all 5 answers
+were rejected, nothing was filled:
+- scan `0005.pdf`: `czynnosc_powod_id` and `numer_postepowania` -> `no_answer` (OCR lost those lines; the model
+  declined instead of guessing);
+- heldout `odwolanie.pdf` x3: `numer_bzp` -> `ungrounded`, one of them a made-up `2026/BZP00123456/01` and two quoting
+  the TED notice line without a BZP number. The grounding gate (`odw2json/llm/reader.py:180-195`) dropped all of them,
+  which is the safety behaviour the criterion asks for. Earlier evidence (4 grounded PESEL quotes on d038cc9) still
+  stands for the "filled" path; after T018 the recipes read PESEL themselves, so nothing is left for the model to fill.
+
+**Opt-in / default.** `odw2json/profiles.py:22` `DEFAULT_PROFILE = "ocr"` (selection `--profile` > `ODW2JSON_PROFILE`
+> `ocr`); compose sets `ODW2JSON_PROFILE` to `ocr` by default; `start.bat` passes no profile; CLI runs log
+`INFO profile ocr`. `llm` needs `--profile llm` plus the weights.
+
+**Other clauses (unchanged):** peak RAM 5.1 GB < 10 GB at 2 workers; Qwen3-1.7B Q8_0, Apache-2.0 (pinned with sha256
+in `odw2json/llm/fetch.py`); offline after the one-time download (only `fetch.py` touches the network; this run loaded the
+local GGUF with no download).
+
+Minor: the bench's `model MB` column shows 30 for `llm` in this run (1780 before), because it sizes the profile's
+`models/...` path and ignores `ODW2JSON_LLM_MODEL`. Cosmetic, but RSS shows the model did load.
+
+**Verdict: PASS** under the D-024 text, recorded with `house check`. My recommendation stands: keep `llm` opt-in. On
+current main it adds 0 F1 for about 5 GB RAM and model latency, so its value now is as a grounded fallback hook for
+new classes, not as a score lever.

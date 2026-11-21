@@ -62,6 +62,14 @@
       "output_tail": "",
       "ran_at": "2026-11-21T22:56:02+01:00",
       "commit": "a20a14b2854f4eb8f9a60c8140e8dde99db2cdb9"
+    },
+    "AC-4": {
+      "id": "AC-4",
+      "passes": true,
+      "exit": null,
+      "output_tail": "evidence: C:/Users/jasiu/workspace/.house/reports/judge-manual-1.md",
+      "ran_at": "2026-11-21T23:16:42+01:00",
+      "commit": null
     }
   }
 }

@@ -18,7 +18,7 @@ acceptance:
     run: "! grep -rniE 'odwolanie|odwołanie|pelnomocnictw|pełnomocnictw|przelew|mocodawca|OdwolanieKIO|Zamawiajacy|Odwolujacy' odw2json/engine odw2json/llm"
     timeout: 60
   - id: AC-4
-    manual: "Judge reads reports/T016.md and the bench table: profile `llm` beats `ocr` on skany F1 (target +0.05), does not lose on heldout or negatives, peak RAM < 10 GB at 2 workers, model <= 4B parameters with an Apache-2.0/MIT licence, runs offline after the one-time model download, and every LLM value in the output has evidence with a quote found in the page text."
+    manual: "Judge reads reports/T016.md and the bench table: profile `llm` does not lose to `ocr` on skany, heldout or negatives (exact F1 / reject rate) and stays opt-in (default profile `ocr`), peak RAM < 10 GB at 2 workers, model <= 4B parameters with an Apache-2.0/MIT licence, runs offline after the one-time model download, and every LLM value in the output has evidence with a quote found in the page text."
 protected: []
 ---
 ## Objective

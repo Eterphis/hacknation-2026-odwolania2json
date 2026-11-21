@@ -40,5 +40,30 @@
     }
   },
   "frozen_at": "2026-11-21T21:56:12+01:00",
-  "results": {}
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\.worktrees\\T019-ocr-preprocess\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\.worktrees\\T019-ocr-preprocess\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmp7zjbedyh\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\.worktrees\\T019-ocr-preprocess\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\.worktrees\\T019-ocr-preprocess\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 259 tests in 72.280s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T23:34:19+01:00",
+      "commit": "3547f8c69d1b23e6a7ac4a4b38b021dee964b4c8"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "scans: 30 pdfs, negatives: 12 pdfs -> .acc/skc\nINFO profile ocr, 4 worker(s)\n31 cases, 42 pdfs, 30 json written, 12 rejected/failed\nwarning: pred case folders with no gold folder (ignored): negatywne\ncases scored: 30\n  odwolanie       P=1.0000 R=0.9887 F1=0.9943 (TP=175 FP=0 FN=2)\n  pelnomocnictwo  P=0.9459 R=0.8974 F1=0.9211 (TP=70 FP=4 FN=8)\n  przelew         P=0.9444 R=0.9444 F1=0.9444 (TP=51 FP=3 FN=3)\nnormalized: 0.9673\nscore: 0.9673",
+      "ran_at": "2026-11-21T23:42:37+01:00",
+      "commit": "3547f8c69d1b23e6a7ac4a4b38b021dee964b4c8"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "copied 60 pdfs to .acc\\input\nINFO profile ocr, 4 worker(s)\n20 cases, 60 pdfs, 60 json written, 0 rejected/failed\ncases scored: 20\n  odwolanie       P=0.9976 R=1.0000 F1=0.9988 (TP=411 FP=1 FN=0)\n  pelnomocnictwo  P=1.0000 R=0.9943 F1=0.9971 (TP=174 FP=0 FN=1)\n  przelew         P=1.0000 R=1.0000 F1=1.0000 (TP=120 FP=0 FN=0)\nnormalized: 0.9986\nscore: 0.9986",
+      "ran_at": "2026-11-21T23:42:52+01:00",
+      "commit": "3547f8c69d1b23e6a7ac4a4b38b021dee964b4c8"
+    }
+  }
 }
