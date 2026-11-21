@@ -11,10 +11,11 @@ from odw2json.model import Classification, Document, Evidence, Extraction
 from odw2json.write import fill as fill_skeleton  # same completion rule as the writer
 from odw2json.write import skeleton as schema_skeleton
 
+from .dedupe import dedupe_items, prefer, same_name
 from .normalise import NORMALISERS, VALIDATORS
 from .recipes import Recipe, RecipeError, dictionaries_dir, load_dictionary, load_recipes, recipes_dir, signature
 from .strategies import STRATEGIES, Candidate, Context, Scope, compile_pattern
-from .text import Text, squash
+from .text import Text, fold, squash
 
 OCR_CONFIDENCE = 0.9  # values read from OCR pages
 INVALID_CONFIDENCE = 0.5  # value failed its checksum validator (kept, never dropped)
@@ -111,6 +112,8 @@ class RecipeEngine:
                     continue
             if "list_of_blocks" in f:
                 self._blocks(f, text, sections, fscope, item, prefix, evidence)
+            elif "attach_to" in f:
+                self._attached(f, text, sections, fscope, item, prefix, evidence)
             else:
                 self._field(f, text, fscope, item, prefix, evidence, sections)
 
@@ -132,15 +135,40 @@ class RecipeEngine:
             items.append(sub)
         existing = _get(item, f["path"])
         if spec.get("merge") and isinstance(existing, list) and existing:
+            dedupers = {g["path"].partition("[]")[0]: (g["path"].partition("[]")[2].lstrip("."), g["dedupe"])
+                        for g in f["fields"] if g.get("dedupe") is not None and "[]" in g["path"]}
             for i, sub in enumerate(items):  # extra blocks join the last existing item
                 target = existing[min(i, len(existing) - 1)]
                 for k, v in sub.items():
                     if isinstance(target.get(k), list):  # lists: add only items not there yet
-                        target[k].extend(x for x in v if x not in target[k])
+                        _merge_list(target[k], v, dedupers.get(k))
                     else:
                         target.setdefault(k, v)
             return
         _set(item, f["path"], items)
+
+    def _attached(self, f, text, sections, scope, item, prefix, evidence) -> None:
+        """A value printed beside each item of a list already read (`attach_to: list[].key`): item i is searched in
+        the text from the end of its own mention up to the next item's mention (at most `window` characters)."""
+        head, _, key = f["attach_to"].partition("[]")
+        key = key.lstrip(".")
+        rows = _get(item, head)
+        if not isinstance(rows, list):
+            return
+        pats = []
+        for row in rows:
+            name = row.get(key) if isinstance(row, dict) else None
+            ok = isinstance(name, str) and name.strip()
+            pats.append(re.compile(r"\s+".join(re.escape(t) for t in fold(name).split())) if ok else None)
+        mentions = [[m.span() for m in p.finditer(text.low, scope.start, scope.end)] if p else [] for p in pats]
+        starts = sorted(a for spans in mentions for a, _ in spans)
+        sub_field = {**f, "path": f["path"].partition("[]")[2].lstrip(".")}
+        for i, row in enumerate(rows):
+            for _, a in mentions[i]:  # the first mention that is followed by a value (a name may also stand in a letterhead)
+                b = min([a + f.get("window", 200), scope.end, *[x for x in starts if x >= a]])
+                self._field(sub_field, text, Scope(a, b), row, f"{head}[{i}].", evidence)
+                if _get(row, sub_field["path"]) is not None:
+                    break
 
     def _field(self, f, text, scope, item, prefix, evidence, sections=None) -> None:
         ctx = Context(text, item, self.dictionary)
@@ -162,6 +190,8 @@ class RecipeEngine:
                     if v is not None and v not in seen:
                         seen.add(v)
                         found.append((v, c))
+                if found and f.get("dedupe") is not None:  # the same person read twice (capitals, one OCR letter)
+                    found = dedupe_items(found, f["dedupe"].get("fuzzy", 0))
                 if found:
                     head, _, tail = path.partition("[]")
                     tail = tail.lstrip(".")
@@ -180,6 +210,21 @@ class RecipeEngine:
                     _set(item, path, v)
                     evidence.append(_evidence(prefix + path, v, c, strat, f, text))
                     return
+
+
+def _merge_list(target: list, new: list, dedupe: tuple[str, dict] | None) -> None:
+    """Add items not there yet; with `dedupe` (key, spec) an item naming the same person replaces/keeps the existing one."""
+    for x in new:
+        if x in target:
+            continue
+        if dedupe and isinstance(x, dict) and isinstance(x.get(dedupe[0]), str):
+            key, spec = dedupe
+            hit = next((t for t in target if isinstance(t, dict) and isinstance(t.get(key), str)
+                        and same_name(t[key], x[key], spec.get("fuzzy", 0))), None)
+            if hit is not None:
+                hit[key] = prefer(hit[key], x[key])
+                continue
+        target.append(x)
 
 
 def _signal_hit(sig: str | dict, views: dict[bool, str]) -> bool:

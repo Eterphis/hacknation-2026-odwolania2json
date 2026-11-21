@@ -66,6 +66,9 @@
         "strategies": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/strategy"}},
         "normalize": {"oneOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]},
         "validate": {"type": "string"},
+        "dedupe": {"type": "object", "additionalProperties": false, "description": "List field (list[].key with all: true, or a list merged by list_of_blocks.merge): merge items that name the same person (equal after casefold and removing diacritics, or at most `fuzzy` characters apart). Keeps the mixed-case form, on a tie the later one.", "properties": {"fuzzy": {"type": "integer", "minimum": 0, "default": 0, "description": "Maximum number of differing characters (OCR slips)."}}},
+        "attach_to": {"type": "string", "description": "list[].key of a list already read: the field is searched for each item separately, in the text after that item's mention up to the next item's mention (e.g. the PESEL printed beside each attorney). The field path is list[].field."},
+        "window": {"type": "integer", "minimum": 1, "default": 200, "description": "attach_to: at most this many characters after the item's mention."},
         "llm": {"$ref": "#/$defs/llmAsk"},
         "list_of_blocks": {
           "type": "object",
