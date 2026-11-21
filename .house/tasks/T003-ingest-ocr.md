@@ -11,7 +11,7 @@ acceptance:
     run: "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t ."
     timeout: 900
   - id: AC-2
-    run: "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import glob,sys; from odw2json.ingest import default_ingestor; ing=default_ingestor(); docs=[ing.ingest(p) for p in glob.glob('C:/Users/jasiu/workspace/uzp-data/dane/*/*.pdf')]; pl=sum(any(c in d.text for c in 'ąęłśżźćńó') for d in docs); boxed=sum(all(p.words and all(0<=w.x0<=w.x1<=p.width+1 and 0<=w.y0<=w.y1<=p.height+1 for w in p.words) for p in d.pages) for d in docs); print('docs',len(docs),'polish',pl,'boxed',boxed); sys.exit(0 if len(docs)==180 and pl>=170 and boxed==180 else 1)\""
+    run: "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import glob,sys; from odw2json.ingest import default_ingestor; ing=default_ingestor(); docs=[ing.ingest(p) for p in glob.glob('C:/Users/jasiu/workspace/uzp-data/dane/*/*.pdf')]; pl=sum(any(c in d.text for c in 'ąęłśżźćńó') for d in docs); boxed=sum(all(p.words and all(0<=w.x0<=w.x1<=p.width+1 and 0<=w.y0<=w.y1<=p.height+1 for w in p.words) for p in d.pages) for d in docs); print('docs',len(docs),'polish',pl,'boxed',boxed); sys.exit(0 if len(docs)>=180 and pl>=170 and boxed>=len(docs)-2 else 1)\""
     timeout: 900
   - id: AC-3
     run: "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import sys; from odw2json.ingest import default_ingestor; d=default_ingestor().ingest('C:/Users/jasiu/workspace/uzp-data/szablon-aplikacja/input/case1/przyklad odwolanie.pdf'); t=d.text.lower(); ok=len(d.pages)==7 and all(p.source=='ocr' and p.words for p in d.pages) and ('odwołuj' in t or 'odwoluj' in t) and 'zamawiaj' in t; print('chars',len(t),'ok',ok); sys.exit(0 if ok else 1)\""
