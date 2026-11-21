@@ -216,15 +216,15 @@ svg.diag text.s { fill: var(--ct-ink-2); font-size: 14px; }
 <!-- 5. Quality -->
 <section class="slide" data-title="Jakość">
   <div class="kicker"><span class="v"></span><span>Jakość ekstrakcji · dokładne F1 na polach</span></div>
-  <h2>30 skanów UZP: F1 <span class="mono" data-n="skany">0,9755</span></h2>
+  <h2>30 skanów UZP: F1 <span class="mono" data-n="skany">0,9789</span></h2>
   <div class="bus"></div>
   <div class="traces fit">
-    <div class="tr"><div class="name">30 skanów UZP<small>główna miara niezależna</small></div><div class="rail"><div class="fill" data-w="skany"></div></div><div class="num" data-n="skany">0,9755</div></div>
+    <div class="tr"><div class="name">30 skanów UZP<small>główna miara, najbliżej prawdziwego testu</small></div><div class="rail"><div class="fill" data-w="skany"></div></div><div class="num" data-n="skany">0,9789</div></div>
     <div class="tr"><div class="name">przykłady 41-60<small>odłożone, pełnomocnictwa częściowo oglądane</small></div><div class="rail arc"><div class="fill" data-w="heldout"></div></div><div class="num" data-n="heldout">1,000</div></div>
     <div class="tr"><div class="name">przykłady 01-40<small>strojenie reguł</small></div><div class="rail arc"><div class="fill" data-w="dev"></div></div><div class="num" data-n="dev">1,000</div></div>
     <div class="tr"><div class="name">12 negatywów<small>odrzucone: dostają <code>{}</code></small></div><div class="rail"><div class="fill" data-w="neg"></div></div><div class="num" data-n="negatywne">12/12</div></div>
   </div>
-  <p class="hint">Skany wg klas: odwołania <span data-n="skany_odw">0,9886</span> · pełnomocnictwa <span data-n="skany_pel">0,9677</span> · przelewy <span data-n="skany_prz">0,9444</span>. Znamy pomyłki i mamy je spisane.</p>
+  <p class="hint">Skany wg klas: odwołania <span data-n="skany_odw">0,9943</span> · pełnomocnictwa <span data-n="skany_pel">0,9677</span> · przelewy <span data-n="skany_prz">0,9444</span>. Znamy pomyłki i mamy je spisane.</p>
 </section>
 
 <!-- 6. Extensibility, components -->
@@ -281,7 +281,7 @@ svg.diag text.s { fill: var(--ct-ink-2); font-size: 14px; }
     <div class="frame card"><div class="in">
       <h3><span class="v v--fault"></span>Skany</h3>
       <ul>
-        <li>linie zgubione przez OCR (prześwit druku z drugiej strony): obróbka obrazu w toku</li>
+        <li>linie zgubione przez OCR (prześwit druku z drugiej strony): druga próba OCR po oczyszczeniu obrazu, +23% czasu</li>
         <li>konsorcjum: nie czytamy podpisującego drugiego członka</li>
         <li>mocodawca jako osoba prowadząca działalność</li>
       </ul>
@@ -312,8 +312,8 @@ svg.diag text.s { fill: var(--ct-ink-2); font-size: 14px; }
 <script>
 /* ===== Liczby do podmiany (jedno miejsce). Liczby z gwiazdką z pitch/script.md. ===== */
 var NUMS = {
-  skany: "0,9755",        // * dokładne F1, 30 skanów UZP
-  skany_odw: "0,9886",    // *
+  skany: "0,9789",        // * dokładne F1, 30 skanów UZP
+  skany_odw: "0,9943",    // *
   skany_pel: "0,9677",    // *
   skany_prz: "0,9444",    // *
   heldout: "1,000",       // * przykłady 41-60

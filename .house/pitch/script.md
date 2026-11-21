@@ -12,13 +12,13 @@ Liczby z gwiazdką zmieniają się po dwóch ostatnich scaleniach. Po aktualizac
 
 | Klucz | Wartość | Co to jest |
 |---|---|---|
-| `skany` * | 0,9755 | dokładne F1, 30 skanów UZP (`dane/skany`), główna miara niezależna, najbliższa prawdziwemu testowi |
-| `skany_odw` * | 0,9886 | to samo, tylko odwołania |
-| `skany_pel` * | 0,9677 | to samo, tylko pełnomocnictwa |
-| `skany_prz` * | 0,9444 | to samo, tylko potwierdzenia przelewu |
-| `heldout` * | 1,000 | przykłady 41-60 (odłożone; pełnomocnictwa częściowo oglądane przy strojeniu, D-014) |
-| `dev` * | 1,000 | przykłady 01-40 (strojenie reguł) |
-| `negatywne` * | 12/12 | dokumentów spoza klas odrzuconych (dostają `{}`) |
+| `skany` | 0,9789 | dokładne F1, 30 skanów UZP (`dane/skany`), główna miara, najbliższa prawdziwemu testowi (reguły powstały też z analizy pomyłek na tych skanach) |
+| `skany_odw` | 0,9943 | to samo, tylko odwołania |
+| `skany_pel` | 0,9677 | to samo, tylko pełnomocnictwa |
+| `skany_prz` | 0,9444 | to samo, tylko potwierdzenia przelewu |
+| `heldout` | 1,000 | przykłady 41-60 (odłożone; pełnomocnictwa częściowo oglądane przy strojeniu, D-014) |
+| `dev` | 1,000 | przykłady 01-40 (strojenie reguł) |
+| `negatywne` | 12/12 | dokumentów spoza klas odrzuconych (dostają `{}`) |
 | czas OCR | ok. 6 s | mediana na dokument, OCR na zimno (`docs/PROFILES.md`) |
 
 Zasada na scenie: skany są naszą główną liczbą, bo UZP testuje na prawdziwych, częściowo skanowanych sprawach. Wynik
@@ -169,9 +169,9 @@ wystarczą, programista dopisuje strategię (`register_strategy`), a jej nazwa j
 
 **6. Jakich pomyłek jesteście świadomi?**
 Z analizy 20 pomyłek (`reports/misses-1.md`) naprawiliśmy większość regułami (PESEL przy pełnomocniku, koniec sekcji Odwołującego,
-duplikaty i sklejone imiona). Zostały: linie, które OCR gubi przez prześwitujący druk z drugiej strony skanu (to jedyna rodzina
-błędów, której nie da się naprawić regułami, trwa praca nad obróbką obrazu przed OCR `[zaktualizować, jeśli T019 wejdzie]`),
-konsorcjum, gdzie nie czytamy podpisującego drugiego członka, mocodawca jako osoba fizyczna prowadząca działalność, oraz prefiks
+duplikaty i sklejone imiona). Linie gubione przez OCR przez prześwitujący druk z drugiej strony skanu czytamy drugi raz po oczyszczeniu obrazu (tylko
+zaszumione pasy strony, +23% czasu OCR); to odzyskało numer postępowania i BZP w skanie 0005. Zostały: tytuł przelewu
+zniekształcony przez słaby druk (OCR nie odzyskuje go żadnym wariantem), konsorcjum, gdzie nie czytamy podpisującego drugiego członka, mocodawca jako osoba fizyczna prowadząca działalność, oraz prefiks
 `PL` w numerze rachunku: w skanach UZP złoty JSON go zachowuje, w danych syntetycznych nie, więc wybraliśmy konwencję
 syntetyczną i zapytaliśmy mentorów.
 
