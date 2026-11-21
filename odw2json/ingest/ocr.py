@@ -59,6 +59,12 @@ class RapidOcrBackend:
             params["Rec.lang_type"] = LangRec(cfg["rec_lang"])
             params["Rec.ocr_version"] = OCRVersion(cfg.get("ocr_version", "PP-OCRv5"))
             params["Rec.model_type"] = ModelType(cfg.get("model_type", "mobile"))
+        # onnxruntime defaults to one thread per core in EVERY process; with a worker pool the pipeline sets
+        # ODW2JSON_OCR_THREADS (cores // workers) so N workers do not oversubscribe the CPU N times over
+        threads = os.environ.get("ODW2JSON_OCR_THREADS") or cfg.get("threads")
+        if threads and int(threads) > 0:
+            params["EngineConfig.onnxruntime.intra_op_num_threads"] = int(threads)
+            params["EngineConfig.onnxruntime.inter_op_num_threads"] = 1
         self._engine = RapidOCR(params=params)
 
     def ocr(self, image: Any) -> list[OcrLine]:
