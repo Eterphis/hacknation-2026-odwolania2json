@@ -43,33 +43,33 @@
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": "C:\\Users\\jasiu\\workspace\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n...........................................................przyklad_41: done\nprzyklad_41: done\n..........every PDF failed; check the log above (dependencies installed? pip install -r requirements.txt)\n..............warning: skipping unreadable pred C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpaywaf21s\\pred\\przyklad_01\\bad.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n................................C:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n................\n----------------------------------------------------------------------\nRan 131 tests in 60.724s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-21T17:06:59+01:00",
-      "commit": "83d22ded515214f91f21f77788ad924667c553eb"
+      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmp4y9ftz96\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 222 tests in 43.249s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T19:31:23+01:00",
+      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
-      "output_tail": "copied 186 pdfs to .acc\\input\n61 cases, 186 pdfs, 181 json written, 5 rejected/failed\nok: 181 files",
-      "ran_at": "2026-11-21T17:08:20+01:00",
-      "commit": "83d22ded515214f91f21f77788ad924667c553eb"
+      "output_tail": "copied 186 pdfs to .acc\\input\nINFO profile ocr, 4 worker(s)\n61 cases, 186 pdfs, 181 json written, 5 rejected/failed\nok: 181 files",
+      "ran_at": "2026-11-21T19:31:43+01:00",
+      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T17:08:20+01:00",
-      "commit": "83d22ded515214f91f21f77788ad924667c553eb"
+      "ran_at": "2026-11-21T19:31:43+01:00",
+      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
     },
     "AC-4": {
       "id": "AC-4",
-      "passes": true,
-      "exit": 0,
-      "output_tail": "3 recipes valid",
-      "ran_at": "2026-11-21T17:08:22+01:00",
-      "commit": "83d22ded515214f91f21f77788ad924667c553eb"
+      "passes": false,
+      "exit": 1,
+      "output_tail": "                    'a': {'class': 'odwolanie',\n                          'path': 'ZamowieniePubliczne.tytul'},\n                    'b': {'class': 'przelew',\n                          'path': 'przelew_bankowy.tytul'},\n                    'compare': 'contains',\n                    'soft': True},\n                   {'name': 'odwolanie.OdwolanieKIO.data in przelew.tytul',\n                    'a': {'class': 'odwolanie',\n                          'path': 'OdwolanieKIO.data'},\n                    'b': {'class': 'przelew',\n                          'path': 'przelew_bankowy.tytul'},\n                    'compare': 'contains',\n                    'soft': True},\n                   {'name': 'odwolanie.pelnomocnik in przelew.tytul',\n                    'a': {'class': 'odwolanie',\n                          'path': 'Odwolujacy[*].pelnomocnik.imie_nazwisko'},\n                    'b': {'class': 'przelew',\n                          'path': 'przelew_bankowy.tytul'},\n                    'compare': 'contains',\n                    'soft': True}]}",
+      "ran_at": "2026-11-21T19:31:44+01:00",
+      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
     }
   }
 }

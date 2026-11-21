@@ -349,6 +349,8 @@ def main(argv=None, measure=measure, commit=None, today=None) -> int:
     ap.add_argument("--gate", action="store_true", help="exit 1 on a regression vs the last accepted history row")
     ap.add_argument("--accept", action="store_true", help="flag this run's rows as accepted baseline")
     ap.add_argument("--cold", action="store_true", help="fresh OCR cache for every run (cost of scans, slow)")
+    ap.add_argument("--record", action="store_true",
+                    help="append this run to --history (tracked file); without it (or --accept) only <out>/history.csv")
     a = ap.parse_args(argv)
 
     names = _csv_arg(a.profiles)
@@ -392,7 +394,10 @@ def main(argv=None, measure=measure, commit=None, today=None) -> int:
     print(md)
 
     violations = check_gate(rows, read_history(a.history)) if a.gate else []
-    append_history(a.history, rows, today, commit, accepted=a.accept and not violations)
+    # Only an explicit --record/--accept touches the tracked history; plain runs (CI, acceptance checks) must not
+    # leave the checkout dirty, so they append to a copy in --out.
+    hist = a.history if (a.record or a.accept) else str(out / "history.csv")
+    append_history(hist, rows, today, commit, accepted=a.accept and not violations)
     if violations:
         for v in violations:
             print(f"GATE FAIL {v}")

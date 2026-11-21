@@ -62,7 +62,7 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
   - Nowe dane w repo: `dane/skany/{odwolania,pelnomocnictwa,potwierdzenia}/NNNN` (3×10 skanów ze złotymi JSON) i `dane/negatywne/` (12 dokumentów, które „powinny zwrócić pusty plik .json”).
   → D-015..D-018; nowe pytania: Q-004.
 
-## Q-004 [open] Pytania uzupełniające do mentorów UZP
+## Q-004 [answered 2026-11-21] Pytania uzupełniające do mentorów UZP
 - **Kontekst:** po odpowiedziach z Q-002 i aktualizacji repo UZP zostały sprzeczności, które zmieniają wynik F1 albo punkty finału.
   1. **Dokument odrzucony:** README i `dane/negatywne/readme.md` mówią „zwrócić pusty plik .json”, a szablon `szablon-aplikacja/output/case1` nie ma żadnego pliku dla „negatywny przyklad.pdf”. Mamy zapisać pusty plik (0 bajtów? czy `{}`?), czy nie tworzyć pliku?
   2. **Ocena finału:** README: etap 2 = 50% F1 + 50% elastyczność (do 20 pkt za „moc modelu LLM” — im mniejszy, tym więcej; do 20 pkt za łatwość dodawania typów dokumentów i klas danych; do 10 pkt za inne funkcje, np. GUI). Czy to obowiązuje (a nie 50/30/20 z PDF)? Ile punktów dostaje rozwiązanie bez LLM, a ile z małym lokalnym modelem (np. 1,5–4 mld parametrów)?
@@ -71,11 +71,22 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
   5. **Uruchomienie u sprawdzającego:** czy laptop ma internet przy pierwszym starcie (pobranie wag modelu ~1–3 GB), czy wagi mają być w paczce? Czy jest limit czasu na sprawę (OCR skanu to ~5–7 s na stronę na CPU)?
   6. **Nowe klasy w finale:** czy jury będzie na żywo dodawać nową klasę dokumentu (jaką, np. dowód/załącznik?) i czy ma ona trafić do `output` z CLI?
   7. **Struktura sprawy testowej:** czy w folderze sprawy mogą być dokumenty negatywne obok trzech klas (jak w szablonie) i czy może być kilka pełnomocnictw / przelewów?
+  8. **Poprawność dokumentów testowych** (pyta właściciel): czy dokumenty w zbiorze testowym są zawsze poprawne i spójne (sumy kontrolne NIP/REGON/PESEL/IBAN, te same strony w odwołaniu, pełnomocnictwie i tytule przelewu), czy mogą zawierać celowe błędy, które mamy przepisać bez poprawiania? Czy przelewem może być też wpis od odwołania (7 500–20 000 zł na rachunek UZP), a nie tylko opłata skarbowa 17 zł? (`reports/source-uzp-gov.md`)
 - **Opcje:** A) pytasz mentorów (stoisko/Discord) i wpisujesz odpowiedzi tutaj B) zostajemy przy domyślnych założeniach (D-016: pusty plik dla odrzuconego, przełączalne w konfiguracji)
 - **Rekomendacja:** A dla pyt. 1, 2 i 5 (zmieniają wynik i paczkę); reszta może iść B.
 - **Blokuje:** nic nie blokuje pracy — domyślne założenia w D-016/D-017.
 - **Poziom:** zawsze człowiek
-- **Odpowiedź:** —
+- **Odpowiedź:** (człowiek od mentorów UZP, 2026-11-21)
+  1. Pusty plik = nawiasy klamrowe: odrzucony dokument → `{}` (tak już robimy).
+  2. Punkty: rozwiązanie bez LLM albo z modelem uruchamianym na 16 GB RAM bez GPU dostaje maksimum. F1 „raczej” z normalizacją, zapewne do stringów (typ liczba/tekst nie powinien mieć znaczenia).
+  3. (bez odpowiedzi — zostajemy przy dokładnym przepisaniu tekstu z dokumentu).
+  4. Zob. 2.
+  5. Laptop ma internet; wagi do kilku GB można pobrać przy uruchomieniu.
+  6. (bez odpowiedzi).
+  7. W sprawie może być kilka pełnomocnictw i negatywy obok trzech klas.
+  8. Dokumenty nie zawsze są spójne. Jeśli pola brakuje w dokumencie, nie ma go też w JSON („pusty string” — złote JSON-y używają `null`: 363 brakujące pola mają `null`, zero pustych stringów, więc zostajemy przy `null`). Nie uzupełniamy pól wartościami z innych dokumentów.
+  → D-021.
+
 
 ## Q-003 [answered 2026-11-21] Wybór koncepcji rozwiązania (ideacja 1)
 - **Kontekst:** Ideator dał 5 koncepcji (`.house/reports/ideation-1.md`), researcherzy karty prior-art (`reports/prior-art-I-00N.md`, licencje: `reports/licences.md`), sędzia ocenił je rubryką 50/30/20 (w nawiasie wariant regulaminu 50/50; `reports/ideation-1-judge.md`). Ranking:

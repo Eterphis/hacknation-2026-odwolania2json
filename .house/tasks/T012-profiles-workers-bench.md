@@ -1,9 +1,9 @@
 ---
 id: T012
 title: Processing profiles, parallel workers and an F1-vs-cost bench on all evaluation sets
-status: todo
-owner: null
-branch: null
+status: done
+owner: coder
+branch: task/T012-profiles-workers-bench
 depends_on: [T013]
 capabilities: [python, devops]
 acceptance:

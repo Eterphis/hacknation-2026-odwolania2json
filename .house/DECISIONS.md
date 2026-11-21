@@ -129,3 +129,8 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** UZP upstream 84cc976 added negatives to dane/ (196 PDFs instead of 180, one image-only negative without words); count and boxed thresholds made data-robust, D-017
 - **Kto:** coordinator
 - **Data:** 2026-11-21 17:44
+
+## D-021 Wnioski z odpowiedzi mentorów (Q-004)
+- **Decyzja:** (1) Odrzucony dokument → `{}` (potwierdzone; domyślny tryb `--rejected-json {}` zostaje). (2) Brakujące pole → `null`, jak w złotych JSON-ach; nigdy nie uzupełniamy pola wartością z innego dokumentu sprawy: naprawy w T009 wyłączone w `recipes/case.yaml` (`repair: false`), sprawdzenia spójności zostają jako informacja w `checks` i UI. (3) Sprawa może mieć kilka pełnomocnictw i negatywy obok trzech klas: każdy dokument przetwarzany osobno, krok sprawy działa na listach dokumentów danej klasy. (4) LLM nie daje przewagi punktowej (bez LLM = maksimum, lokalny na 16 GB = maksimum): T016 zostaje tylko wtedy, gdy podnosi F1 lub odporność na nowe układy przy akceptowalnym czasie; domyślny profil pozostaje `ocr`, dopóki bench nie pokaże zysku. (5) Wagi modelu mogą być pobierane przy pierwszym uruchomieniu (laptop ma internet). (6) F1 prawdopodobnie normalizowane do stringów: typy liczba/tekst nie wymagają zmian.
+- **Kto:** człowiek (odpowiedzi mentorów) + coordinator
+- **Data:** 2026-11-21 21:00

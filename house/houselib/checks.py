@@ -421,9 +421,21 @@ def _run_cmd(cmd: list[str] | str, workdir: Path, timeout: int, keep_group: bool
         return code, out.read(), proc.pid
 
 
+# Set to a dict by `house merge` for its re-check loop only: an identical command run in the same checkout at the
+# same commit (e.g. the shared unit-test command of every task) runs once and its output is reused; each criterion
+# still applies its own `expect`. None (the default) disables it.
+RUN_CACHE: dict | None = None
+
+
 def _run_one(c: Criterion, workdir: Path, commit: str | None) -> Result:
     """Run one `run` criterion in workdir and return its `Result` (timeout and bad regex count as failures)."""
-    code, output, _ = _run_cmd(c.run, workdir, c.timeout)
+    key = (str(Path(workdir).resolve()), commit, c.run, c.timeout)
+    if RUN_CACHE is not None and commit and key in RUN_CACHE:
+        code, output = RUN_CACHE[key]
+    else:
+        code, output, _ = _run_cmd(c.run, workdir, c.timeout)
+        if RUN_CACHE is not None and commit:
+            RUN_CACHE[key] = (code, output)
     if code is None:
         return Result(c.id, False, None, f"timeout after {c.timeout} s\n" + _tail(output), _now(), commit)
     try:

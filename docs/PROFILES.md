@@ -65,7 +65,7 @@ Zbiory: `dev` (przyklad_01–40), `heldout` (41–60), `skany` (30 skanów ze z�
 (lub `UZP_DATA`, `--src`). Każdy zestaw (profil, zbiór, liczba procesów) to osobne uruchomienie CLI, więc szczytowa
 pamięć (psutil, suma procesu głównego i wszystkich roboczych) nie miesza się między pomiarami.
 
-Wyniki: `<out>/bench-<data>-<commit>.json` i `.md` oraz dopisane wiersze w `bench/history.csv`. Ostatnia linia:
+Wyniki: `<out>/bench-<data>-<commit>.json` i `.md` oraz kopia historii w `<out>/history.csv`; do śledzonego `bench/history.csv` dopisują tylko `--record` i `--accept` (zwykłe uruchomienie, np. w CI, nie brudzi repo). Ostatnia linia:
 `bench: <P> profiles x <S> sets ok`.
 
 Jak czytać tabelę:
