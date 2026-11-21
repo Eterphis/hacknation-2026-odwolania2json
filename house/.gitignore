@@ -1,0 +1,7 @@
+contests/
+__pycache__/
+*.pyc
+.env*
+!.env.example
+.superpowers/
+exports/

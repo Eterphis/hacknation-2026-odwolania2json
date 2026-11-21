@@ -1,0 +1,248 @@
+"""`house setup`: make a fresh machine ready (user-level skills + hints for missing tools).
+
+Used by: `house setup` (owner, once per machine, re-run to update). Installs `user-skills/*` into
+`~/.claude/skills`, fetches the Remotion skill (not vendored for licence reasons) and prints exact next steps
+for tools that `house doctor` found missing. An installed skill that differs from the shipped one is kept as
+`<name>.bak-<timestamp>`; nothing outside `~/.claude/skills` and `~/.cache/house` is written.
+"""
+import filecmp
+import shutil
+import subprocess
+import time
+from collections.abc import Callable
+from pathlib import Path
+
+from . import HOUSE_ROOT
+
+
+def _same_tree(a: Path, b: Path) -> bool:
+    """Return True when two directories have the same files with identical content."""
+    cmp = filecmp.dircmp(a, b)
+    if cmp.left_only or cmp.right_only or cmp.diff_files or cmp.funny_files:
+        return False
+    return all(_same_tree(a / d, b / d) for d in cmp.common_dirs)
+
+
+def _install_skill(src: Path, dst_root: Path) -> None:
+    """Copy one skill folder into dst_root; a differing local copy is kept as <name>.bak-<timestamp>."""
+    dst = dst_root / src.name
+    if dst.exists():
+        if _same_tree(src, dst):
+            return
+        dst.rename(dst_root / f"{src.name}.bak-{time.strftime('%Y%m%d-%H%M%S')}")
+    shutil.copytree(src, dst)
+
+
+def install_user_skills(root: Path = HOUSE_ROOT, home: Path = Path.home()) -> list[str]:
+    """Copy user-skills/* to ~/.claude/skills.
+
+    Args:
+        root: House repo root; sources are the folders in `root/user-skills`.
+        home: Home directory that holds `.claude/skills` (default the real one; override in tests).
+
+    Returns:
+        Names of the skills installed or already up to date.
+    """
+    dst_root = home / ".claude/skills"
+    dst_root.mkdir(parents=True, exist_ok=True)
+    installed = []
+    for src in sorted((root / "user-skills").iterdir()):
+        if src.is_dir():
+            _install_skill(src, dst_root)
+            installed.append(src.name)
+    return installed
+
+
+REMOTION_REPO = "https://github.com/remotion-dev/skills"
+REMOTION_SKILL = "remotion-best-practices"
+REMOTION_LICENSE_NOTE = ("Remotion is free for individuals and companies of up to 3 employees; bigger companies "
+                         "need a company licence (remotion.dev/license); fine for hackathons entered privately.")
+GIT_TIMEOUT_S = 120
+
+
+def _git_clone_or_pull(url: str, dest: Path) -> None:
+    """Shallow-clone url into dest, or fast-forward an existing clone; raise RuntimeError on failure."""
+    if (dest / ".git").is_dir():
+        cmd = ["git", "-C", str(dest), "pull", "-q", "--ff-only"]
+    else:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        cmd = ["git", "clone", "-q", "--depth", "1", url, str(dest)]
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=GIT_TIMEOUT_S, check=False)
+    if r.returncode != 0:
+        raise RuntimeError(r.stderr.strip() or f"{cmd[1]} failed")
+
+
+def fetch_remotion_skill(home: Path | None = None,
+                         clone: Callable[[str, Path], None] = _git_clone_or_pull) -> str | None:
+    """Fetch remotion-best-practices into ~/.claude/skills (not vendored: its repo has no licence to redistribute).
+
+    Clones into ~/.cache/house/remotion-skills; offline, falls back to that cache. None = nothing installed.
+
+    Args:
+        home: Home directory for the cache and `.claude/skills`; defaults to the real one.
+        clone: Callable `(url, dest)` that clones or updates; replace in tests. Failures are ignored.
+
+    Returns:
+        The skill name `remotion-best-practices`, or None when there is no clone and no cache.
+    """
+    home = home or Path.home()
+    cache = home / ".cache/house/remotion-skills"
+    try:
+        clone(REMOTION_REPO, cache)
+    except (RuntimeError, OSError, subprocess.SubprocessError):
+        pass  # offline: use the cached copy if there is one
+    src = cache / "skills" / REMOTION_SKILL
+    if not (src / "SKILL.md").is_file():
+        return None
+    dst_root = home / ".claude/skills"
+    dst_root.mkdir(parents=True, exist_ok=True)
+    _install_skill(src, dst_root)
+    return REMOTION_SKILL
+
+
+def hints(tools: dict) -> list[str]:
+    """List the next steps for whatever is missing on this machine.
+
+    Args:
+        tools: The dict from `doctor.detect`.
+
+    Returns:
+        Instruction lines: install Claude Code, the superpowers plugin, uv, ruff, Codex CLI, ollama (and a model
+        when the GPU has enough VRAM), and a Remotion browser download hint.
+    """
+    out = []
+    if not tools.get("claude"):
+        out.append("Claude Code: install from https://claude.com/claude-code, then run `claude` and log in")
+    out.append("superpowers plugin (if not installed yet): in Claude Code run "
+               "`/plugin install superpowers@claude-plugins-official`, then restart")
+    if not tools.get("uv"):
+        out.append("uv: `curl -LsSf https://astral.sh/uv/install.sh | sh` (Python tooling: uv run / uvx)")
+    if not tools.get("ruff"):
+        out.append("ruff: `uv tool install ruff`")
+    if not tools.get("codex"):
+        out.append("Codex CLI: `npm i -g @openai/codex && codex login` (second usage pool)")
+    ollama, gpu = tools.get("ollama") or {}, tools.get("gpu")
+    if not ollama.get("installed"):
+        out.append("ollama (optional, local summaries): https://ollama.com/download")
+    elif not ollama.get("models") and gpu and gpu.get("vram_mib", 0) >= 10000:
+        out.append("ollama model: `ollama pull qwen3:8b` (enough VRAM on this GPU)")
+    out.append("before a video sprint: `npx remotion browser ensure` in the video project "
+               "(downloads Remotion's Chrome Headless Shell once, so the first render doesn't)")
+    return out
+
+
+TIMER = "house-signal-pull"
+SERVICE_UNIT = """[Unit]
+Description=house: odbiór Signala do magazynu (house signal pull)
+
+[Service]
+Type=oneshot
+Environment=PATH={path}
+ExecStart={root}/bin/house signal pull --timeout 5 --maintenance
+{agent}TimeoutStartSec=900
+"""
+TIMER_UNIT = """[Unit]
+Description=house: odbiór Signala co {every}
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec={every}
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+"""
+
+
+def install_signal_timer(root: Path = HOUSE_ROOT, home: Path | None = None, run=subprocess.run,
+                         every: str = "5min", claude: str | None = None, agent: bool = False) -> list[Path]:
+    """Install and start the systemd user timer that runs `house signal pull --maintenance` periodically.
+
+    Receiving without any open session keeps the store fresh and the linked device active; `--maintenance`
+    also compacts the store once a day. Rewriting the units is idempotent.
+
+    Args:
+        root: House repo root (the unit runs `<root>/bin/house`).
+        home: Home directory. Defaults to `Path.home()`.
+        run: Runner for `systemctl` (signature of `subprocess.run`); replaceable in tests.
+        every: Interval, a systemd time span such as "5min" (S7 uses "1min"). Defaults to "5min".
+        claude: Path of `claude` (its directory goes to the unit's PATH, which systemd keeps minimal otherwise).
+            Defaults to `shutil.which("claude")`.
+        agent: Also run `house signal agent tick` after every pull (S7 on). Defaults to False.
+
+    Returns:
+        Paths of the service and timer unit files.
+
+    Raises:
+        RuntimeError: `systemctl --user` is missing or fails (no user manager, no D-Bus).
+    """
+    claude = claude or shutil.which("claude")
+    tick = f"ExecStart={Path(root).resolve()}/bin/house signal agent tick\n" if agent else ""
+    return _install_timer(TIMER, SERVICE_UNIT.format(root=Path(root).resolve(), path=_unit_path(claude), agent=tick),
+                          TIMER_UNIT.format(every=every), home, run)
+
+
+def _unit_path(claude: str | None) -> str:
+    """PATH for a unit: the directories of `claude` and `docker` (if found) plus the system dirs.
+
+    systemd keeps PATH minimal, so a snap `docker` (`/snap/bin`) would be invisible to S7's tick, which then
+    silently runs jobs locally.
+    """
+    docker = shutil.which("docker")
+    extra = [str(Path(x).parent) for x in (claude, docker) if x]
+    return ":".join(dict.fromkeys([*extra, "/usr/local/bin", "/usr/bin", "/bin"]))
+
+
+def _install_timer(name: str, service_text: str, timer_text: str, home: Path | None, run) -> list[Path]:
+    """Write `<name>.service` / `<name>.timer` user units, reload systemd and enable the timer."""
+    units = (home or Path.home()) / ".config/systemd/user"
+    units.mkdir(parents=True, exist_ok=True)
+    service, timer = units / f"{name}.service", units / f"{name}.timer"
+    service.write_text(service_text)
+    timer.write_text(timer_text)
+    for argv in (["systemctl", "--user", "daemon-reload"],
+                 ["systemctl", "--user", "enable", "--now", f"{name}.timer"]):
+        try:
+            r = run(argv, capture_output=True, text=True, check=False)
+        except OSError as e:
+            raise RuntimeError(f"systemctl --user niedostępny: {e}") from e
+        if r.returncode != 0:
+            raise RuntimeError(f"{' '.join(argv)}: {(r.stderr or '').strip()[:200]}")
+    return [service, timer]
+
+
+LB_TIMER = "house-lb"
+LB_SERVICE_UNIT = """[Unit]
+Description=house: oficjalne rankingi konkursów (house lb poll)
+
+[Service]
+Type=oneshot
+Environment=PATH={path}
+ExecStart={root}/bin/house lb poll
+TimeoutStartSec=900
+"""
+LB_TIMER_UNIT = """[Unit]
+Description=house: rankingi co {every}
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec={every}
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+"""
+
+
+def install_lb_timer(root: Path = HOUSE_ROOT, home: Path | None = None, run=subprocess.run,
+                     every: str = "5min") -> list[Path]:
+    """Install and start the user timer running `house lb poll` (each contest's own `leaderboard.every` applies).
+
+    Returns:
+        Paths of the service and timer unit files.
+
+    Raises:
+        RuntimeError: `systemctl --user` is missing or fails.
+    """
+    return _install_timer(LB_TIMER, LB_SERVICE_UNIT.format(root=Path(root).resolve(), path=_unit_path(None)),
+                          LB_TIMER_UNIT.format(every=every), home, run)

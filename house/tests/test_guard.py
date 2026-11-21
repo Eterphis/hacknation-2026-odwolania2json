@@ -1,0 +1,308 @@
+"""`house guard`: rules that block edits to protected files, secret commits and unsafe pushes."""
+import tempfile
+import unittest
+from pathlib import Path
+
+from houselib import checks, guard, scaffold
+from tests.helpers import FAKE_TOOLS, git, make_root
+
+TASK = ("---\nid: T001\ntitle: x\nstatus: todo\nowner: null\nbranch: task/T001-x\ndepends_on: []\n"
+        "acceptance:\n  - id: AC-1\n    run: \"true\"\nprotected:\n  - test_a.py\n  - later.py\n---\nx\n")
+
+
+class GuardTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = make_root(Path(self._tmp.name))
+        self.c = scaffold.new_contest("c1", None, root=self.root, detect=lambda: FAKE_TOOLS)
+        (self.c / "test_a.py").write_text("assert True\n")
+        (self.c / ".house/tasks/T001-x.md").write_text(TASK)
+        git(self.c, "add", "-A")
+        git(self.c, "commit", "-q", "-m", "base")
+        checks.freeze(self.c / ".house", "T001")
+        self.wt = self.c / ".worktrees/T001-x"
+        git(self.c, "worktree", "add", "-q", str(self.wt), "-b", "task/T001-x")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_contest_root_from_worktree_and_subdir(self):
+        (self.wt / "src").mkdir()
+        self.assertEqual(guard.contest_root(self.wt / "src"), self.c.resolve())
+        self.assertEqual(guard.contest_root(self.c), self.c.resolve())
+        self.assertIsNone(guard.contest_root(Path(self._tmp.name)))
+
+    def test_repo_relative(self):
+        self.assertEqual(guard.repo_relative(str(self.wt / "test_a.py"), self.wt, self.c), "test_a.py")
+        self.assertEqual(guard.repo_relative("test_a.py", self.wt, self.c), "test_a.py")
+        self.assertEqual(guard.repo_relative(str(self.c / ".house/checks/T001.json"), self.c, self.c),
+                         ".house/checks/T001.json")
+        self.assertIsNone(guard.repo_relative("/etc/passwd", self.c, self.c))
+
+    def test_protected_paths_only_hashed(self):
+        self.assertEqual(guard.protected_paths(self.c), {"test_a.py": "T001"})
+
+    def test_local_scorer_is_protected(self):
+        (self.c / "score.py").write_text("print(1)\n")
+        (self.c / "preds.txt").write_text("1\n")
+        (self.c / ".house/spec.yaml").write_text("scoring:\n  local_scorer: python3 score.py preds.txt --split val\n")
+        git(self.c, "add", "score.py")
+        git(self.c, "commit", "-qm", "scorer")
+        self.assertIn("score.py", guard.protected_paths(self.c))
+        self.assertNotIn("preds.txt", guard.protected_paths(self.c))  # untracked output, not the scorer
+
+    def test_check_edit(self):
+        self.assertIn("T001", guard.check_edit("test_a.py", self.c))
+        self.assertIsNotNone(guard.check_edit(".house/checks/T001.json", self.c))
+        self.assertIsNone(guard.check_edit("later.py", self.c))
+        self.assertIsNone(guard.check_edit("src/app.py", self.c))
+
+    def test_bash_writes_to_protected(self):
+        for cmd in ("echo x >> test_a.py", "sed -i 's/a/b/' test_a.py", "rm -f test_a.py",
+                    "cp other.py test_a.py", "cat x | tee test_a.py", "true && mv test_a.py b.py",
+                    "echo '{}' > .house/checks/T001.json"):
+            self.assertIsNotNone(guard.check_bash(cmd, self.wt, self.c), cmd)
+        for cmd in ("cat test_a.py", "python3 -m pytest test_a.py", "cp test_a.py /tmp/copy.py", "grep x test_a.py"):
+            self.assertIsNone(guard.check_bash(cmd, self.wt, self.c), cmd)
+
+    def test_git_add_secrets(self):
+        (self.wt / ".env").write_text("KEY=1\n")  # .env* is in the contest .gitignore
+        self.assertIsNone(guard.check_bash("git add -A", self.wt, self.c))
+        (self.wt / ".gitignore").write_text("")
+        self.assertIsNotNone(guard.check_bash("git add -A", self.wt, self.c))
+        self.assertIsNotNone(guard.check_bash("git add .env", self.wt, self.c))
+        (self.wt / ".env").unlink()
+        (self.wt / "cfg.py").write_text('API_KEY = "sk-abcdefghijklmnopqrstuvwxyz123456"\n')
+        self.assertIsNotNone(guard.check_bash("git add cfg.py", self.wt, self.c))
+        self.assertIsNotNone(guard.check_bash("git commit -am wip", self.wt, self.c) or
+                             guard.check_bash("git add . && git commit -m x", self.wt, self.c))
+        (self.wt / "cfg.py").write_text("X = 1\n")
+        self.assertIsNone(guard.check_bash("git add cfg.py && git commit -m ok", self.wt, self.c))
+
+    def test_git_push_rules(self):
+        self.assertIsNone(guard.check_bash("git push origin task/T001-x", self.wt, self.c))
+        self.assertIsNotNone(guard.check_bash("git push public main", self.c, self.c))
+        self.assertIsNotNone(guard.check_bash("git push --force origin main", self.c, self.c))
+        self.assertIsNotNone(guard.check_bash("git push origin +main", self.c, self.c))
+        self.assertIsNone(guard.check_bash("git push -f origin task/T001-x", self.wt, self.c))
+        (self.c / ".house/spec.yaml").write_text("guard:\n  push_allow: [origin, team]\n")
+        self.assertIsNone(guard.check_bash("git push team task/T001-x", self.wt, self.c))
+
+    def test_diff_violations(self):
+        self.assertEqual(guard.diff_violations(self.c, "T001", self.wt), [])
+        (self.wt / "test_a.py").write_text("assert False\n")
+        git(self.wt, "commit", "-qam", "loosen")
+        (self.wt / ".env.local").write_text("X=1\n")
+        found = guard.diff_violations(self.c, "T001", self.wt)
+        self.assertTrue(any("test_a.py" in v for v in found), found)
+
+    def test_frozen_tampering(self):
+        import json
+        cf = self.c / ".house/checks/T001.json"
+        data = json.loads(cf.read_text())
+        data["frozen"]["criteria"][0]["run"] = "exit 0"
+        cf.write_text(json.dumps(data))
+        self.assertTrue(guard.frozen_tampering(self.c))
+
+
+    def test_identifiers_are_not_secrets(self):
+        (self.wt / "m.py").write_text("def task_dependencies_are_satisfied(): pass\n"
+                                      "attention_mask_for_padding_tokens_long = 1\n")
+        self.assertIsNone(guard.check_bash("git add m.py", self.wt, self.c))
+        git(self.wt, "add", "m.py")
+        git(self.wt, "commit", "-qm", "code")
+        self.assertEqual(guard.diff_violations(self.c, "T001", self.wt), [])
+
+    def test_multiline_commands_checked(self):
+        self.assertIsNotNone(guard.check_bash("echo hi\nrm test_a.py", self.wt, self.c))
+        self.assertIsNotNone(guard.check_bash("cd .\ngit push --force origin main", self.c, self.c))
+
+    def test_git_dash_c_checked(self):
+        (self.wt / ".gitignore").write_text("")
+        (self.wt / ".env").write_text("K=1\n")
+        self.assertIsNotNone(guard.check_bash(f"git -C {self.wt} add -A", self.c, self.c))
+        self.assertIsNotNone(guard.check_bash("git -C . push --force origin main", self.c, self.c))
+        self.assertIsNotNone(guard.check_bash("git -c core.x=y push -fu origin main", self.c, self.c))
+
+    def test_restoring_protected_file_allowed(self):
+        for cmd in ("git checkout test_a.py", "git checkout -- test_a.py", "git checkout HEAD -- test_a.py",
+                    "git restore test_a.py", "git checkout -b feature", "git checkout main"):
+            self.assertIsNone(guard.check_bash(cmd, self.wt, self.c), cmd)
+        self.assertIsNotNone(guard.check_bash("git checkout other -- test_a.py", self.wt, self.c))
+        self.assertIsNotNone(guard.check_bash("git restore --source=other test_a.py", self.wt, self.c))
+
+    def test_bare_push_uses_upstream_remote(self):
+        bare = Path(self._tmp.name) / "public.git"
+        git(Path(self._tmp.name), "init", "-q", "--bare", str(bare))
+        git(self.wt, "remote", "add", "public", str(bare))
+        git(self.wt, "push", "-q", "-u", "public", "task/T001-x")
+        self.assertIsNotNone(guard.check_bash("git push", self.wt, self.c))
+        self.assertIsNotNone(guard.check_bash("git push --repo=public", self.wt, self.c))
+
+    def test_one_harmless_segment_does_not_end_the_check(self):
+        self.assertIsNotNone(guard.check_bash("echo > .house/checksum; echo x > test_a.py", self.c, self.c))
+        self.assertIsNone(guard.check_bash("echo > .house/checksum", self.c, self.c))
+
+    def test_removing_a_committed_env_is_allowed(self):
+        (self.wt / ".gitignore").write_text("")
+        (self.wt / ".env").write_text("K=1\n")
+        git(self.wt, "add", "-f", ".env", ".gitignore")
+        git(self.wt, "commit", "-qm", "oops")
+        (self.wt / ".env").unlink()
+        self.assertIsNone(guard.check_bash("git add -A", self.wt, self.c))
+        self.assertIsNone(guard.check_bash("git commit -am 'remove secret'", self.wt, self.c))
+
+    def test_heredoc_body_is_not_a_command(self):
+        cmd = "cat <<'EOF' > notes.md\nrun prog > test_a.py\nEOF"
+        self.assertIsNone(guard.check_bash(cmd, self.wt, self.c))
+
+    def test_large_and_binary_files_are_cheap(self):
+        (self.wt / "data.bin").write_bytes(b"\0" * 2_000_000 + b"sk-abcdefghijklmnopqrstuvwxyz0123")
+        self.assertIsNone(guard.check_bash("git add data.bin", self.wt, self.c))
+
+    def test_rename_in_status(self):
+        git(self.wt, "mv", "test_a.py", "test_b.py")
+        paths = [p for _, p in guard._status(self.wt)]
+        self.assertIn("test_b.py", paths)
+        self.assertTrue(all(not p.startswith("t_a") for p in paths), paths)
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class SignalRulesTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.home = Path(self._tmp.name) / "home"
+        self.cwd = Path(self._tmp.name) / "repo"
+        self.cwd.mkdir(parents=True)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def check(self, tool, **args):
+        return guard.check_signal(tool, args, self.cwd, home=self.home)
+
+    def test_bare_signal_cli_blocked(self):
+        for cmd in ("signal-cli -a +1 receive", "~/.local/bin/signal-cli -a +1 send -m x",
+                    "foo && signal-cli -a +1 -o json receive --timeout 1", "timeout 5 signal-cli -a +1 receive",
+                    "cd /tmp\nsignal-cli -a +48 send --note-to-self -m hej"):
+            reason = self.check("Bash", command=cmd)
+            self.assertIsNotNone(reason, cmd)
+            self.assertIn("house signal", reason)
+
+    def test_any_signal_cli_run_blocked(self):
+        for cmd in ("signal-cli -a +1 -o json listGroups", "signal-cli -a +1 listContacts", "signal-cli --version"):
+            self.assertIsNotNone(self.check("Bash", command=cmd), cmd)
+
+    def test_allow_deny_from_agent_blocked(self):
+        for cmd in ("bin/house signal allow techarena_claude --alias t", "house signal deny techarena",
+                    'echo t | script -qc "house signal allow techarena --alias x" /dev/null',
+                    "unbuffer ~/house/bin/house signal allow x", "house signal agent on",
+                    "echo t | script -qc 'house signal agent members techarena' /dev/null"):
+            reason = self.check("Bash", command=cmd)
+            self.assertIsNotNone(reason, cmd)
+            self.assertIn("human", reason)
+
+    def test_house_env_overrides_blocked(self):
+        for cmd in ("HOUSE_SIGNAL_CONFIG=/tmp/a.toml house signal pull", "export HOUSE_DATA_DIR=/tmp/x",
+                    "env HOUSE_NOTIFY_CONFIG=/tmp/n house inbox", "HOUSE_SIGNAL_ATTACHMENTS=/ house signal pull"):
+            self.assertIsNotNone(self.check("Bash", command=cmd), cmd)
+
+    def test_writes_to_house_data_blocked(self):
+        data = self.home / ".local/share/house"
+        self.assertIsNotNone(self.check("Bash", command="echo x >> ~/.local/share/house/groups.json"))
+        self.assertIsNotNone(self.check("Write", file_path=str(data / "signal/messages.jsonl"), content="x"))
+        self.assertIsNotNone(self.check("Edit", file_path=str(data / "groups.json")))
+        self.assertIsNone(self.check("Read", file_path=str(data / "signal/messages.jsonl")))
+
+    def test_read_signal_cli_dir_blocked(self):
+        d = self.home / ".local/share/signal-cli/attachments/x.jpg"
+        self.assertIsNotNone(self.check("Read", file_path=str(d)))
+        self.assertIsNotNone(self.check("Grep", pattern="x", path=str(d.parent)))
+        self.assertIsNotNone(self.check("Glob", pattern="*", path=str(self.home / ".local/share/signal-cli")))
+        self.assertIsNotNone(self.check("Bash", command="cat ~/.local/share/signal-cli/attachments/x"))
+        self.assertIsNotNone(self.check("Bash", command="ls $HOME/.local/share/signal-cli/data"))
+        self.assertIsNotNone(self.check("Edit", file_path=str(d)))
+
+    def test_store_copies_allowed(self):
+        self.assertIsNone(self.check("Read", file_path=str(self.home / ".local/share/house/signal/files/t/a.jpg")))
+
+    def test_write_config_blocked(self):
+        cfg = self.home / ".config/house/signal.toml"
+        self.assertIsNotNone(self.check("Write", file_path=str(cfg), content="x"))
+        self.assertIsNotNone(self.check("Edit", file_path=str(cfg)))
+        self.assertIsNotNone(self.check("Bash", command="echo x > ~/.config/house/signal.toml"))
+        self.assertIsNotNone(self.check("Bash", command="tee -a $HOME/.config/house/notify.env < x"))
+        self.assertIsNone(self.check("Read", file_path=str(cfg)))
+        self.assertIsNone(self.check("Bash", command="cat ~/.config/house/signal.toml"))
+
+    def test_house_signal_commands_allowed(self):
+        for cmd in ("bin/house signal read techarena", "house signal send techarena 'hej' --reply-to 5",
+                    "house signal pull", "grep -r signal-cli houselib/"):
+            self.assertIsNone(self.check("Bash", command=cmd), cmd)
+
+
+class JobModeTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.home = Path(self._tmp.name) / "home"
+        self.wt = self.home / "house/.worktrees/signal-abc"
+        self.wt.mkdir(parents=True)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def check(self, tool, **args):
+        return guard.check_job(tool, args, self.wt, self.wt, home=self.home)
+
+    def test_job_mode_blocks_network_git_and_house(self):
+        for cmd in ("git push origin x", "git -C . remote add x y", "git config core.hooksPath x", "git commit -m x",
+                    "git fetch", "gh pr create", "curl https://x", "wget x", "ssh host", "scp a b:", "nc -l 1",
+                    "rsync a b", "house signal send self x", "bin/house exp run x", "python3 x.py && git push",
+                    "timeout 5 curl x", "sudo ls"):
+            self.assertIsNotNone(self.check("Bash", command=cmd), cmd)
+
+    def test_job_mode_allows_work_in_worktree(self):
+        for cmd in ("python3 -m pytest -q", "git status", "git diff", "git log --oneline -3", "ls -la",
+                    "echo x > wynik.txt", "pip install numpy"):
+            self.assertIsNone(self.check("Bash", command=cmd), cmd)
+        self.assertIsNone(self.check("Write", file_path=str(self.wt / "a.py"), content="x"))
+        self.assertIsNone(self.check("Read", file_path=str(self.wt / ".house-job/request.md")))
+        self.assertIsNone(self.check("Read", file_path="/usr/lib/python3/os.py"))
+
+    def test_job_mode_blocks_outside_worktree(self):
+        self.assertIsNotNone(self.check("Write", file_path=str(self.home / "house/houselib/guard.py"), content="x"))
+        self.assertIsNotNone(self.check("Edit", file_path="../../other/x.py"))
+        self.assertIsNotNone(self.check("Read", file_path=str(self.home / ".config/house/signal.toml")))
+        self.assertIsNotNone(self.check("Grep", pattern="x", path=str(self.home)))
+        self.assertIsNotNone(self.check("Bash", command="echo x > ../../evil.sh"))
+        self.assertIsNotNone(self.check("Bash", command="cat ~/.ssh/id_ed25519"))
+
+
+class JobModeReviewTest(JobModeTest):
+    def test_reads_outside_worktree_refused_except_system(self):
+        for path in ("/tmp/claude-1001/x/tasks/a.output", "/proc/1234/environ", "/run/user/1001/x",
+                     str(self.home / ".claude/x")):
+            self.assertIsNotNone(self.check("Read", file_path=path), path)
+        self.assertIsNotNone(self.check("Grep", pattern="x", path="/tmp"))
+        self.assertIsNotNone(self.check("Glob", pattern="/tmp/**/*.output"))
+        for path in ("/usr/lib/python3/os.py", "/etc/ssl/certs/ca.pem", str(self.wt / "a.py")):
+            self.assertIsNone(self.check("Read", file_path=path), path)
+        self.assertIsNone(self.check("Glob", pattern="**/*.py"))
+
+    def test_git_and_claude_files_in_worktree_refused(self):
+        for rel in (".git", ".git/config", ".gitattributes", ".claude/settings.local.json", "sub/.git"):
+            self.assertIsNotNone(self.check("Write", file_path=str(self.wt / rel), content="x"), rel)
+        self.assertIsNotNone(self.check("Bash", command="printf 'gitdir: /x' > .git"))
+        self.assertIsNotNone(self.check("Bash", command="ln -s ~/.local/share/house .house-job/out"))
+        self.assertIsNotNone(self.check("Bash", command="python3 -c \"import os; os.symlink('/x', 'y')\""))
+
+    def test_allow_agent_bypass_forms_refused(self):
+        for cmd in ("house signal agent --kill on", "h=house; $h signal agent on", "house signal agent 'on'",
+                    "house signal 'allow' x", "bin/house signal agent members techarena",
+                    "house signal agent token"):
+            self.assertIsNotNone(guard.check_signal("Bash", {"command": cmd}, self.wt, home=self.home), cmd)
+        self.assertIsNone(guard.check_signal("Bash", {"command": "house signal agent status"}, self.wt,
+                                             home=self.home))
