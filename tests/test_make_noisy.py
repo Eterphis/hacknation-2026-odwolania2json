@@ -62,3 +62,20 @@ class MakeNoisyTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DefaultSrcTest(unittest.TestCase):
+    def test_finds_uzp_data_in_a_parent_folder_without_env(self):
+        import os
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "uzp-data" / "dane").mkdir(parents=True)
+            nested = root / ".worktrees" / "T010"
+            nested.mkdir(parents=True)
+            env = {k: v for k, v in os.environ.items() if k != "UZP_DATA"}
+            with mock.patch.dict(os.environ, env, clear=True):
+                self.assertEqual(Path(mn.default_src(nested)), (root / "uzp-data" / "dane").resolve())
+            with mock.patch.dict(os.environ, {"UZP_DATA": str(root / "x")}):
+                self.assertEqual(Path(mn.default_src(nested)), root / "x" / "dane")

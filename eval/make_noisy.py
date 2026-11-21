@@ -141,6 +141,17 @@ def build(src_root: Path, out: Path, cases: list[int], dpi: int = DEFAULT_DPI, s
     return n_pdf, n_gold
 
 
+def default_src(start: Path | None = None) -> str | None:
+    """$UZP_DATA/dane, else the nearest ``uzp-data/dane`` in the current folder or a parent (repo or worktree)."""
+    if os.environ.get("UZP_DATA"):
+        return os.path.join(os.environ["UZP_DATA"], "dane")
+    here = (start or Path.cwd()).resolve()
+    for d in (here, *here.parents):
+        if (d / "uzp-data" / "dane").is_dir():
+            return str(d / "uzp-data" / "dane")
+    return None
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="eval.make_noisy", description=__doc__.split("\n")[0])
     ap.add_argument("--cases", default="41-50")
@@ -149,9 +160,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dpi", type=int, default=DEFAULT_DPI)
     ap.add_argument("--seed", type=int, default=DEFAULT_SEED)
     args = ap.parse_args(argv)
-    src = args.src or (os.path.join(os.environ["UZP_DATA"], "dane") if os.environ.get("UZP_DATA") else None)
+    src = args.src or default_src()
     if not src:
-        ap.error("set --src or the UZP_DATA environment variable")
+        ap.error("set --src or the UZP_DATA environment variable (or clone the data into <repo>/uzp-data)")
     n_pdf, n_gold = build(Path(src), Path(args.out), parse_cases(args.cases), args.dpi, args.seed)
     print(f"wrote {n_pdf} noisy pdfs, {n_gold} gold files to {args.out}")
     return 0
