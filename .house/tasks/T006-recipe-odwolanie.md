@@ -1,7 +1,7 @@
 ---
 id: T006
 title: Complete the odwolanie recipe to the held-out F1 target
-status: review
+status: done
 owner: teammate-session
 branch: task/T006-recipe-odwolanie
 depends_on: [T002, T004]
