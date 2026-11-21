@@ -1,4 +1,4 @@
-"""Generic case step. Relations between document classes come from `recipes/case.yaml`; nothing here names a class.
+"""Generic case step. Relations between document classes come from `recipes/case/relations.yaml`; nothing here names a class.
 
 relation:
   name       text of the resulting Check
@@ -26,7 +26,7 @@ from ..engine.normalise import VALIDATORS
 from ..model import CaseResult, Check, DocumentResult, Evidence
 from .paths import assign, expand
 
-CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "recipes" / "case.yaml"
+CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "recipes" / "case" / "relations.yaml"
 _PL = str.maketrans("ąćęłńóśźżĄĆĘŁŃÓŚŹŻ", "acelnoszzACELNOSZZ")
 
 
