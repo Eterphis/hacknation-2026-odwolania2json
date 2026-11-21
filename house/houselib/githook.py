@@ -63,7 +63,7 @@ def wrapper(root: Path, name: str) -> str:
     when that file is gone, so moving the house checkout never blocks commits."""
     hook = Path(root).resolve() / "bin/house-githook"
     return (f"#!/bin/sh\n{MARKER} (written by `house adapt`; do not edit)\n"
-            f"hook={shlex.quote(str(hook))}\n"
+            f"hook={shlex.quote(hook.as_posix())}\n"
             f'if [ -x "$hook" ]; then exec "$hook" {name} "$@"; fi\n'
             'echo "house: git hook skipped ($hook is missing; run house adapt)" >&2\nexit 0\n')
 

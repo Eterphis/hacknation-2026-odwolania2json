@@ -21,7 +21,7 @@ it; they find answers in QUESTIONS.md / DECISIONS.md. Rules:
 * Files: `signal/inbox_done.json` in the data dir (handled event key → "<contest> Q-###" or null) and
   `inbox.lock` (one `house inbox` at a time).
 """
-import fcntl
+from .flockcompat import fcntl
 import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta

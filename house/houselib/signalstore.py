@@ -16,7 +16,7 @@ Readers take no lock: the file only grows, so a last line without a newline is s
 line that is not a JSON object (`bad_lines()` lists them for `house doctor`).
 """
 import errno
-import fcntl
+from .flockcompat import fcntl
 import json
 import mimetypes
 import os

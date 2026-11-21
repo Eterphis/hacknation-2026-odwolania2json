@@ -92,8 +92,19 @@ def plan(contest: Path) -> tuple[list[str], list[str]]:
         `(files to export, excluded files)`, relative paths from `git ls-files`.
     """
     tracked = [f for f in git(contest, "ls-files", "-z").split("\0") if f]
-    keep = [f for f in tracked if not is_excluded(f)]
-    return keep, [f for f in tracked if is_excluded(f)]
+    vendored = _vendored_prefix(contest)
+    out = {f for f in tracked if is_excluded(f) or (vendored and f.startswith(vendored))}
+    return [f for f in tracked if f not in out], [f for f in tracked if f in out]
+
+
+def _vendored_prefix(contest: Path) -> str | None:
+    """`"house/"` when the house toolkit is copied inside this contest repo (it is ours, not the submission)."""
+    from . import HOUSE_ROOT
+    try:
+        rel = HOUSE_ROOT.resolve().relative_to(contest.resolve())
+    except ValueError:
+        return None
+    return rel.as_posix().rstrip("/") + "/" if rel.parts else None
 
 
 def export(contest: Path, dest: Path, force: bool = False) -> list[Path]:

@@ -11,7 +11,7 @@ Rules a reader of this module must keep:
 * The agent runs sandboxed in its own worktree and never commits, pushes or sends; house does that afterwards,
   after filtering what goes back to the chat.
 """
-import fcntl
+from .flockcompat import fcntl
 import hashlib
 import json
 import os

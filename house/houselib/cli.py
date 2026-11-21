@@ -47,13 +47,18 @@ def contest_dir(name: str) -> Path:
         name: Contest name, lowercase words/numbers separated by single hyphens.
 
     Returns:
-        `<house root>/contests/<name>`.
+        `<house root>/contests/<name>`; when that does not exist and house is vendored inside a contest repo
+        (the parent of the house root has `.house/` and `.git`), that enclosing repo, whatever its name.
 
     Raises:
         ValueError: The name is not valid (e.g. contains "..", "/" or uppercase letters).
     """
     scaffold.validate_name(name)  # raises ValueError: never resolve "..", "/x", etc.
-    return HOUSE_ROOT / "contests" / name
+    path = HOUSE_ROOT / "contests" / name
+    vendored = HOUSE_ROOT.parent  # house copied into a contest repo (e.g. `<repo>/house/`): that repo is the contest
+    if not path.exists() and (vendored / ".house").is_dir() and (vendored / ".git").exists():
+        return vendored
+    return path
 
 
 def cmd_doctor(args) -> int:

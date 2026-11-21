@@ -13,8 +13,10 @@ is dropped or falls back to its `fallback` profile (e.g. coder-codex becomes cod
 kept as `<name>.orig`; see `manifest`.
 """
 import json
+import os
 import shutil
 import subprocess
+import sys
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -143,7 +145,8 @@ def _read_tools(contest: Path) -> dict:
 
 def _paths(contest: Path, root: Path) -> dict[str, str]:
     """Return the placeholder map for `$HOUSE_DIR` and `$HOUSE_ROOT` (resolved absolute paths)."""
-    return {"$HOUSE_DIR": str((contest / ".house").resolve()), "$HOUSE_ROOT": str(root.resolve())}
+    # as_posix: forward slashes also work on Windows, while backslashes break in the bash that agents use there
+    return {"$HOUSE_DIR": (contest / ".house").resolve().as_posix(), "$HOUSE_ROOT": root.resolve().as_posix()}
 
 
 def _substitute(text: str, paths: dict[str, str]) -> str:
@@ -207,8 +210,8 @@ def codex(contest: Path, root: Path = HOUSE_ROOT) -> dict[str, str]:
     text = (root / "adapters/codex/AGENTS.md.tmpl").read_text()
     for key, value in {
         "{contest_name}": contest.name,
-        "{house_dir}": str((contest / ".house").resolve()),
-        "{house_root}": str(root.resolve()),
+        "{house_dir}": (contest / ".house").resolve().as_posix(),
+        "{house_root}": root.resolve().as_posix(),
         "{roster}": "\n".join(rows),
         "{coordinator}": profiles["coordinator"][1].strip(),
     }.items():
@@ -291,7 +294,10 @@ def claude_settings(root: Path = HOUSE_ROOT) -> dict:
         A settings dict: PreToolUse, PostToolUse and SessionStart guard hooks, and an allowlist of Bash commands
         (house, codex-task, git, test and lint tools) so headless sessions need no permission prompts.
     """
-    hook = f"{root.resolve()}/bin/house-hook"
+    base = root.resolve().as_posix()
+    hook = f"{base}/bin/house-hook"
+    if os.name == "nt":  # no shebangs on Windows: name the interpreter (3.11+, UTF-8 mode) explicitly
+        hook = f'"{Path(sys.executable).as_posix()}" -X utf8 "{hook}"'
     return {
         "hooks": {
             "PreToolUse": [{"matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash|Read|Grep|Glob",
@@ -300,7 +306,7 @@ def claude_settings(root: Path = HOUSE_ROOT) -> dict:
                              "hooks": [{"type": "command", "command": f"{hook} post-tool"}]}],
             "SessionStart": [{"hooks": [{"type": "command", "command": f"{hook} session-start", "timeout": 45}]}],
         },
-        "permissions": {"allow": [f"Bash({root.resolve()}/bin/house:*)", f"Bash({root.resolve()}/bin/codex-task:*)",
+        "permissions": {"allow": [f"Bash({base}/bin/house:*)", f"Bash({base}/bin/codex-task:*)",
                                   *(f"Bash({c})" for c in ALLOW_COMMANDS)]},
     }
 

@@ -24,7 +24,7 @@ Rules an agent should know:
 """
 import contextlib
 import csv
-import fcntl
+from .flockcompat import fcntl
 import hashlib
 import os
 import re
