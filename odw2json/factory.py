@@ -1,4 +1,7 @@
-"""Default component wiring. Later tasks switch these from stubs to the real modules."""
+"""Default component wiring: T003 ingestor (text layer + OCR) and the T004 recipe engine.
+
+The recipes directory comes from env ODW2JSON_RECIPES (the CLI's --recipes sets it), default ./recipes.
+"""
 from __future__ import annotations
 
 from functools import cache
@@ -8,20 +11,24 @@ from .model import Classifier, Extractor, Ingestor
 
 @cache
 def default_ingestor() -> Ingestor:
-    from .stubs import PdfplumberIngestor  # T003 replaces
+    from .ingest import default_ingestor as make
 
-    return PdfplumberIngestor()
+    return make()
 
 
 @cache
+def recipe_engine():
+    """One engine serves as both classifier and extractor (recipes loaded once, reloaded on file change)."""
+    from .engine import RecipeEngine
+
+    eng = RecipeEngine()
+    eng.recipes  # load eagerly: a broken recipe raises RecipeError here, at startup, not once per document
+    return eng
+
+
 def default_classifier() -> Classifier:
-    from .stubs import KeywordClassifier  # T004 replaces
-
-    return KeywordClassifier()
+    return recipe_engine()
 
 
-@cache
 def default_extractor() -> Extractor:
-    from .stubs import SkeletonExtractor  # T004 replaces
-
-    return SkeletonExtractor()
+    return recipe_engine()
