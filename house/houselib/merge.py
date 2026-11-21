@@ -214,11 +214,14 @@ def merge_task(contest: Path, task_id: str, worktree: Path | None = None,
 
     main_branch = _git(contest, "rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
     data = json.loads((house / "checks" / f"{task_id}.json").read_text())
-    already_on_main = _git(wt, "merge-base", "--is-ancestor", main_branch, "HEAD").returncode == 0
-    if data.get("reverted") and not already_on_main:  # replay every commit since the old fork point as new
+    # A branch rebased on an earlier attempt forks from main's first-parent line; a reverted, not yet rebased
+    # branch is reachable from main only through the reverted merge commit's second parent.
+    fork = _git(wt, "merge-base", main_branch, "HEAD").stdout.strip()
+    mainline = set(_git(contest, "rev-list", "--first-parent", main_branch).stdout.split())
+    already_rebased = bool(fork) and fork in mainline
+    if data.get("reverted") and not already_rebased:  # replay every commit since the old fork point as new
         # commits; otherwise git treats the reverted ones as already merged and brings only the newer ones.
-        # Skipped once the branch contains main (rebased on an earlier attempt): replaying again would re-apply
-        # main's own commits on top of main and conflict.
+        # Skipped once rebased: replaying again would re-apply main's own commits on top of main and conflict.
         rb = _git(wt, "rebase", "--onto", main_branch, data["reverted"]["base"])
         if rb.returncode != 0:
             _git(wt, "rebase", "--abort")
