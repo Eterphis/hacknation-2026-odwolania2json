@@ -23,7 +23,7 @@ RECIPE = textwrap.dedent(
         strategies:
           - {use: regex, all: true, raw: true, pattern: '(?P<v>[A-ZŁ][\w-]+ [A-ZŁ][\w-]+)\s*\('}
         normalize: person
-        dedupe: {fuzzy: 1}
+        dedupe: {}
       - path: osoby[].pesel
         attach_to: osoby[].imie_nazwisko
         window: 60
@@ -54,10 +54,18 @@ class SameNameTests(unittest.TestCase):
         self.assertFalse(same_name("Anna Nowak", "Jan Nowak", 1))
         self.assertFalse(same_name("Anna Nowak", "Anna Kowalska", 1))
 
+    def test_kowalski_and_kowalska_stay_two_people(self):
+        self.assertFalse(same_name("Jan Kowalski", "Jan Kowalska"))
+        self.assertEqual(dedupe_names(["Jan Kowalski", "Jan Kowalska"]), ["Jan Kowalski", "Jan Kowalska"])
+        out = run("lista
+Jan Kowalski (adw.)
+Jan Kowalska (r. pr.)")
+        self.assertEqual(len(out["osoby"]), 2)
+
     def test_dedupe_prefers_mixed_case_then_later(self):
         self.assertEqual(dedupe_names(["MATEUSZ WIERZBICKI", "Mateusz Wierzbicki"], 1), ["Mateusz Wierzbicki"])
         self.assertEqual(dedupe_names(["Mateusz Wierzbicki", "MATEUSZ WIERZBICKI"], 1), ["Mateusz Wierzbicki"])
-        self.assertEqual(dedupe_names(["Jan Zawadżki", "Ewa Lis", "Jan Zawadzki"], 1), ["Jan Zawadzki", "Ewa Lis"])
+        self.assertEqual(dedupe_names(["Jan Zawadżki", "Ewa Lis", "Jan Zawadzki"]), ["Jan Zawadzki", "Ewa Lis"])
         self.assertEqual(dedupe_names(["Ewa Lis", "Jan Lis"], 1), ["Ewa Lis", "Jan Lis"])
 
 

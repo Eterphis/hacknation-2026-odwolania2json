@@ -78,7 +78,7 @@ fields:
           - {use: regex, all: true, raw: true, pattern: '(?:[Pp]rzez:?\s*|,\s*|^)(?P<v>[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?(?: |(?=[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]))[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?)\s*[–-]\s*(?:Prezes|Wiceprezes|Członek|Prokurent|Dyrektor|Wspólnik|Właściciel|Pełnomocnik|Komplementariusz|Partner|Likwidator|Kierownik)'}
           - {use: regex, all: true, raw: true, pattern: '[Pp]odpisan\w* (?:elektronicznie )?przez:?\s*(?P<v>[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)? [A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?)'}
         normalize: person  # also splits "HalinaBaran" (OCR lost the space)
-        dedupe: {fuzzy: 1}
+        dedupe: {}
 
   # Signatories, grouped per principal by "W imieniu X:" / "Za X" captions (merged into the principals in order);
   # without such groups every signatory belongs to the (first) principal.
@@ -103,13 +103,13 @@ fields:
               - 'miejsce|podpis|pieczec|data\b|oplata|dowod|zalacznik'
             not_after: ['adw\.?', 'r\.\s?pr\.?', 'radca prawny', 'adwokat', 'mec\.?']
         normalize: person
-        dedupe: {fuzzy: 1}  # "Zawadżki" in the body, "Zawadzki" at the signature
+        dedupe: {}  # "Zawadżki" in the body, "Zawadzki" at the signature
 
   - path: pelnomocnicy[].imie_nazwisko
     strategies:
       - {use: regex, all: true, pattern: '(?:r\.\s?pr\.|adw\.|radca prawny|adwokat(?![a-z]))\s+(?P<v>[a-z]+\s+[a-z-]+)'}
     normalize: person
-    dedupe: {fuzzy: 1}  # the letterhead prints the same attorney in capitals
+    dedupe: {}  # the letterhead prints the same attorney in capitals
 
   # "... udziela pełnomocnictwa: 1. Jan Kowal – adwokat ... 2. ..." or "X (adwokat, ...) oraz Y (radca prawny, ...)";
   # runs after the title-based rule above and replaces its list when this list is found
@@ -118,7 +118,7 @@ fields:
     strategies:
       - {use: regex, all: true, raw: true, pattern: '(?<![\w.])(?P<v>[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?\s+[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?|[A-ZĄĆĘŁŃÓŚŹŻ]{2,}(?:-[A-ZĄĆĘŁŃÓŚŹŻ]{2,})?\s+[A-ZĄĆĘŁŃÓŚŹŻ]{2,}(?:-[A-ZĄĆĘŁŃÓŚŹŻ]{2,})?)(?![\w])'}
     normalize: person
-    dedupe: {fuzzy: 1}
+    dedupe: {}
 
   # The PESEL printed beside each attorney: "(radca prawny, nr wpisu PO-4973, PESEL: 6910...)", "- adwokat, nr wpisu X,
   # PESEL: ...", "r. pr. Jan Kowal, PESEL 8507..." (no colon). Searched after the name up to the next attorney.
