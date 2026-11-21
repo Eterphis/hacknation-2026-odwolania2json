@@ -13,7 +13,7 @@
       {
         "id": "AC-2",
         "kind": "run",
-        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import glob,sys; from odw2json.ingest import default_ingestor; ing=default_ingestor(); docs=[ing.ingest(p) for p in glob.glob('C:/Users/jasiu/workspace/uzp-data/dane/*/*.pdf')]; pl=sum(any(c in d.text for c in 'ąęłśżźćńó') for d in docs); boxed=sum(all(p.words and all(0<=w.x0<=w.x1<=p.width+1 and 0<=w.y0<=w.y1<=p.height+1 for w in p.words) for p in d.pages) for d in docs); print('docs',len(docs),'polish',pl,'boxed',boxed); sys.exit(0 if len(docs)==180 and pl>=170 and boxed==180 else 1)\"",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import glob,sys; from odw2json.ingest import default_ingestor; ing=default_ingestor(); docs=[ing.ingest(p) for p in glob.glob('C:/Users/jasiu/workspace/uzp-data/dane/*/*.pdf')]; pl=sum(any(c in d.text for c in 'ąęłśżźćńó') for d in docs); boxed=sum(all(p.words and all(0<=w.x0<=w.x1<=p.width+1 and 0<=w.y0<=w.y1<=p.height+1 for w in p.words) for p in d.pages) for d in docs); print('docs',len(docs),'polish',pl,'boxed',boxed); sys.exit(0 if len(docs)>=180 and pl>=170 and boxed>=len(docs)-2 else 1)\"",
         "expect": null,
         "text": null,
         "timeout": 900
@@ -37,39 +37,39 @@
     ],
     "protected": {}
   },
-  "frozen_at": "2026-11-21T11:59:42+01:00",
+  "frozen_at": "2026-11-21T17:44:20+01:00",
   "results": {
     "AC-1": {
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": "C:\\Users\\jasiu\\workspace\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n...........................................................przyklad_41: done\nprzyklad_41: done\n.......every PDF failed; check the log above (dependencies installed? pip install -r requirements.txt)\n.............warning: skipping unreadable pred C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmp_eaknpgr\\pred\\przyklad_01\\bad.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n................................C:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n................\n----------------------------------------------------------------------\nRan 127 tests in 28.226s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-21T16:25:13+01:00",
-      "commit": "9b9c2430de061ed293ed1813d4867da4c78aca22"
-    },
-    "AC-2": {
-      "id": "AC-2",
-      "passes": true,
-      "exit": 0,
-      "output_tail": "docs 180 polish 180 boxed 180",
-      "ran_at": "2026-11-21T16:25:39+01:00",
-      "commit": "9b9c2430de061ed293ed1813d4867da4c78aca22"
+      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 25, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpiob9lu2g\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 25, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 209 tests in 51.922s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T19:15:57+01:00",
+      "commit": "adca1ff6a46e049bd890c0eb33d833a2f618fa02"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
       "output_tail": "chars 16158 ok True",
-      "ran_at": "2026-11-21T16:25:40+01:00",
-      "commit": "9b9c2430de061ed293ed1813d4867da4c78aca22"
+      "ran_at": "2026-11-21T19:16:40+01:00",
+      "commit": "adca1ff6a46e049bd890c0eb33d833a2f618fa02"
     },
     "AC-4": {
       "id": "AC-4",
       "passes": true,
       "exit": 0,
       "output_tail": "True",
-      "ran_at": "2026-11-21T16:25:40+01:00",
-      "commit": "9b9c2430de061ed293ed1813d4867da4c78aca22"
+      "ran_at": "2026-11-21T19:16:41+01:00",
+      "commit": "adca1ff6a46e049bd890c0eb33d833a2f618fa02"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "docs 196 polish 195 boxed 195",
+      "ran_at": "2026-11-21T19:16:40+01:00",
+      "commit": "adca1ff6a46e049bd890c0eb33d833a2f618fa02"
     }
   }
 }

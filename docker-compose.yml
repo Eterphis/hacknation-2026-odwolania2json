@@ -9,6 +9,8 @@ services:
     volumes:
       - ./recipes:/app/recipes:ro          # edit recipes without rebuilding (hot reload)
       - ./dictionaries:/app/dictionaries:ro
+    environment:
+      ODW2JSON_PROFILE: ${ODW2JSON_PROFILE:-ocr}     # text | ocr (docs/PROFILES.md)
     restart: unless-stopped
 
   cli:
@@ -20,4 +22,8 @@ services:
       - ./output:/app/output
       - ./recipes:/app/recipes:ro
       - ./dictionaries:/app/dictionaries:ro
+      - ./profiles:/app/profiles:ro
+    environment:
+      ODW2JSON_PROFILE: ${ODW2JSON_PROFILE:-ocr}     # text | ocr (docs/PROFILES.md)
+      ODW2JSON_WORKERS: ${ODW2JSON_WORKERS:-}        # empty = min(4, cpu_count // 2)
     profiles: ["cli"]                     # not started by `docker compose up`

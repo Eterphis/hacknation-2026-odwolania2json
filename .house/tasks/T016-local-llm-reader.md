@@ -1,9 +1,9 @@
 ---
 id: T016
 title: Local small LLM as a grounded reader for weak fields (profile `llm`, CPU, 16 GB)
-status: todo
-owner: null
-branch: null
+status: review
+owner: coder
+branch: task/T016-local-llm-reader
 depends_on: [T012, T014]
 capabilities: [python, ml]
 acceptance:

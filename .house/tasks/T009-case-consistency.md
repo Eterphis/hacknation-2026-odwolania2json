@@ -1,9 +1,9 @@
 ---
 id: T009
 title: Case-level consistency checks and cross-document value voting
-status: todo
-owner: null
-branch: null
+status: review
+owner: coder
+branch: task/T009-case-consistency
 depends_on: [T005, T006]
 capabilities: [python]
 acceptance:

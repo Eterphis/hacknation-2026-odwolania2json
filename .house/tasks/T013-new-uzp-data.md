@@ -1,7 +1,7 @@
 ---
 id: T013
 title: Adapt to the updated UZP data - empty JSON for rejects, negatives, scans with gold, code 12
-status: review
+status: done
 owner: teammate-session
 branch: task/T013-new-uzp-data
 depends_on: [T005, T006]

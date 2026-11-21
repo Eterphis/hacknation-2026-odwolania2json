@@ -92,3 +92,24 @@ class OcrFallbackTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class OcrSwitchTests(unittest.TestCase):
+    @unittest.skipUnless(SCAN.exists(), "needs UZP template scan")
+    def test_ocr_disabled_leaves_scan_empty(self):
+        b = FakeBackend()
+        doc = PdfIngestor(backend=b, config={"ocr": {"enabled": False}}).ingest(str(SCAN))
+        self.assertEqual(b.calls, 0)
+        self.assertTrue(all(p.words == [] and p.text == "" for p in doc.pages))
+
+    def test_cache_env_overrides(self):
+        old = dict(os.environ)
+        try:
+            os.environ["ODW2JSON_OCR_CACHE"] = "0"
+            self.assertIsNone(PdfIngestor(backend=FakeBackend()).cache_dir)
+            del os.environ["ODW2JSON_OCR_CACHE"]
+            os.environ["ODW2JSON_OCR_CACHE_DIR"] = "somewhere"
+            self.assertEqual(PdfIngestor(backend=FakeBackend()).cache_dir, Path("somewhere"))
+        finally:
+            os.environ.clear()
+            os.environ.update(old)
