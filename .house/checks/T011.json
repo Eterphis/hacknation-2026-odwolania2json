@@ -1,0 +1,42 @@
+{
+  "task": "T011",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import sys; from fastapi.testclient import TestClient; from web.app import app; c=TestClient(app); fs=[('files',(n,open('C:/Users/jasiu/workspace/uzp-data/dane/przyklad_07/'+n,'rb'),'application/pdf')) for n in ('odwolanie.pdf','pelnomocnictwo.pdf','potwierdzenie_przelewu.pdf')]; r=c.post('/api/process',files=fs); j=r.json(); names=sorted(d['output_name'] or '' for d in j['documents']); h=c.get('/'); css=c.get('/static/coldtrace/bundle.css'); js=c.get('/static/coldtrace/bundle.js'); ok=r.status_code==200 and names==['odwolanie.json','pelnomocnictwo.json','potwierdzenie_przelewu.json'] and h.status_code==200 and 'class=\\\"ct' in h.text and css.status_code==200 and js.status_code==200 and '/_blob/' not in css.text; print(r.status_code,names,css.status_code,js.status_code,ok); sys.exit(0 if ok else 1)\"",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "! grep -rnE '#[0-9A-Fa-f]{6}\\b|#[0-9A-Fa-f]{3}\\b|border-radius: *[1-9]|box-shadow|backdrop-filter|filter: *blur' web --include=*.css --include=*.html --include=*.js --exclude-dir=coldtrace",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      },
+      {
+        "id": "AC-4",
+        "kind": "manual",
+        "run": null,
+        "expect": null,
+        "text": "Judge opens `python -m web` in a browser: night is the default and the Daylight switch works; both modes pass the Cold Trace review checklist (design/cold-trace/README.md section 12): role tokens only, chamfers not rounding, colour only in lines/vias/traces, one prime key per view, Anybody wide + Martian Mono, sentence case, no shadows/glows/emoji, works at 375px with 44px touch targets; Eterphis lockup in the top bar; uploading przyklad_07 and the template case shows classes, rejected TED, JSON and the evidence table in the new look.",
+        "timeout": 600
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T12:53:55+01:00",
+  "results": {}
+}
