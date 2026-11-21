@@ -297,7 +297,10 @@ def _load_docs(case_dir, strict):
         return docs
     for f in sorted(case_dir.glob("*.json")):
         try:
-            docs.append((f.name, json.loads(f.read_text(encoding="utf-8-sig"))))
+            doc = json.loads(f.read_text(encoding="utf-8-sig"))
+            if strict and doc_type(doc) is None:
+                print(f"warning: gold document {f} has unknown type, ignored", file=sys.stderr)
+            docs.append((f.name, doc))
         except (OSError, ValueError) as e:
             if strict:
                 raise SystemExit(f"cannot read gold {f}: {e}")
@@ -312,7 +315,6 @@ def _score_case(pred_docs, gold_docs, types, eq):
     for _, d in gold_docs:
         t = doc_type(d)
         if t is None:
-            print("warning: gold document of unknown type ignored", file=sys.stderr)
             continue
         by_type_g.setdefault(t, []).append(d)
     for _, d in pred_docs:
@@ -326,9 +328,9 @@ def _score_case(pred_docs, gold_docs, types, eq):
         for _, _, pc in pairs:
             c.merge(pc)
         for i in up:
-            _only(c, ps[i], t, "fp")
+            _only(c, ps[i], "", "fp")
         for j in ug:
-            _only(c, gs[j], t, "fn")
+            _only(c, gs[j], "", "fn")
         result[t] = c
     return result
 
@@ -345,6 +347,12 @@ def score_dirs(pred_dir, gold_dir, cases=None, types=None):
     out = {"exact": Counts(), "normalized": Counts(),
            "by_type": {"exact": {}, "normalized": {}}, "cases": {}}
     gold_cases = sorted(d for d in gold_dir.iterdir() if d.is_dir()) if gold_dir.is_dir() else []
+    if pred_dir.is_dir():
+        known = {d.name for d in gold_cases}
+        stray = sorted(d.name for d in pred_dir.iterdir() if d.is_dir() and d.name not in known)
+        if stray:
+            print("warning: pred case folders with no gold folder (ignored): " + ", ".join(stray),
+                  file=sys.stderr)
     for gdir in gold_cases:
         no = _case_no(gdir.name)
         if wanted is not None and no not in wanted:
@@ -406,7 +414,11 @@ def main(argv=None):
     for t in types or []:
         if t not in DOC_TYPES:
             ap.error(f"unknown type {t!r}")
-    res = score_dirs(a.pred, a.gold, a.cases, types)
+    try:
+        cases = parse_cases(a.cases)
+    except ValueError:
+        ap.error(f"malformed --cases {a.cases!r} (use e.g. 41-60 or 01,07)")
+    res = score_dirs(a.pred, a.gold, cases, types)
     print(f"cases scored: {len(res['cases'])}")
     for t, c in sorted(res["by_type"]["exact"].items()):
         print(f"  {t:<15} {_fmt(c)}")

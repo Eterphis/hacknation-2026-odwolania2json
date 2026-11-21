@@ -159,5 +159,91 @@ class TestRun(unittest.TestCase):
         self.assertIn("worst", rep.read_text(encoding="utf-8").lower())
 
 
+class TestEdgeCases(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.gold = Path(self.tmp.name) / "gold"
+        self.pred = Path(self.tmp.name) / "pred"
+        self.pred.mkdir()
+
+    def test_field_paths_same_for_matched_and_unmatched(self):
+        matched = S.compare_docs(PRZ, PRZ, S.eq_exact)
+        write(self.gold, "przyklad_01", "przelew.json", PRZ)
+        write(self.gold, "przyklad_02", "przelew.json", PRZ)  # missing in pred
+        write(self.gold, "przyklad_03", "x.json", ODW)
+        write(self.pred, "przyklad_01", "a.json", PRZ)
+        write(self.pred, "przyklad_03", "extra.json", PRZ)  # extra przelew
+        r = S.score_dirs(self.pred, self.gold)
+        fields = r["by_type"]["exact"]["przelew"].fields
+        self.assertEqual(set(fields), set(matched.fields))
+        self.assertEqual(fields["przelew_bankowy.kwota"], [1, 1, 1])
+
+    def test_nested_list_alignment(self):
+        g = {"mocodawca": [{"data": {"nazwa": "A"}, "podpisujacy": [{"imie_nazwisko": "a"}, {"imie_nazwisko": "b"}]},
+                           {"data": {"nazwa": "B"}, "podpisujacy": [{"imie_nazwisko": "c"}]}]}
+        p = {"mocodawca": [{"data": {"nazwa": "B"}, "podpisujacy": [{"imie_nazwisko": "c"}]},
+                           {"data": {"nazwa": "A"}, "podpisujacy": [{"imie_nazwisko": "b"}, {"imie_nazwisko": "a"}]}]}
+        c = S.compare_docs(p, g, S.eq_exact)
+        self.assertEqual((c.tp, c.fp, c.fn), (5, 0, 0))
+
+    def test_three_items_non_square(self):
+        g = [{"a": 1, "b": 1, "c": 1}, {"a": 1, "b": 1, "c": 9}]
+        p = [{"a": 1, "b": 1, "c": 9}, {"a": 1, "b": 1, "c": 1}, {"a": 7}]
+        c = S.compare(p, g, S.eq_exact)
+        self.assertEqual((c.tp, c.fp, c.fn), (6, 1, 0))
+
+    def test_dict_vs_list_mismatch(self):
+        c = S.compare({"x": {"a": 1}}, {"x": [{"a": 1}]}, S.eq_exact)
+        self.assertEqual((c.tp, c.fp, c.fn), (0, 1, 1))
+
+    def test_extra_pred_key_is_fp(self):
+        p = json.loads(json.dumps(PRZ))
+        p["przelew_bankowy"]["extra"] = "x"
+        c = S.compare_docs(p, PRZ, S.eq_exact)
+        self.assertEqual((c.tp, c.fp, c.fn), (3, 1, 0))
+
+    def test_parse_cases_exact(self):
+        self.assertEqual(S.parse_cases("01-05,60"), {1, 2, 3, 4, 5, 60})
+        self.assertIsNone(S.parse_cases(None))
+
+    def test_bom_invalid_and_unknown_type(self):
+        write(self.gold, "przyklad_01", "przelew.json", PRZ)
+        d = self.pred / "przyklad_01"
+        d.mkdir()
+        (d / "bom.json").write_bytes(b"\xef\xbb\xbf" + json.dumps(PRZ).encode("utf-8"))
+        (d / "bad.json").write_text("{not json", encoding="utf-8")
+        (d / "unk.json").write_text(json.dumps({"foo": "x", "baz": [1, 2]}), encoding="utf-8")
+        r = S.score_dirs(self.pred, self.gold)
+        self.assertEqual((r["exact"].tp, r["exact"].fp, r["exact"].fn), (3, 3, 0))
+        self.assertIn("unknown", r["by_type"]["exact"])
+
+    def test_malformed_cases_is_clean_error(self):
+        import subprocess, sys
+        out = subprocess.run([sys.executable, "-X", "utf8", "-m", "eval.score", "--pred", str(self.pred),
+                              "--gold", str(self.pred), "--cases", "1-x"],
+                             capture_output=True, text=True, encoding="utf-8",
+                             cwd=Path(__file__).resolve().parents[1])
+        self.assertEqual(out.returncode, 2)
+        self.assertNotIn("Traceback", out.stderr)
+
+    def test_stray_pred_case_warns_once(self):
+        import contextlib, io
+        write(self.gold, "przyklad_01", "przelew.json", PRZ)
+        write(self.pred, "przyklad_1", "a.json", PRZ)
+        buf = io.StringIO()
+        with contextlib.redirect_stderr(buf):
+            S.score_dirs(self.pred, self.gold)
+        self.assertEqual(buf.getvalue().count("przyklad_1"), 1)
+
+    def test_unknown_gold_warns_once_with_name(self):
+        import contextlib, io
+        write(self.gold, "przyklad_01", "weird.json", {"foo": 1})
+        buf = io.StringIO()
+        with contextlib.redirect_stderr(buf):
+            S.score_dirs(self.pred, self.gold)
+        self.assertEqual(buf.getvalue().count("weird.json"), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

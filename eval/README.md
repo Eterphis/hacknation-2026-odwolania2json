@@ -20,3 +20,9 @@ Prints a per-type table, `normalized: <F1>` and, as the last line, `score: <F1>`
 - Gold is never copied into the repo; unit tests use small inline fixtures. Standard library only.
 
 Sanity numbers: gold vs gold = 1.0; empty pred = 0.0; case 01 without the przelew document = 0.8966.
+
+Caveats for extractors:
+- List items are matched by best agreement, not by position, so the local F1 is an upper bound if the hidden
+  grader compares lists by index. Keep document order in lists anyway.
+- An empty string `""` counts as a value (FP when gold is null). Emit `null` for absent fields.
+- Exact mode does not bridge types (`"34.00"` vs `34.0`).
