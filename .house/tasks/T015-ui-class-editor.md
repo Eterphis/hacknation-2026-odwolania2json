@@ -1,9 +1,9 @@
 ---
 id: T015
 title: Add and edit a document class from the web UI (recipe + output schema, validate, try, no restart)
-status: todo
-owner: null
-branch: null
+status: review
+owner: coder
+branch: task/T015-ui-class-editor
 depends_on: [T013, T011]
 capabilities: [python, frontend]
 acceptance:

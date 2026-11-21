@@ -18,3 +18,4 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - 2026-11-21 13:48 T004 cofnięte po scaleniu: regresja w T011: AC-1 (exit 1)
 - 2026-11-21 · coordinator · T004 scalone (po poprawkach z review, naprawa niestabilnego testu T010 i błędu rebase w house merge); pomiar zaszumionych skanów 41–50: F1 0,77 vs 0,85 na czystych, OCR najbardziej psuje tytuły i nazwy stron · reports/T010.md
 - 2026-11-21 · coordinator · fala 3 scalona (T005, T006, T008); odpowiedzi mentorów zapisane (Q-002, D-015..D-018), nowe pytania Q-004; stan wyjściowy na nowych danych UZP: skany 0,58 F1, negatywy 11/12 odrzuconych (fałszywie przyjęty wyrok KIO)
+- 2026-11-21 · coder · T015 gotowe: zakładka „Klasy dokumentów” (lista, edytor z numerami linii, sprawdzanie z linią błędu, próba na PDF, zapis z .bak, usuwanie, tryb tylko do odczytu), nowa klasa działa bez restartu · reports/T015.md
