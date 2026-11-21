@@ -137,7 +137,7 @@ def to_markdown(rows) -> str:
     for r in rows:
         ra = "-" if r.get("reject_acc") is None else f"{100 * float(r['reject_acc']):.1f}%"
         L.append(f"| {r['profile']} | {r['set']} | {r['workers']} | {r['docs']} | {_fmt(r.get('f1_exact'), '.4f')} | "
-                 f"{_fmt(r.get('f1_norm'), '.4f')} | {ra} | {r.get('false_rejects', '-')} | {_fmt(r['p50'], '.2f')} | "
+                 f"{_fmt(r.get('f1_norm'), '.4f')} | {ra} | {_fmt(r.get('false_rejects'), '.0f')} | {_fmt(r['p50'], '.2f')} | "
                  f"{_fmt(r['p95'], '.2f')} | {_fmt(r['docs_per_min'], '.1f')} | {_fmt(r['peak_rss_mb'], '.0f')} | "
                  f"{_fmt(r['model_mb'], '.0f')} | {'cold' if r.get('cold') else 'warm'} |")
     return "\n".join(L) + "\n"
