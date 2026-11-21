@@ -57,9 +57,7 @@ class SameNameTests(unittest.TestCase):
     def test_kowalski_and_kowalska_stay_two_people(self):
         self.assertFalse(same_name("Jan Kowalski", "Jan Kowalska"))
         self.assertEqual(dedupe_names(["Jan Kowalski", "Jan Kowalska"]), ["Jan Kowalski", "Jan Kowalska"])
-        out = run("lista
-Jan Kowalski (adw.)
-Jan Kowalska (r. pr.)")
+        out = run("lista\nJan Kowalski (adw.)\nJan Kowalska (r. pr.)")
         self.assertEqual(len(out["osoby"]), 2)
 
     def test_dedupe_prefers_mixed_case_then_later(self):
