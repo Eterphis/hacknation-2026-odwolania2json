@@ -1,0 +1,34 @@
+{
+  "task": "T007",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import sys; from fastapi.testclient import TestClient; from web.app import app; c=TestClient(app); fs=[('files',(n,open('C:/Users/jasiu/workspace/uzp-data/dane/przyklad_07/'+n,'rb'),'application/pdf')) for n in ('odwolanie.pdf','pelnomocnictwo.pdf','potwierdzenie_przelewu.pdf')]; r=c.post('/api/process',files=fs); j=r.json(); names=sorted(d['output_name'] or '' for d in j['documents']); print(r.status_code,names); h=c.get('/'); sys.exit(0 if r.status_code==200 and names==['odwolanie.json','pelnomocnictwo.json','potwierdzenie_przelewu.json'] and all('data' in d and 'evidence' in d and 'classification' in d for d in j['documents']) and h.status_code==200 else 1)\"",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-3",
+        "kind": "manual",
+        "run": null,
+        "expect": null,
+        "text": "Judge opens the UI in a browser, uploads przyklad_07 plus the template case (scan + TED notice), sees each file's class and score (TED marked as rejected), the JSON per document with a download button (single JSON and a ZIP in the ./output layout), and for each field its value, page, snippet and rule; the page is usable at 1280px and on a phone width.",
+        "timeout": 600
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T11:59:49+01:00",
+  "results": {}
+}
