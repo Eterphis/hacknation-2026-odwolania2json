@@ -198,7 +198,7 @@ def _set(task: checks.Task, **fields) -> None:
 def _commit_paths(contest: Path, paths: list[Path], message: str) -> None:
     """Commit only files the night itself wrote. Never all of .house/: workers write there too, and committing
     their edits before the gate would hide tampering from `guard.frozen_tampering`."""
-    rels = [str(p.relative_to(contest)) for p in paths if p.exists()]
+    rels = [p.relative_to(contest).as_posix() for p in paths if p.exists()]
     if not rels:
         return
     _git(contest, "add", "--", *rels)
@@ -584,7 +584,7 @@ def _restore_tampering(contest: Path, found: list[str]) -> None:
     for path in sorted((contest / ".house/tasks").glob("T*-*.md")):
         tid = path.name.split("-", 1)[0]
         if any(line.startswith(f"{tid} set to") for line in found):
-            _git(contest, "checkout", "HEAD", "--", str(path.relative_to(contest)))
+            _git(contest, "checkout", "HEAD", "--", path.relative_to(contest).as_posix())
 
 
 def _commit_leftovers(wt: Path, tid: str, contest: Path) -> list[str]:
@@ -628,7 +628,7 @@ def _finish(contest: Path, tid: str, n: int, branch: str, wt: Path, log: Path, t
         and merged through `merge.merge_task`.
     """
     house = contest / ".house"
-    rel_log = str(log.relative_to(contest)) if log.is_relative_to(contest) else str(log)
+    rel_log = log.relative_to(contest).as_posix() if log.is_relative_to(contest) else str(log)
     tampered = guard.frozen_tampering(contest)
     if tampered:
         _restore_tampering(contest, tampered)

@@ -785,7 +785,7 @@ def _big_files(wt: Path) -> list[str]:
             except OSError:
                 continue
             if stat.S_ISREG(st.st_mode) and st.st_size > COMMIT_FILE_MAX:
-                big.append(str(p.relative_to(wt)))
+                big.append(p.relative_to(wt).as_posix())
     return big
 
 

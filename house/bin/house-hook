@@ -17,8 +17,11 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from houselib import pyboot  # noqa: E402  (re-runs under Python 3.11+ / UTF-8 mode on Windows)
-pyboot.ensure(__file__)
+try:  # re-run under Python 3.11+ / UTF-8 mode on Windows; a broken checkout falls through to the normal errors
+    from houselib import pyboot  # noqa: E402
+    pyboot.ensure(__file__)
+except ImportError:
+    pass
 
 
 def main() -> int:

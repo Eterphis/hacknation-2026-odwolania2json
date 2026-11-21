@@ -212,7 +212,7 @@ def _frozen_criteria(data: dict) -> list[Criterion]:
 
 def _hash_if_exists(path: Path) -> str | None:
     """Return the SHA-256 of the file, or None when it is not an existing regular file."""
-    return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest() if path.is_file() else None
 
 
 def freeze(house: Path, task_id: str, workdir: Path | None = None) -> Path:
@@ -251,7 +251,7 @@ def _git_commit(house: Path, paths: list[Path], message: str) -> None:
     repo = house.parent
     if subprocess.run(["git", "rev-parse", "--git-dir"], cwd=repo, capture_output=True, check=False).returncode:
         return
-    rels = [str(p.relative_to(repo)) for p in paths]
+    rels = [p.relative_to(repo).as_posix() for p in paths]
     subprocess.run(["git", "add", "--", *rels], cwd=repo, capture_output=True, check=False)
     subprocess.run(["git", "commit", "-q", "-m", message, "--", *rels], cwd=repo, capture_output=True, check=False)
 
@@ -343,16 +343,48 @@ def _env() -> dict[str, str]:
 
 
 def _kill_group(pgid: int) -> None:
-    """SIGKILL a process group, ignoring one that is already gone."""
+    """SIGKILL a process group (Windows: kill the process tree), ignoring one that is already gone."""
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/F", "/T", "/PID", str(pgid)], capture_output=True, check=False)
+        return
     try:
         os.killpg(pgid, signal.SIGKILL)
     except (ProcessLookupError, PermissionError):
         pass
 
 
+def bash() -> str:
+    """The bash that runs check commands: `bash` on POSIX; on Windows Git for Windows' bash (never the WSL
+    launcher in System32), overridable with HOUSE_BASH."""
+    if os.name != "nt":
+        return "bash"
+    import shutil
+    env = os.environ.get("HOUSE_BASH")
+    candidates = [Path(env)] if env else []
+    git = shutil.which("git")
+    if git:
+        g = Path(git).resolve()
+        candidates += [g.parents[1] / "bin/bash.exe", g.parents[2] / "bin/bash.exe", g.parents[1] / "usr/bin/bash.exe",
+                       g.parent / "bash.exe", g.parents[2] / "usr/bin/bash.exe"]
+    candidates += [Path(os.environ.get("ProgramFiles", "C:/Program Files")) / "Git/bin/bash.exe",
+                   Path("C:/msys64/usr/bin/bash.exe")]
+    for c in candidates:
+        if c.is_file():
+            return str(c)
+    return "bash"
+
+
 def _start(cmd: list[str] | str, workdir: Path, out, extra_env: dict | None = None) -> subprocess.Popen:
     """Own process group, output to a file (not a pipe): background children can neither hang us nor survive."""
-    return subprocess.Popen(cmd, shell=isinstance(cmd, str), cwd=workdir, env={**_env(), **(extra_env or {})},
+    env = {**_env(), **(extra_env or {})}
+    if os.name == "nt":  # criteria are written for bash, not cmd.exe
+        if isinstance(cmd, str):
+            cmd = [bash(), "-c", cmd]
+        elif cmd and cmd[0] == "bash":
+            cmd = [bash(), *cmd[1:]]
+        return subprocess.Popen(cmd, cwd=workdir, env=env, stdout=out, stderr=subprocess.STDOUT,
+                                stdin=subprocess.DEVNULL, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+    return subprocess.Popen(cmd, shell=isinstance(cmd, str), cwd=workdir, env=env,
                             stdout=out,
                             stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True)
 
@@ -507,7 +539,7 @@ def seal_protected(house: Path, task_id: str, workdir: Path) -> list[str]:
         if sha is None:
             path = workdir / rel
             if path.is_file():
-                data["frozen"]["protected"][rel] = hashlib.sha256(path.read_bytes()).hexdigest()
+                data["frozen"]["protected"][rel] = hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()  # CRLF checkouts hash like LF
             else:
                 missing.append(rel)
     _save(house, task_id, data)

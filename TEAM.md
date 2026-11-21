@@ -56,8 +56,11 @@ claude
 ```
 
 Our copy of house has a small Windows patch: a file-lock fallback for `fcntl`, a re-launch under Python 3.11+
-in UTF-8 mode, forward-slash paths, and hooks that call the right Python. After `adapt`, `house/bin/house …`
-works directly from Git Bash too.
+in UTF-8 mode, forward-slash paths, hooks that call the right Python, acceptance checks run through Git Bash
+(not cmd.exe), and hashes of protected files that ignore CRLF vs LF. After `adapt`, `house/bin/house …` works
+directly from Git Bash too. The build flow (`check`, `merge`, `guard`, `export`, the `/house-*` commands) is
+tested on Windows. Not on Windows: `house exp` (optimize contests), Signal, `house night` / `house review` unless
+the `claude` CLI is on PATH. Write acceptance criteria as bash commands that work on macOS, Linux and Git Bash.
 
 ### What `adapt` does
 

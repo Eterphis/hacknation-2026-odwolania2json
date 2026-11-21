@@ -170,7 +170,7 @@ def apply(contest: Path, generated: dict[str, str], old: dict[str, str] | None,
             backup = _backup_path(path)
             path.rename(backup)
             res.backed_up.append(rel)
-            res.backups.append(str(backup.relative_to(contest)))
+            res.backups.append(backup.relative_to(contest).as_posix())
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text)
         res.written.append(rel)

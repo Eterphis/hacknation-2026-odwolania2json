@@ -81,12 +81,12 @@ def repo_relative(path: str, cwd: Path, contest: Path) -> str | None:
     worktrees = contest / ".worktrees"
     if p.is_relative_to(worktrees):
         parts = p.relative_to(worktrees).parts
-        return str(Path(*parts[1:])) if len(parts) > 1 else None
+        return Path(*parts[1:]).as_posix() if len(parts) > 1 else None
     if p.is_relative_to(contest):
-        return str(p.relative_to(contest))
+        return p.relative_to(contest).as_posix()
     top = _git(p.parent if p.parent.is_dir() else Path(cwd), "rev-parse", "--show-toplevel")
-    if top.returncode == 0 and contest_root(Path(top.stdout.strip())) == contest:
-        return str(p.relative_to(Path(top.stdout.strip()).resolve()))
+    if top.returncode == 0 and contest_root(Path(top.stdout.strip())) == contest             and p.is_relative_to(Path(top.stdout.strip()).resolve()):
+        return p.relative_to(Path(top.stdout.strip()).resolve()).as_posix()
     return None
 
 
@@ -233,7 +233,7 @@ def protected_violation(contest: Path, rel: str, content: bytes | None, protecte
     if not owner:
         return None
     if owner != "local_scorer" and content is not None \
-            and hashlib.sha256(content).hexdigest() == pinned_sha(contest, owner, rel):
+            and hashlib.sha256(content.replace(b"\r\n", b"\n")).hexdigest() == pinned_sha(contest, owner, rel):
         return None
     return f"{rel} is protected ({owner}) and was changed"
 
@@ -417,7 +417,7 @@ def _staging_candidates(sub: list[str], cwd: Path) -> list[str]:
     if any(o in ("-A", "--all", "-u", "--update") for o in opts) or "." in paths or not paths:
         return [p for code, p in status if not (code == "??" and ("-u" in opts or "--update" in opts))]
     top = Path(_git(cwd, "rev-parse", "--show-toplevel").stdout.strip() or cwd).resolve()
-    rels = [str((cwd / p).resolve().relative_to(top)) if (cwd / p).resolve().is_relative_to(top) else p
+    rels = [(cwd / p).resolve().relative_to(top).as_posix() if (cwd / p).resolve().is_relative_to(top) else p
             for p in paths]
     return [p for _, p in status if any(p == r or p.startswith(r.rstrip("/") + "/") for r in rels)]
 
@@ -726,7 +726,7 @@ def _protected_in_worktree(full: Path, wt: Path) -> bool:
 
 def _sha(path: Path) -> str | None:
     """Return the SHA-256 hex digest of the file at `path`, or None when it is not a file."""
-    return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest() if path.is_file() else None
 
 
 def _at_head(repo: Path, rel: str) -> str | None:
@@ -753,7 +753,7 @@ def frozen_tampering(contest: Path) -> list[str]:
     house = contest / ".house"
     found = []
     for path in sorted((house / "checks").glob("*.json")):
-        rel = str(path.relative_to(contest))
+        rel = path.relative_to(contest).as_posix()
         head = _at_head(contest, rel)
         try:
             now = json.loads(path.read_text())["frozen"]
@@ -764,7 +764,7 @@ def frozen_tampering(contest: Path) -> list[str]:
         if before != now:
             found.append(f"frozen criteria in {rel} changed outside `house check --freeze/--refreeze`")
     for path in sorted((house / "tasks").glob("T*-*.md")):
-        rel = str(path.relative_to(contest))
+        rel = path.relative_to(contest).as_posix()
         try:
             now = parse_frontmatter(path.read_text())[0].get("status")
             head = _at_head(contest, rel)
