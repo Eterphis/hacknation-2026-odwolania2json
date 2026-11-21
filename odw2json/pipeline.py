@@ -165,7 +165,7 @@ def process_input(input_dir, output_dir, ingestor=None, classifier=None, extract
         by_case[c.name].append(d)
     results: list[CaseResult] = []
     for c in cases:
-        res = CaseResult(c.name, by_case[c.name])
+        res = apply_case(CaseResult(c.name, by_case[c.name]))  # same case step as process_case (web), before writing
         for d in res.documents:
             if d.output_name and d.extraction is not None:
                 write_json(output_dir / res.case / d.output_name, d.extraction.data)
