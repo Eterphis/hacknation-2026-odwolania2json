@@ -40,12 +40,14 @@ fields:
     strategies:
       - {use: after_label, labels: ["rachun\\w* (odbiorcy|beneficjenta|adresata|uznawany)", "na rachunek( nr)?"], value: "(pl)?\\s?\\d{2}( ?\\d{4}){6}"}
       - {use: after_label, labels: ["(dane )?(odbiorc|beneficjen|adresat)\\w*"], value: "(pl)?\\s?\\d{2}( ?\\d{4}){6}", max_lines: 4}
+      # letter layout: "... na rachunek nr PL10 3863 ... 4853" with the last group wrapped to the next line
+      - {use: regex, pattern: 'na rachunek(?: nr)?:?\s*(?P<v>(?:pl)?\s?\d{2}(?:\s?\d{4}){6})'}
     normalize: iban_pl
     validate: iban
 
   - path: przelew_bankowy.numer_transakcji
     strategies:
-      - {use: after_label, labels: ["nr ref\\.?", "numer referencyjny( operacji)?", "numer transakcji( operacji)?", "id transakcji", "identyfikator (transakcji|operacji)"], value: "[a-z0-9][a-z0-9/-]{5,}"}
+      - {use: after_label, labels: ["nr ref\\.?( operacji)?:?", "numer referencyjny( operacji)?", "numer transakcji( operacji)?", "id transakcji", "identyfikator (transakcji|operacji)"], value: "(?=[a-z0-9/-]*\\d)[a-z0-9][a-z0-9/-]{5,}"}
     normalize: unquote
 
   - path: przelew_bankowy.tytul
