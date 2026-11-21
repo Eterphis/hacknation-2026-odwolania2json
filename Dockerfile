@@ -13,7 +13,12 @@ RUN pip install -r requirements.txt
 # fetch the RapidOCR ONNX models at build time, so OCR works offline at run time
 RUN python -c "from rapidocr import RapidOCR; RapidOCR()"
 
+# optional local LLM (profile `llm`, docs/LLM.md): docker build --build-arg LLM_MODEL=qwen3-1.7b .
+# bakes the runtime and the sha256-checked weights into the image, so the llm profile also runs offline
+ARG LLM_MODEL=
+COPY requirements-llm.txt .
 COPY odw2json/ odw2json/
+RUN if [ -n "$LLM_MODEL" ]; then pip install -r requirements-llm.txt && python -m odw2json.llm.fetch "$LLM_MODEL" --dest /app/models; fi
 COPY recipes/ recipes/
 COPY profiles/ profiles/
 COPY dictionaries/ dictionaries/
