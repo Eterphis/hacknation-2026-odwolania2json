@@ -5,6 +5,7 @@ import logging
 import os
 import sys
 
+from . import factory
 from .pipeline import process_input
 
 
@@ -17,6 +18,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.recipes:
         os.environ["ODW2JSON_RECIPES"] = args.recipes
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+    from .engine import RecipeError
+
+    try:
+        factory.recipe_engine()  # fail loudly before processing anything
+    except RecipeError as e:
+        print(f"recipe error: {e}", file=sys.stderr)
+        return 2
     results = process_input(args.input, args.output)
     total = sum(len(r.documents) for r in results)
     written = sum(1 for r in results for d in r.documents if d.output_name)

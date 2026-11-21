@@ -53,7 +53,7 @@ def date_pl(s: str) -> str | None:
     m = re.search(r"(\d{1,2})\s*[./-]\s*(\d{1,2})\s*[./-]\s*(\d{4})", t)
     if m:
         return _iso(int(m[3]), int(m[2]), int(m[1]))
-    m = re.search(r"(\d{1,2})\s*([a-z]+)\.?\s*(\d{4})", t)
+    m = re.search(r"(\d{1,2})[\s.]*([a-z]+)[\s.]*(\d{4})", t)
     if m:
         word = m[2]
         month = _ROMAN.get(word) or next((v for k, v in _MONTHS.items() if word.startswith(k)), None)

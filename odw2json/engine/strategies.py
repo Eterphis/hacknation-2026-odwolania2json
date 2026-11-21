@@ -162,18 +162,23 @@ def _continue(t: Text, i: int, n: int, x0: float | None = None, x1: float = floa
     return out
 
 
+_LABEL_END = r"(?:(?<=\W)|(?!\w))"
+
+
 @register_strategy("after_label")
 def after_label(ctx: Context, spec: dict, scope: Scope) -> Iterator[Candidate]:
     """Value right of the label on its line (up to the next column gap), else below in the label's column."""
     t = ctx.text
     labels = [compile_pattern(p, loose_spaces=True) for p in spec["labels"]]
+    # pages without word boxes: the label must end at a word boundary ("nr ref" is not the start of "referencyjny")
+    plain_labels = [compile_pattern(p + _LABEL_END, loose_spaces=True) for p in spec["labels"]]
     extra = int(spec.get("max_lines", 1)) - 1
     idx = _lines_in(t, scope)
     for k, i in enumerate(idx):
         ln = t.lines[i]
         low = t.low[ln.start : ln.start + len(ln.text)]
-        for lab in labels:
-            m = lab.search(low)
+        for lab, plain in zip(labels, plain_labels):
+            m = (lab if ln.words else plain).search(low)
             if not m:
                 continue
             if not ln.words:  # plain text: rest of the line, else the next non-empty line

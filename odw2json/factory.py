@@ -21,7 +21,9 @@ def recipe_engine():
     """One engine serves as both classifier and extractor (recipes loaded once, reloaded on file change)."""
     from .engine import RecipeEngine
 
-    return RecipeEngine()
+    eng = RecipeEngine()
+    eng.recipes  # load eagerly: a broken recipe raises RecipeError here, at startup, not once per document
+    return eng
 
 
 def default_classifier() -> Classifier:

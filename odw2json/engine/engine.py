@@ -1,12 +1,14 @@
 """RecipeEngine: the Classifier and Extractor of odw2json, driven only by recipe files."""
 from __future__ import annotations
 
+import dataclasses
+import dataclasses
 import os
 import re
 from typing import Any
 
 from odw2json.model import Classification, Document, Evidence, Extraction
-from odw2json.write import _fill as fill_skeleton  # same completion rule as the writer
+from odw2json.write import fill as fill_skeleton  # same completion rule as the writer
 from odw2json.write import skeleton as schema_skeleton
 
 from .normalise import NORMALISERS, VALIDATORS
@@ -31,8 +33,12 @@ class RecipeEngine:
     def recipes(self) -> dict[str, Recipe]:
         sig = signature(self.dir)
         if sig != self._sig:
-            self._recipes = {r.name: r for r in load_recipes(self.dir)}
+            recipes = {r.name: r for r in load_recipes(self.dir)}
             self._dicts = {}
+            for r in recipes.values():  # dictionaries referenced by lookups: a typo fails now, not per document
+                for name in _lookup_dictionaries(r.fields):
+                    self.dictionary(name)
+            self._recipes = recipes
             self._sig = sig
         return self._recipes
 
@@ -87,6 +93,10 @@ class RecipeEngine:
                 skel = schema_skeleton(doc_class)
             except KeyError:
                 skel = None
+        if skel is not None:  # evidence paths follow the output JSON (lists are wrapped as [0])
+            evidence = [dataclasses.replace(e, path=_output_path(e.path, skel)) for e in evidence]
+        if skel is not None:  # evidence paths follow the output JSON (lists are wrapped as [0])
+            evidence = [dataclasses.replace(e, path=_output_path(e.path, skel)) for e in evidence]
         return Extraction(fill_skeleton(data, skel) if skel is not None else data, evidence)
 
     def _fields(self, fields, text, sections, scope, item, prefix, evidence) -> None:
@@ -157,11 +167,71 @@ def _signal_hit(sig: str | dict, views: dict[bool, str]) -> bool:
         sig = {"pattern": sig}
     pat = sig["pattern"]
     if sig.get("squash"):
-        pat = re.sub(r"\\s[*+?]?|(?<!\\) ", "", pat)
+        pat = squash_pattern(pat)
     text = views[bool(sig.get("squash"))]
     if sig.get("head"):
         text = text[: sig["head"]]
     return compile_pattern(pat).search(text) is not None
+
+
+_QUANT = re.compile(r"(?:[*+?]|\{\d+(?:,\d*)?\})\??")
+
+
+def squash_pattern(pat: str) -> str:
+    r"""Rewrite a pattern for whitespace-free text: drop literal spaces and standalone \s tokens (with their
+    quantifier) outside character classes; classes such as [^\s] and escaped characters stay untouched."""
+    out: list[str] = []
+    i, n = 0, len(pat)
+    while i < n:
+        c = pat[i]
+        if c == "\\" and i + 1 < n:
+            if pat[i + 1] == "s":
+                i += 2
+                q = _QUANT.match(pat, i)
+                i = q.end() if q else i
+            else:
+                out.append(pat[i : i + 2])
+                i += 2
+        elif c == "[":
+            j = i + 1
+            if j < n and pat[j] == "^":
+                j += 1
+            if j < n and pat[j] == "]":
+                j += 1
+            while j < n and pat[j] != "]":
+                j += 2 if pat[j] == "\\" else 1
+            out.append(pat[i : j + 1])
+            i = j + 1
+        elif c == " ":
+            i += 1
+            q = _QUANT.match(pat, i)
+            i = q.end() if q else i
+        else:
+            out.append(c)
+            i += 1
+    return "".join(out)
+
+
+def _lookup_dictionaries(fields: list[dict]) -> set[str]:
+    names: set[str] = set()
+    for f in fields:
+        names.update(s["dictionary"] for s in f.get("strategies", []) if s.get("use") == "lookup")
+        names.update(_lookup_dictionaries(f.get("fields") or []))
+    return names
+
+
+def _output_path(path: str, skel: Any) -> str:
+    """Evidence path as it appears in the output JSON: a list in the skeleton is addressed as name[0]."""
+    out, node = [], skel
+    for part in path.split("."):
+        m = re.fullmatch(r"(.*?)((?:\[\d+\])*)", part)
+        name, idx = m[1], m[2]
+        node = node.get(name) if isinstance(node, dict) else None
+        if isinstance(node, list):
+            idx = idx or "[0]"
+            node = node[0] if node else None
+        out.append(name + idx)
+    return ".".join(out)
 
 
 def _sections(recipe: Recipe, text: Text) -> dict[str, Scope]:
@@ -204,9 +274,11 @@ def _set(obj: dict[str, Any], path: str, value: Any) -> None:
     parts = path.split(".")
     for p in parts[:-1]:
         nxt = obj.get(p)
-        if isinstance(nxt, list):
-            nxt = nxt[0] if nxt else None
-        if not isinstance(nxt, dict):
+        if isinstance(nxt, list):  # lists stay lists: descend into the first item (created when empty)
+            if not nxt or not isinstance(nxt[0], dict):
+                nxt[0:1] = [{}]
+            nxt = nxt[0]
+        elif not isinstance(nxt, dict):
             nxt = {}
             obj[p] = nxt
         obj = nxt

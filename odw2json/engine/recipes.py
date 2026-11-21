@@ -11,6 +11,9 @@ from typing import Any
 import jsonschema
 import yaml
 
+from .strategies import compile_pattern
+from .text import fold
+
 ROOT = Path(__file__).resolve().parent.parent.parent
 SCHEMA_FILE = ROOT / "recipes" / "recipe.schema.json"
 
@@ -76,10 +79,15 @@ def _check_regexes(spec: Any, where: str, name: str) -> None:
     keys = {"pattern", "start", "end"}
     if isinstance(spec, dict):
         for k, v in spec.items():
-            if k in keys and isinstance(v, str) or k == "labels" and isinstance(v, list):
+            is_value = k == "value" and spec.get("use") == "after_label" and isinstance(v, str)
+            if k in keys and isinstance(v, str) or k == "labels" and isinstance(v, list) or is_value:
                 for pat in v if isinstance(v, list) else [v]:
                     try:
                         re.compile(pat)
+                        if k == "pattern" and spec.get("squash"):
+                            from .engine import squash_pattern
+
+                            re.compile(squash_pattern(pat))
                     except re.error as e:
                         raise RecipeError(f"{name}: {where}/{k}: bad regex {pat!r}: {e}") from None
             _check_regexes(v, f"{where}/{k}", name)
@@ -122,6 +130,12 @@ def load_dictionary(name: str, directory: str | os.PathLike | None = None) -> li
     entries = data.get("entries") if isinstance(data, dict) else None
     if not isinstance(entries, list) or not all(isinstance(e, dict) and isinstance(e.get("triggers"), list) for e in entries):
         raise RecipeError(f"{p.name}: expected 'entries: [{{id, label, triggers: [...]}}]'")
+    for e in entries:
+        for trig in e["triggers"]:
+            try:
+                compile_pattern(fold(str(trig)), loose_spaces=True)
+            except re.error as err:
+                raise RecipeError(f"{p.name}: entry {e.get('id')!r}: bad regex in trigger {trig!r}: {err} (triggers are regular expressions)") from None
     return entries
 
 
