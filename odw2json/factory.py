@@ -41,18 +41,23 @@ def default_classifier() -> Classifier:
 
 
 @cache
+def _llm_extractor(engine, model: str, n_ctx: int, threads) -> Extractor:
+    from .llm import make_extractor
+
+    return make_extractor(engine, model, n_ctx=n_ctx, threads=threads)
+
+
 def extractor_for(profile: str) -> Extractor:
     """The recipe engine, wrapped by the grounded local-LLM reader when the profile asks for it
-    (`reader: {kind: llm, model: ..}`); the model loads on first use and a missing model leaves the recipe output as is."""
+    (`reader: {kind: llm, model: ..}`); the model loads on first use and a missing model leaves the recipe output as is.
+    Keyed by the engine, so clearing `recipe_engine`'s cache (new recipes directory) also renews the wrapper."""
     from . import profiles
 
+    engine = recipe_engine()
     reader = profiles.load_profile(profile).reader
     if reader and reader.get("kind") == "llm":
-        from .llm import make_extractor
-
-        return make_extractor(recipe_engine(), reader.get("model", "models/Qwen3-1.7B-Q8_0.gguf"),
-                              n_ctx=int(reader.get("n_ctx", 4096)), threads=reader.get("threads"))
-    return recipe_engine()
+        return _llm_extractor(engine, reader.get("model", "models/Qwen3-1.7B-Q8_0.gguf"), int(reader.get("n_ctx", 4096)), reader.get("threads"))
+    return engine
 
 
 def default_extractor() -> Extractor:
