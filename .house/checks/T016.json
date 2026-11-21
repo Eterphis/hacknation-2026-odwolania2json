@@ -43,25 +43,25 @@
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 25, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpes6p66w9\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 25, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 232 tests in 38.064s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-21T20:08:56+01:00",
-      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
+      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmprx53vgc7\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 244 tests in 39.474s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T20:28:30+01:00",
+      "commit": "3e9716692735f03051aa3a440c5695aa24d51a33"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
-      "output_tail": "bench: ocr / skany / 2 worker(s) ...\n  F1 0.9639  reject -  p95 0.30s  721.5 docs/min  RSS 154 MB\nbench: ocr / negatywne / 2 worker(s) ...\n  F1 -  reject 1.00  p95 2.46s  88.1 docs/min  RSS 305 MB\nbench: llm / heldout / 2 worker(s) ...\n  F1 0.9986  reject -  p95 116.72s  12.0 docs/min  RSS 5143 MB\nbench: llm / skany / 2 worker(s) ...\n  F1 0.9707  reject -  p95 114.23s  7.8 docs/min  RSS 4979 MB\nbench: llm / negatywne / 2 worker(s) ...\n  F1 -  reject 1.00  p95 2.52s  81.0 docs/min  RSS 312 MB\n| profile | set | workers | docs | F1 exact | F1 norm | reject acc | false rejects | p50 s | p95 s | docs/min | peak RSS MB | model MB | OCR cache |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| ocr | heldout | 2 | 60 | 0.9986 | 0.9986 | - | 0 | 0.09 | 1.21 | 260.4 | 330 | 30 | warm |\n| ocr | skany | 2 | 30 | 0.9639 | 0.9639 | - | 0 | 0.02 | 0.30 | 721.5 | 154 | 30 | warm |\n| ocr | negatywne | 2 | 12 | - | - | 100.0% | - | 0.96 | 2.46 | 88.1 | 305 | 30 | warm |\n| llm | heldout | 2 | 60 | 0.9986 | 0.9986 | - | 0 | 0.16 | 116.72 | 12.0 | 5143 | 1780 | warm |\n| llm | skany | 2 | 30 | 0.9707 | 0.9707 | - | 0 | 0.05 | 114.23 | 7.8 | 4979 | 1780 | warm |\n| llm | negatywne | 2 | 12 | - | - | 100.0% | - | 0.99 | 2.52 | 81.0 | 312 | 1780 | warm |\n\nbench: 2 profiles x 3 sets ok",
-      "ran_at": "2026-11-21T20:18:23+01:00",
-      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
+      "output_tail": "bench: ocr / skany / 2 worker(s) ...\n  F1 0.9639  reject -  p95 0.29s  723.8 docs/min  RSS 152 MB\nbench: ocr / negatywne / 2 worker(s) ...\n  F1 -  reject 1.00  p95 2.58s  82.9 docs/min  RSS 306 MB\nbench: llm / heldout / 2 worker(s) ...\n  F1 0.9986  reject -  p95 111.30s  13.5 docs/min  RSS 5122 MB\nbench: llm / skany / 2 worker(s) ...\n  F1 0.9707  reject -  p95 101.80s  8.8 docs/min  RSS 4985 MB\nbench: llm / negatywne / 2 worker(s) ...\n  F1 -  reject 1.00  p95 2.42s  88.9 docs/min  RSS 304 MB\n| profile | set | workers | docs | F1 exact | F1 norm | reject acc | false rejects | p50 s | p95 s | docs/min | peak RSS MB | model MB | OCR cache |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| ocr | heldout | 2 | 60 | 0.9986 | 0.9986 | - | 0 | 0.07 | 1.07 | 279.0 | 333 | 30 | warm |\n| ocr | skany | 2 | 30 | 0.9639 | 0.9639 | - | 0 | 0.03 | 0.29 | 723.8 | 152 | 30 | warm |\n| ocr | negatywne | 2 | 12 | - | - | 100.0% | - | 1.00 | 2.58 | 82.9 | 306 | 30 | warm |\n| llm | heldout | 2 | 60 | 0.9986 | 0.9986 | - | 0 | 0.14 | 111.30 | 13.5 | 5122 | 1780 | warm |\n| llm | skany | 2 | 30 | 0.9707 | 0.9707 | - | 0 | 0.04 | 101.80 | 8.8 | 4985 | 1780 | warm |\n| llm | negatywne | 2 | 12 | - | - | 100.0% | - | 0.91 | 2.42 | 88.9 | 304 | 1780 | warm |\n\nbench: 2 profiles x 3 sets ok",
+      "ran_at": "2026-11-21T20:36:55+01:00",
+      "commit": "3e9716692735f03051aa3a440c5695aa24d51a33"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T20:18:23+01:00",
-      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
+      "ran_at": "2026-11-21T20:36:55+01:00",
+      "commit": "3e9716692735f03051aa3a440c5695aa24d51a33"
     }
   }
 }
