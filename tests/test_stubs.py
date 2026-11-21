@@ -59,7 +59,7 @@ DATA = Path("C:/Users/jasiu/workspace/uzp-data/dane")
 class TrainingDataTests(unittest.TestCase):
     def test_class_matches_file_name(self):
         ing, clf = stubs.PdfplumberIngestor(), stubs.KeywordClassifier()
-        want = {"odwolanie": "odwolanie", "pelnomocnictwo": "pelnomocnictwo", "potwierdzenie_przelewu": "przelew"}
+        want = {"odwolanie": "odwolanie", "pelnomocnictwo": "pelnomocnictwo", "potwierdzenie_przelewu": "przelew", "przelew": "przelew"}
         bad = []
         pdfs = sorted(DATA.glob("przyklad_*/*.pdf"))
         self.assertGreaterEqual(len(pdfs), 150)

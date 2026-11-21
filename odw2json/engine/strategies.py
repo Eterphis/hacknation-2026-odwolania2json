@@ -78,7 +78,11 @@ def _span_candidate(t: Text, a: int, b: int) -> Candidate:
 @register_strategy("regex")
 def regex(ctx: Context, spec: dict, scope: Scope) -> Iterator[Candidate]:
     t = ctx.text
-    for m in compile_pattern(spec["pattern"]).finditer(t.low, scope.start, scope.end):
+    if spec.get("raw"):  # case-sensitive on the original text (e.g. capitalised person names)
+        pat, hay = re.compile(spec["pattern"], re.MULTILINE), t.raw
+    else:
+        pat, hay = compile_pattern(spec["pattern"]), t.low
+    for m in pat.finditer(hay, scope.start, scope.end):
         a, b = _group_span(m)
         if b > a:
             yield _span_candidate(t, a, b)

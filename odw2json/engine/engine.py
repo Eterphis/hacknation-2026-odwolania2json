@@ -135,7 +135,10 @@ class RecipeEngine:
             for i, sub in enumerate(items):  # extra blocks join the last existing item
                 target = existing[min(i, len(existing) - 1)]
                 for k, v in sub.items():
-                    target.setdefault(k, v) if not isinstance(target.get(k), list) else target[k].extend(v)
+                    if isinstance(target.get(k), list):  # lists: add only items not there yet
+                        target[k].extend(x for x in v if x not in target[k])
+                    else:
+                        target.setdefault(k, v)
             return
         _set(item, f["path"], items)
 

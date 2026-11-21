@@ -13,6 +13,8 @@ classify:
     - {pattern: "zamawiajac\\w*\\s*:", weight: 1}
   forbidden:
     - {pattern: "see the notice on ted website|ogloszenie o zamowieniu lub ogloszenie o koncesji", head: 600}
+    # a KIO ruling (wyrok / postanowienie) quotes the appeal but is not one
+    - {pattern: 'sygn\.? ?akt:? ?kio.{0,200}?(?:postanowienie|wyrok)|(?:postanowienie|wyrok)\b.{0,200}?sygn\.? ?akt|krajowa izba odwolawcza\s*-?\s*w skladzie|przewodniczac\w*\s*:', head: 1200}
 
 sections:
   - {name: odwolujacy, start: "^odwo\\w{0,3}ujac\\w*\\s*:", end: "^(zamawiajac\\w*\\s*:|odwolanie\\s*$|o d w o l a n i e|dotyczy|prezes)"}

@@ -97,7 +97,7 @@
         "end": {"type": "string"},
         "exclude": {"type": "array", "items": {"type": "string"}, "description": "segments: skip a column segment whose text (leading dots removed) starts with one of these regexes."},
         "not_after": {"type": "array", "items": {"type": "string"}, "description": "segments: skip a value when one of these regexes ends right before it in its segment (e.g. a title such as 'adw.')."},
-        "raw": {"type": "boolean", "description": "segments: match 'value' case-sensitively on the original text (diacritics kept)."},
+        "raw": {"type": "boolean", "description": "segments: match 'value', regex: match 'pattern', case-sensitively on the original text (diacritics kept)."},
         "dictionary": {"type": "string", "description": "lookup: dictionaries/<name>.yaml with entries {id, label, triggers}; triggers are regular expressions (a space matches optional whitespace), so escape literal punctuation."},
         "return": {"type": "string", "description": "lookup: entry key to return (id, label, ...)."},
         "if_set": {"type": "string", "description": "derived: sibling path; value when it is non-null, else 'else'."},
