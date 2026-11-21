@@ -1,0 +1,91 @@
+{
+  "task": "T013",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/prep_input.py .acc/input 01-60 --template && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/input --output .acc/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/output_shape.py .acc/input .acc/output --expect-reject 'negatywny przyklad.pdf' --check-class",
+        "expect": "ok: 181 files",
+        "text": null,
+        "timeout": 1800
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.prep_skany .acc/sk && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/sk/input --output .acc/sk/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import glob,sys; fs=glob.glob('.acc/sk/input/negatywne/*.pdf'); bad=[f for f in fs if open(f.replace('input','output',1)[:-4]+'.json',encoding='utf-8').read().strip()!='{}']; print(len(fs),'negatives,',len(bad),'not rejected',bad); sys.exit(0 if len(fs)==12 and not bad else 1)\"",
+        "expect": null,
+        "text": null,
+        "timeout": 2400
+      },
+      {
+        "id": "AC-4",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.prep_skany .acc/sk2 && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/sk2/input --output .acc/sk2/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred .acc/sk2/output --gold .acc/sk2/gold",
+        "expect": "score >= 0.70",
+        "text": null,
+        "timeout": 2400
+      },
+      {
+        "id": "AC-5",
+        "kind": "run",
+        "run": "! grep -rniE 'odwolanie|odwołanie|pelnomocnictw|pełnomocnictw|przelew|mocodawca|OdwolanieKIO|Zamawiajacy' odw2json/engine",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T16:55:00+01:00",
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "C:\\Users\\jasiu\\workspace\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n...........................................................przyklad_41: done\nprzyklad_41: done\n..........every PDF failed; check the log above (dependencies installed? pip install -r requirements.txt)\n..............warning: skipping unreadable pred C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpgmdcfp0b\\pred\\przyklad_01\\bad.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n................................C:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n................\n----------------------------------------------------------------------\nRan 131 tests in 33.929s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T16:55:50+01:00",
+      "commit": "71505efcef35fdab7619407650c78b2a6bcf88ef"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "copied 186 pdfs to .acc\\input\n61 cases, 186 pdfs, 181 json written, 5 rejected/failed\nok: 181 files",
+      "ran_at": "2026-11-21T16:56:29+01:00",
+      "commit": "71505efcef35fdab7619407650c78b2a6bcf88ef"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "scans: 30 pdfs, negatives: 12 pdfs -> .acc/sk\n31 cases, 42 pdfs, 30 json written, 12 rejected/failed\n12 negatives, 0 not rejected []",
+      "ran_at": "2026-11-21T16:56:45+01:00",
+      "commit": "71505efcef35fdab7619407650c78b2a6bcf88ef"
+    },
+    "AC-4": {
+      "id": "AC-4",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "scans: 30 pdfs, negatives: 12 pdfs -> .acc/sk2\n31 cases, 42 pdfs, 30 json written, 12 rejected/failed\nwarning: pred case folders with no gold folder (ignored): negatywne\ncases scored: 30\n  odwolanie       P=0.7429 R=0.5876 F1=0.6562 (TP=104 FP=36 FN=73)\n  pelnomocnictwo  P=0.9459 R=0.8974 F1=0.9211 (TP=70 FP=4 FN=8)\n  przelew         P=0.8421 R=0.5926 F1=0.6957 (TP=32 FP=6 FN=22)\nnormalized: 0.7344\nscore: 0.7344",
+      "ran_at": "2026-11-21T16:57:10+01:00",
+      "commit": "71505efcef35fdab7619407650c78b2a6bcf88ef"
+    },
+    "AC-5": {
+      "id": "AC-5",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "",
+      "ran_at": "2026-11-21T16:57:11+01:00",
+      "commit": "71505efcef35fdab7619407650c78b2a6bcf88ef"
+    }
+  }
+}

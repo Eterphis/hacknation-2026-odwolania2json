@@ -1,0 +1,42 @@
+{
+  "task": "T016",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.bench --profiles ocr,llm --sets heldout,skany,negatywne --workers 2 --out .acc/bench-llm",
+        "expect": "bench: 2 profiles x 3 sets ok",
+        "text": null,
+        "timeout": 5400
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "! grep -rniE 'odwolanie|odwołanie|pelnomocnictw|pełnomocnictw|przelew|mocodawca|OdwolanieKIO|Zamawiajacy|Odwolujacy' odw2json/engine odw2json/llm",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      },
+      {
+        "id": "AC-4",
+        "kind": "manual",
+        "run": null,
+        "expect": null,
+        "text": "Judge reads reports/T016.md and the bench table: profile `llm` beats `ocr` on skany F1 (target +0.05), does not lose on heldout or negatives, peak RAM < 10 GB at 2 workers, model <= 4B parameters with an Apache-2.0/MIT licence, runs offline after the one-time model download, and every LLM value in the output has evidence with a quote found in the page text.",
+        "timeout": 600
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T16:56:54+01:00",
+  "results": {}
+}
