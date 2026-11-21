@@ -33,3 +33,9 @@ class ExtractorTests(unittest.TestCase):
     def test_skeleton(self):
         e = stubs.SkeletonExtractor().extract(doc(""), "przelew")
         self.assertIsNone(e.data["przelew_bankowy"]["kwota"])
+
+
+class LetterSpacedTests(unittest.TestCase):
+    def test_letter_spaced_heading(self):
+        r = stubs.KeywordClassifier().classify(doc("P E Ł N O M O C N I C T W O\nMocodawca X"))
+        self.assertEqual(r.doc_class, "pelnomocnictwo")

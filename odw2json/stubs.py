@@ -29,11 +29,12 @@ class KeywordClassifier:
 
     def classify(self, doc: Document) -> Classification:
         t = _norm(doc.text)
+        squashed = t.replace(" ", "")  # headings are sometimes letter-spaced: "P E Ł N O M O C N I C T W O"
         przelew = float("potwierdzenie" in t) + float("przelew" in t)
         odwolanie = float("odwołanie" in t or "odwolanie" in t) + float("krajowej izby" in t)
         scores = {
             "przelew": przelew if przelew >= 2 else 0.0,
-            "pelnomocnictwo": 2.0 * float("pełnomocnictw" in t or "pelnomocnictw" in t),
+            "pelnomocnictwo": 2.0 * float("pełnomocnictw" in squashed or "pelnomocnictw" in squashed),
             "odwolanie": odwolanie if odwolanie >= 2 else 0.0,
         }
         best = max(scores, key=lambda k: scores[k])
