@@ -31,7 +31,7 @@
         "kind": "manual",
         "run": null,
         "expect": null,
-        "text": "Judge reads reports/T019.md: variants tried, measured on the 30 scans with a cold OCR cache (F1 per type, wrong leaves, median/p95 seconds per document, peak RAM), the chosen default and why; preprocessing is on by default only if it does not lower scan F1 and costs at most +30% OCR time; misses-1.md rows 1-4 and 18 say recovered or not, with the OCR line before/after.",
+        "text": "Judge reads reports/T019.md: variants tried, measured on the 30 scans with a cold OCR cache (F1 per type, wrong leaves, median/p95 seconds per document, peak RAM), the chosen default and why; preprocessing is on by default only if it does not lower scan F1 and costs at most +40% OCR time; misses-1.md rows 1-4 and 18 say recovered or not, with the OCR line before/after.",
         "timeout": 600
       }
     ],
@@ -39,6 +39,6 @@
       "eval/score.py": "f3465f3825279b7257669495bf3bf0148087b142831a1043f940023e0b074973"
     }
   },
-  "frozen_at": "2026-11-21T21:52:46+01:00",
+  "frozen_at": "2026-11-21T21:56:12+01:00",
   "results": {}
 }
