@@ -14,3 +14,4 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - 2026-11-21 · coder · T003: ingest PDF -> strony ze słowami i ramkami, OCR RapidOCR (modele w paczce, polskie znaki OK) tylko dla stron bez warstwy tekstu; skan szablonu ~50 s, check GREEN · .house/reports/T003.md
 - T007 (web UI: wgrywanie PDF, klasa+wynik, JSON, tabela dowodów, ZIP) gotowe do przeglądu, check GREEN (AC-3 ręcznie).
 - T011 (web UI w tożsamości Cold Trace / Eterphis: noc/dzień, lockup, własne fonty offline, tabela dowodów) gotowe do przeglądu, check GREEN (AC-4 ręcznie).
+- 2026-11-21 · coordinator · T010 scalone (zaszumiony zbiór skanów, poprawka domyślnej ścieżki danych); T004 po poprawkach z review GREEN, F1 odłożone 0,8737; fala 3 przekazana teammate'owi (.house/handoff/wave3-teammate.md)

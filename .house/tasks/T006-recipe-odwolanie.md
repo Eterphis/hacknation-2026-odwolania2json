@@ -2,7 +2,7 @@
 id: T006
 title: Complete the odwolanie recipe to the held-out F1 target
 status: todo
-owner: null
+owner: teammate-session
 branch: null
 depends_on: [T002, T004]
 capabilities: [python]

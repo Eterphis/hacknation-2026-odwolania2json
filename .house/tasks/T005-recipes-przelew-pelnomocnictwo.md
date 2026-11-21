@@ -2,7 +2,7 @@
 id: T005
 title: Complete recipes for przelew and pelnomocnictwo to held-out F1 targets
 status: todo
-owner: null
+owner: teammate-session
 branch: null
 depends_on: [T002, T004]
 capabilities: [python]

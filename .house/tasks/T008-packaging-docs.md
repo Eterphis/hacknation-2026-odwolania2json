@@ -2,7 +2,7 @@
 id: T008
 title: Packaging and handover docs - start.bat, Docker Compose, CI, architecture and new-class guide
 status: todo
-owner: null
+owner: teammate-session
 branch: null
 depends_on: [T004, T007]
 capabilities: [python, devops, docs]

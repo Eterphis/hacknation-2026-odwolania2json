@@ -48,3 +48,4 @@ input/*
 !input/.gitkeep
 output/*
 !output/.gitkeep
+uzp-data-noisy/

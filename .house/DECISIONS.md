@@ -81,3 +81,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** decyzja człowieka; demo i zrzuty ekranu widzi jury, a przejrzystość ekstrakcji (tabela dowodów) jest oceniana. Zrzuty w `docs/screenshots/` pokazują dowody z makiety (silnik to jeszcze stub T001) — do powtórzenia po T004.
 - **Kto:** człowiek + coordinator
 - **Data:** 2026-11-21 16:30
+
+## D-013 Fala 3 (T005, T006, T008) u teammate'a; tutaj tylko weryfikacja i scalanie
+- **Decyzja:** Zadania implementacyjne fali 3 wykonuje sesja teammate'a według `.house/handoff/wave3-teammate.md` (kolejność przy małym limicie: T005 → T006 → T008). Na maszynie właściciela nie uruchamiamy nowych coderów; house check, review i merge działają normalnie. Poprawki z review T004 (2 MAJOR + 5 MINOR) dokończono tutaj przed scaleniem, F1 bez zmian (0,8737). Zaszumiony zbiór T010 leży w `uzp-data-noisy/` (gitignored).
+- **Dlaczego:** decyzja człowieka: limit właściciela 80%, teammate'a 30%, reset o 14:30.
+- **Kto:** człowiek
+- **Data:** 2026-11-21 17:00
