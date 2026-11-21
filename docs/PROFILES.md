@@ -22,9 +22,13 @@ Format pliku:
 ```yaml
 description: jedna linijka
 ocr: {enabled: true}      # OCR stron bez warstwy tekstowej
-ingest: {dpi: 200}        # dowolna opcja PdfIngestor (ingest.dpi, ingest.cache, ingest.cache_dir)
+ingest: {dpi: 200}        # dowolna opcja PdfIngestor (ingest.dpi, ingest.cache, ingest.cache_dir, ingest.preprocess)
 reader: null              # miejsce na lokalny model (T016)
 ```
+
+`ingest.preprocess: none | levels` (domyślnie `levels`, zmienna `ODW2JSON_PREPROCESS` ma pierwszeństwo) czyści obraz strony
+przed OCR (rozjaśnia przebijający tekst z drugiej strony skanu); strony z warstwą tekstową nie są dotykane, a ustawienie
+wchodzi do klucza cache OCR.  Pomiary: `.house/reports/T019.md`.
 
 Nieznany klucz albo nieznany `reader` kończy się błędem (`profile error`, kod wyjścia 2), a nie cichym użyciem innego
 profilu.
