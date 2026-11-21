@@ -116,3 +116,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Decyzja:** Prace implementacyjne znowu idą w sesji właściciela (koordynator deleguje do coderów tutaj); handoffy dla teammate'ów piszemy tylko, gdy właściciel o to poprosi. D-013 przestaje obowiązywać.
 - **Kto:** człowiek
 - **Data:** 2026-11-21 19:00
+
+## D-019 Fala 4: T013 od teammate'a + T012/T014/T015/T016, potem T009
+- **Decyzja:** Synchronizacja z handoffem teammate'a (`.house/handoff/teammate-final.md`): jego T013 (nowe dane UZP: `{}` dla odrzuconych, negatywy 16/16, id 12, poprawka kolejności linii OCR, skany 0,73) scalamy z automatycznymi kryteriami dopisanymi przez koordynatora (kształt wyjścia, negatywy, skany ≥ 0,70) — od teraz to bramka regresji. Numeracja jak u teammate'a: T012 = profile + `--workers` + bench (jego propozycja P0–P4 zawężona do D-015: profile `text`/`ocr`, slot na `llm`, bez API i bez P4), T014 = recepty na skanach (cel ≥ 0,80, 41–60 ≥ 0,94), T015 = edytor klas w UI (20 pkt za dodawanie typów), T016 = lokalny mały LLM jako ugruntowany czytelnik słabych pól (spike modeli najpierw, wzorzec spec-extraction właściciela), T009 = spójność sprawy po T014. Równolegle: T012, T014, T015 (rozłączne pliki); T016 po T012 i T014.
+- **Dlaczego:** skany to najlepsza miara prawdziwego testu; czas i RAM na laptopie oceniającego wymagają równoległości i pomiaru; elastyczność to 50% finału.
+- **Kto:** coordinator (prośba człowieka: „sync, potem plan i ruszaj z falą”)
+- **Data:** 2026-11-21 19:30
