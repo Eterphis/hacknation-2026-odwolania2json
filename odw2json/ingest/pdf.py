@@ -11,11 +11,13 @@ from odw2json.model import Document, Page, Word
 
 from .layout import build_text, is_garbage_text
 from .ocr import OcrBackend, OcrLine, get_backend
+from .preprocess import NAMES as PREPROCESS_NAMES, preprocess_image
 
 DEFAULT_DPI = 200
+DEFAULT_PREPROCESS = "levels"
 DEFAULT_MIN_CONF = 0.6  # OCR lines below this are noise (e.g. black redaction bars read as 'n on nn')
 MAX_SIDE_PX = 2400  # cap the rendered bitmap (a 150-dpi A4 scan is already 1240 pt wide)
-_CACHE_VERSION = 1
+_CACHE_VERSION = 2
 
 
 def lines_to_words(lines: list[OcrLine], scale: float, min_conf: float = 0.0) -> list[Word]:
@@ -53,6 +55,9 @@ class PdfIngestor:
         self._config = config
         self._backend = backend
         self.dpi = int(cfg.get("dpi", DEFAULT_DPI))
+        self.preprocess = str(os.environ.get("ODW2JSON_PREPROCESS") or cfg.get("preprocess") or DEFAULT_PREPROCESS)
+        if self.preprocess not in PREPROCESS_NAMES:
+            raise ValueError(f"unknown ingest.preprocess {self.preprocess!r}; available: {PREPROCESS_NAMES}")
         self.min_conf = float(((config or {}).get("ocr") or {}).get("min_conf", DEFAULT_MIN_CONF))
         self._backend_id = (
             type(backend).__name__ if backend is not None
@@ -118,6 +123,7 @@ class PdfIngestor:
             image = page.render(scale=scale).to_pil().convert("RGB")
         finally:
             page.close()
+        image = preprocess_image(image, self.preprocess)
         words = lines_to_words(self.backend.ocr(image), scale, self.min_conf)
         # map by the real pixel/point ratio so rounding of the bitmap size never shifts boxes
         words = _clamp(words, width, height)
@@ -132,7 +138,7 @@ class PdfIngestor:
             for chunk in iter(lambda: f.read(1 << 20), b""):
                 h.update(chunk)
         backend = self._backend_id
-        h.update(f"|{index}|{self.dpi}|{self.min_conf}|{backend}|{_CACHE_VERSION}".encode())
+        h.update(f"|{index}|{self.dpi}|{self.min_conf}|{backend}|{self.preprocess}|{_CACHE_VERSION}".encode())
         return h.hexdigest()
 
     def _cache_read(self, key: str | None) -> list[Word] | None:
