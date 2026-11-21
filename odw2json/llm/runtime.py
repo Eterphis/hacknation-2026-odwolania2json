@@ -36,11 +36,11 @@ def model_path(name_or_path: str) -> Path:
 
 
 def default_threads(workers: int | None = None) -> int:
-    env = os.environ.get("ODW2JSON_LLM_THREADS")
+    """ODW2JSON_LLM_THREADS, else the per-worker share the pipeline sets for OCR (cores // workers), else all cores."""
+    env = os.environ.get("ODW2JSON_LLM_THREADS") or os.environ.get("ODW2JSON_OCR_THREADS")
     if env:
         return max(1, int(env))
-    workers = workers or int(os.environ.get("ODW2JSON_WORKERS") or 1)
-    return max(1, (os.cpu_count() or 4) // max(1, workers))
+    return max(1, (os.cpu_count() or 4) // max(1, workers or 1))
 
 
 class LlamaCppRuntime:

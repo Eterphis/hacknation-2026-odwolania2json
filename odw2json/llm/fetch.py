@@ -49,6 +49,24 @@ def fetch(name: str, dest: Path) -> Path:
     return target
 
 
+def ensure_model(reader: dict) -> None:
+    """Called once by the CLI for a profile with `reader: {kind: llm, model: ...}`: when the weights are missing and the
+    file name is a known model, download it (profile key `fetch: false` turns this off). Never raises: offline or a
+    failed download only means the reader stays off and the recipe output is used."""
+    from .runtime import model_path
+
+    path = model_path(reader.get("model", ""))
+    if path.is_file() or reader.get("fetch", True) is False:
+        return
+    name = next((n for n, m in MODELS.items() if m[1] == path.name), None)
+    if name is None:
+        return
+    try:
+        fetch(name, path.parent)
+    except (OSError, SystemExit) as e:
+        print(f"LLM model download failed ({e}); continuing without the LLM reader", file=sys.stderr)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("name", nargs="?", default=DEFAULT, choices=sorted(MODELS))

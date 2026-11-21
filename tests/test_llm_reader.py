@@ -250,5 +250,26 @@ class Extractor(unittest.TestCase):
         x.extract(doc("letter\nfrom: Acme"), "letter")  # disabled after the first failure, no exception
 
 
+class Profile(unittest.TestCase):
+    def test_shipped_llm_profile_loads_and_names_a_known_model(self):
+        from odw2json import profiles
+        from odw2json.llm.fetch import MODELS
+
+        prof = profiles.load_profile("llm")
+        self.assertEqual(prof.reader["kind"], "llm")
+        self.assertIn(Path(prof.reader["model"]).name, [m[1] for m in MODELS.values()])
+
+    def test_every_listed_model_has_a_permissive_licence(self):
+        from odw2json.llm.fetch import MODELS
+
+        self.assertTrue(all(m[4] in ("Apache-2.0", "MIT") for m in MODELS.values()))
+
+    def test_ensure_model_never_raises_and_respects_fetch_false(self):
+        from odw2json.llm.fetch import ensure_model
+
+        ensure_model({"kind": "llm", "model": "models/not-a-known-model.gguf"})
+        ensure_model({"kind": "llm", "model": "models/Qwen3-1.7B-Q8_0.gguf", "fetch": False})
+
+
 if __name__ == "__main__":
     unittest.main()

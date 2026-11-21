@@ -45,9 +45,9 @@ class ProfileLoadTests(unittest.TestCase):
             with self.assertRaises(ProfileError):
                 profiles.load_profile("x", d)
 
-    def test_reader_slot_not_installed_fails_loudly(self):
+    def test_unknown_reader_kind_fails_loudly(self):
         with tempfile.TemporaryDirectory() as d:
-            write(d, "llm", "description: x\nreader: {kind: llm, model: m.gguf}\n")
+            write(d, "llm", "description: x\nreader: {kind: remote-api, model: m}\n")
             with self.assertRaises(ProfileError) as cm:
                 profiles.load_profile("llm", d)
             self.assertIn("reader", str(cm.exception))
