@@ -1,0 +1,34 @@
+{
+  "task": "T010",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.make_noisy --cases 41-50 --out C:/Users/jasiu/workspace/uzp-data-noisy && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import glob,sys,pdfplumber; fs=glob.glob('C:/Users/jasiu/workspace/uzp-data-noisy/input/*/*.pdf'); txt=sum(1 for f in fs if any((p.extract_text() or '').strip() for p in pdfplumber.open(f).pages)); g=glob.glob('C:/Users/jasiu/workspace/uzp-data-noisy/gold/*/*.json'); print(len(fs),txt,len(g)); sys.exit(0 if len(fs)==30 and txt==0 and len(g)==30 else 1)\"",
+        "expect": null,
+        "text": null,
+        "timeout": 1800
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input C:/Users/jasiu/workspace/uzp-data-noisy/input --output .acc/noisy-out && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred .acc/noisy-out --gold C:/Users/jasiu/workspace/uzp-data-noisy/gold",
+        "expect": "score: [0-9.]+\\s*$",
+        "text": null,
+        "timeout": 3600
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T11:59:54+01:00",
+  "results": {}
+}
