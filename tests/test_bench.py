@@ -170,6 +170,12 @@ class MainTests(unittest.TestCase):
         self.assertEqual(out.strip().splitlines()[-1], "bench: 2 profiles x 3 sets ok")
         self.assertIn("bench-2026-11-21-abc1234.json", files)
         self.assertIn("bench-2026-11-21-abc1234.md", files)
+        self.assertEqual(hist, "")  # a plain run never touches the tracked history (keeps the checkout clean)
+        self.assertIn("history.csv", files)  # it appends to a copy in --out instead
+
+    def test_record_appends_to_tracked_history(self):
+        _, _, _, hist, _ = self.run_main(["--profiles", "text,ocr", "--sets", "heldout,skany,negatywne",
+                                          "--workers", "1,4", "--record"])
         self.assertEqual(len(hist.strip().splitlines()), 1 + 12)
 
     def test_gate_fails_exit_1(self):
