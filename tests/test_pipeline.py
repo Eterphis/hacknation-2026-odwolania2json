@@ -45,7 +45,7 @@ class PipelineTests(unittest.TestCase):
             res = pipeline.process_input(inp, out, FakeIngestor(), FakeClassifier(), FakeExtractor())
             self.assertEqual([r.case for r in res], ["c1", "c2"])
             self.assertTrue((out / "c1" / "a.json").exists())
-            self.assertFalse((out / "c1" / "bad.json").exists())
+            self.assertEqual((out / "c1" / "bad.json").read_text(encoding="utf-8").strip(), "{}")  # UZP: rejected -> empty JSON
             self.assertTrue((out / "c2" / "b.json").exists())
             data = json.loads((out / "c1" / "a.json").read_text(encoding="utf-8"))
             self.assertEqual(data["przelew_bankowy"]["kwota"], 1.5)
@@ -62,7 +62,16 @@ class PipelineTests(unittest.TestCase):
             d = res[0].documents[0]
             self.assertIsNone(d.output_name)
             self.assertTrue(d.warnings)
-            self.assertFalse((out / "c1" / "a.json").exists())
+            self.assertEqual(json.loads((out / "c1" / "a.json").read_text(encoding="utf-8")), {})
+
+    def test_rejected_json_modes(self):
+        for mode, expect in (("empty", ""), ("none", None)):
+            with tempfile.TemporaryDirectory() as t:
+                inp, out = Path(t) / "in", Path(t) / "out"
+                make(inp, ["c1/bad.pdf"])
+                pipeline.process_input(inp, out, FakeIngestor(), FakeClassifier(), FakeExtractor(), rejected_json=mode)
+                f = out / "c1" / "bad.json"
+                self.assertEqual(f.read_text(encoding="utf-8") if f.exists() else None, expect)
 
     def test_missing_input_dir(self):
         with tempfile.TemporaryDirectory() as t:

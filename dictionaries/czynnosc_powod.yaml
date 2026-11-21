@@ -36,3 +36,7 @@ entries:
   - id: 11
     label: "Opis przedmiotu zamówienia (OPZ)"
     triggers: ["udostępnił opis przedmiotu zamówienia", "opublikował opis przedmiotu zamówienia"]
+  # official code list: uzp-data/oczekiwane-json/czynnosc_powod_id_dict.md
+  - id: 12
+    label: "Projektowane postanowienia umowy"
+    triggers: ["projektowan\\w* postanowie\\w* umowy", "wzoru umowy", "wzorze umowy"]

@@ -43,8 +43,22 @@ def process_case(case_dir, ingestor=None, classifier=None, extractor=None) -> Ca
     return CaseResult(case_dir.name, docs)
 
 
-def process_input(input_dir, output_dir, ingestor=None, classifier=None, extractor=None) -> list[CaseResult]:
-    """Walk <input>/<case>/*.pdf and write <output>/<case>/<basename>.json for accepted documents."""
+REJECTED_JSON = ("{}", "empty", "none")
+
+
+def write_rejected(path: Path, mode: str) -> None:
+    """UZP: a document that belongs to no class gets an empty .json ('{}' = valid JSON, 'empty' = 0 bytes)."""
+    if mode == "none":
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("{}\n" if mode == "{}" else "", encoding="utf-8")
+
+
+def process_input(input_dir, output_dir, ingestor=None, classifier=None, extractor=None, rejected_json="{}") -> list[CaseResult]:
+    """Walk <input>/<case>/*.pdf and write <output>/<case>/<basename>.json for every PDF: the extraction for an
+    accepted document, an empty JSON (see `rejected_json`) for a rejected or unreadable one."""
+    if rejected_json not in REJECTED_JSON:
+        raise ValueError(f"rejected_json must be one of {REJECTED_JSON}")
     input_dir, output_dir = Path(input_dir), Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     if not input_dir.is_dir():
@@ -61,5 +75,7 @@ def process_input(input_dir, output_dir, ingestor=None, classifier=None, extract
         for d in res.documents:
             if d.output_name and d.extraction is not None:
                 write_json(output_dir / res.case / d.output_name, d.extraction.data)
+            else:
+                write_rejected(output_dir / res.case / (Path(d.input_path).stem + ".json"), rejected_json)
         results.append(res)
     return results

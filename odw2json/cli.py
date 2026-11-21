@@ -14,6 +14,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--input", default="./input", help="folder with <case>/*.pdf (default ./input)")
     ap.add_argument("--output", default="./output", help="folder for <case>/<name>.json (default ./output)")
     ap.add_argument("--recipes", default=None, help="folder with <class>.yaml recipes (default ./recipes or env ODW2JSON_RECIPES)")
+    ap.add_argument("--rejected-json", choices=["{}", "empty", "none"], default=os.environ.get("ODW2JSON_REJECTED_JSON", "{}"),
+                    help="output for a document of no class: '{}' (default, UZP: empty .json), 'empty' (0 bytes) or 'none' (no file)")
     args = ap.parse_args(argv)
     if args.recipes:
         os.environ["ODW2JSON_RECIPES"] = args.recipes
@@ -25,7 +27,7 @@ def main(argv: list[str] | None = None) -> int:
     except RecipeError as e:
         print(f"recipe error: {e}", file=sys.stderr)
         return 2
-    results = process_input(args.input, args.output)
+    results = process_input(args.input, args.output, rejected_json=args.rejected_json)
     total = sum(len(r.documents) for r in results)
     written = sum(1 for r in results for d in r.documents if d.output_name)
     print(f"{len(results)} cases, {total} pdfs, {written} json written, {total - written} rejected/failed")
