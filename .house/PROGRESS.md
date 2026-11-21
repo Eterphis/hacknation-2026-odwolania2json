@@ -13,3 +13,4 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - 2026-11-21 judge: przegląd T001 (szkielet + CLI) — VERDICT: CHANGES; kontrakt I/O, schematy i writer OK, ale stub klasyfikatora daje schemat pełnomocnictwa dla 60/60 odwołań i 3 przelewów (stubs.py:37,40), a brak zależności (pdfplumber) kończy się pustym output/ z kodem 0 (pipeline.py:27); reports/review-T001.md
 - 2026-11-21 · coder · T003: ingest PDF -> strony ze słowami i ramkami, OCR RapidOCR (modele w paczce, polskie znaki OK) tylko dla stron bez warstwy tekstu; skan szablonu ~50 s, check GREEN · .house/reports/T003.md
 - T007 (web UI: wgrywanie PDF, klasa+wynik, JSON, tabela dowodów, ZIP) gotowe do przeglądu, check GREEN (AC-3 ręcznie).
+- T011 (web UI w tożsamości Cold Trace / Eterphis: noc/dzień, lockup, własne fonty offline, tabela dowodów) gotowe do przeglądu, check GREEN (AC-4 ręcznie).

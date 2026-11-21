@@ -1,9 +1,9 @@
 ---
 id: T011
 title: Restyle the web prototype in the Cold Trace visual identity (Eterphis)
-status: todo
-owner: null
-branch: null
+status: review
+owner: coder
+branch: task/T011-ui-cold-trace
 depends_on: [T007]
 capabilities: [frontend]
 acceptance:

@@ -75,3 +75,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** decyzja człowieka; odciąża limit 3 równoległych agentów tutaj, a jedna bramka scalania na jednej maszynie zachowuje zamrożone kryteria i spójny main.
 - **Kto:** człowiek
 - **Data:** 2026-11-21 16:00
+
+## D-012 UI w tożsamości Cold Trace (Eterphis), T011 na Sonnecie
+- **Decyzja:** Interfejs webowy (T011) nosi system wizualny właściciela Cold Trace według artefaktu https://claude.ai/artifact/WchMUpvmWZxesNduioFZ2o. Lokalna kopia referencyjna zestawu leży w `design/cold-trace/` (tylko do odczytu), a aplikacja serwuje własną kopię z `web/static/coldtrace/`: grit z lokalnych PNG, fonty Anybody i Martian Mono (SIL OFL) hostowane lokalnie, więc działa offline / on-premise. Noc domyślnie, przełącznik Daylight. API i trasy bez zmian. Zadanie wykonał coder na Sonnecie (prośba człowieka). Do `house review` na Windows potrzebny jest prefiks PATH z pakietem winget Claude Code oraz poprawka `house/houselib/review.py` (taskkill zamiast `os.killpg`).
+- **Dlaczego:** decyzja człowieka; demo i zrzuty ekranu widzi jury, a przejrzystość ekstrakcji (tabela dowodów) jest oceniana. Zrzuty w `docs/screenshots/` pokazują dowody z makiety (silnik to jeszcze stub T001) — do powtórzenia po T004.
+- **Kto:** człowiek + coordinator
+- **Data:** 2026-11-21 16:30
