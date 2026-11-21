@@ -43,33 +43,33 @@
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": "C:\\Users\\jasiu\\workspace\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n...........................................................przyklad_41: done\nprzyklad_41: done\n..........every PDF failed; check the log above (dependencies installed? pip install -r requirements.txt)\n.........................warning: skipping unreadable pred C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpqubdza7o\\pred\\przyklad_01\\bad.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n................................C:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n........................................\n----------------------------------------------------------------------\nRan 166 tests in 50.786s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-21T18:54:14+01:00",
-      "commit": "d702731f06a85e6a62cafe235b1377b401a3ff47"
+      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 25, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpiob9lu2g\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 25, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 209 tests in 51.922s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T19:16:41+01:00",
+      "commit": "adca1ff6a46e049bd890c0eb33d833a2f618fa02"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
-      "output_tail": "copied 186 pdfs to .acc\\input\n61 cases, 186 pdfs, 181 json written, 5 rejected/failed\nok: 181 files",
-      "ran_at": "2026-11-21T18:55:08+01:00",
-      "commit": "d702731f06a85e6a62cafe235b1377b401a3ff47"
+      "output_tail": "copied 186 pdfs to .acc\\input\nINFO profile ocr, 4 worker(s)\n61 cases, 186 pdfs, 181 json written, 5 rejected/failed\nok: 181 files",
+      "ran_at": "2026-11-21T19:17:02+01:00",
+      "commit": "adca1ff6a46e049bd890c0eb33d833a2f618fa02"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T18:55:08+01:00",
-      "commit": "d702731f06a85e6a62cafe235b1377b401a3ff47"
+      "ran_at": "2026-11-21T19:17:03+01:00",
+      "commit": "adca1ff6a46e049bd890c0eb33d833a2f618fa02"
     },
     "AC-4": {
       "id": "AC-4",
       "passes": true,
       "exit": 0,
       "output_tail": "3 recipes valid",
-      "ran_at": "2026-11-21T18:55:09+01:00",
-      "commit": "d702731f06a85e6a62cafe235b1377b401a3ff47"
+      "ran_at": "2026-11-21T19:17:03+01:00",
+      "commit": "adca1ff6a46e049bd890c0eb33d833a2f618fa02"
     }
   }
 }

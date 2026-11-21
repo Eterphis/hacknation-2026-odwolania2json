@@ -22,3 +22,4 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - 2026-11-21 · coder · T014 gotowe: skany 0,73 -> 0,96 F1 (odwołania 0,99, przelewy 0,94), 41–60: 0,9986, negatywy 12/12 puste; nowe ogólne reguły silnika (sekcja per strategia, nth, słownik znaków diakrytycznych) · reports/T014.md
 - T009: krok sprawy (relacje w recipes/case.yaml): sprawdzenia spójności, naprawy OCR-confusable z walidacją sum; 41-60 bez zmian 0,9986, skany 0,9639 (do przeglądu)
 - T012 gotowe do przeglądu: profile text/ocr, --workers (domyślnie 4, wynik identyczny), eval.bench z bramką; F1 heldout 0,944, skany 0,734, skany na zimno 4,5 dok./min przy 2,3 GB RAM.
+- 2026-11-21 · coder · T016 gotowe do przeglądu: lokalny czytelnik LLM (Qwen3-1,7B, Apache-2.0, 1,8 GB) z ugruntowaniem cytatów i bez nadpisywania; profil llm opt-in: skany 0,9639 -> 0,9707 (PESEL-e), heldout bez zmian, 5,1 GB RAM, ~2 min na wywołanie na tym laptopie · reports/T016.md
