@@ -1,7 +1,7 @@
 ---
 id: T004
 title: Generic recipe engine and classifier with reject (zero class-specific code)
-status: review
+status: blocked
 owner: teammate-session
 branch: task/T004-recipe-engine
 depends_on: [T001, T003]

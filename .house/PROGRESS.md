@@ -15,3 +15,4 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - T007 (web UI: wgrywanie PDF, klasa+wynik, JSON, tabela dowodów, ZIP) gotowe do przeglądu, check GREEN (AC-3 ręcznie).
 - T011 (web UI w tożsamości Cold Trace / Eterphis: noc/dzień, lockup, własne fonty offline, tabela dowodów) gotowe do przeglądu, check GREEN (AC-4 ręcznie).
 - 2026-11-21 · coordinator · T010 scalone (zaszumiony zbiór skanów, poprawka domyślnej ścieżki danych); T004 po poprawkach z review GREEN, F1 odłożone 0,8737; fala 3 przekazana teammate'owi (.house/handoff/wave3-teammate.md)
+- 2026-11-21 13:48 T004 cofnięte po scaleniu: regresja w T011: AC-1 (exit 1)

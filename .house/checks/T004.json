@@ -43,33 +43,36 @@
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": "C:\\Users\\jasiu\\workspace\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n.....................................................every PDF failed; check the log above (dependencies installed? pip install -r requirements.txt)\n.............warning: skipping unreadable pred C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpfnf09swd\\pred\\przyklad_01\\bad.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n...............................C:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n................\n----------------------------------------------------------------------\nRan 113 tests in 43.632s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-21T13:21:29+01:00",
-      "commit": "d1514c887fb8686402fb50f37f443cc549dec231"
+      "output_tail": "C:\\Users\\jasiu\\workspace\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n.....................................................przyklad_41: done\nprzyklad_41: done\n.....every PDF failed; check the log above (dependencies installed? pip install -r requirements.txt)\n.............warning: skipping unreadable pred C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmp_i3rvvut\\pred\\przyklad_01\\bad.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n................................C:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n................\n----------------------------------------------------------------------\nRan 119 tests in 30.312s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T13:30:24+01:00",
+      "commit": "243cbe0017286a3bbcb2e8e5003d688a3bd280dd"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
       "output_tail": "copied 182 pdfs to .acc\\input\n61 cases, 182 pdfs, 181 json written, 1 rejected/failed\nok: 181 files",
-      "ran_at": "2026-11-21T13:22:12+01:00",
-      "commit": "d1514c887fb8686402fb50f37f443cc549dec231"
+      "ran_at": "2026-11-21T13:30:59+01:00",
+      "commit": "243cbe0017286a3bbcb2e8e5003d688a3bd280dd"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T13:22:12+01:00",
-      "commit": "d1514c887fb8686402fb50f37f443cc549dec231"
+      "ran_at": "2026-11-21T13:31:00+01:00",
+      "commit": "243cbe0017286a3bbcb2e8e5003d688a3bd280dd"
     },
     "AC-4": {
       "id": "AC-4",
       "passes": true,
       "exit": 0,
       "output_tail": "3 recipes valid",
-      "ran_at": "2026-11-21T13:22:13+01:00",
-      "commit": "d1514c887fb8686402fb50f37f443cc549dec231"
+      "ran_at": "2026-11-21T13:31:01+01:00",
+      "commit": "243cbe0017286a3bbcb2e8e5003d688a3bd280dd"
     }
+  },
+  "reverted": {
+    "base": "5d2fdd4745763449334423a657ce37739fa6acab"
   }
 }
