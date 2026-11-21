@@ -27,31 +27,23 @@ def skeleton(doc_class: str) -> Any:
     return copy.deepcopy(_cache[doc_class])
 
 
-def fill(value: Any, template: Any) -> Any:
+def _fill(value: Any, template: Any) -> Any:
     if isinstance(template, dict):
         src = value if isinstance(value, dict) else {}
-        return {k: fill(src.get(k), t) for k, t in template.items()}
+        return {k: _fill(src.get(k), t) for k, t in template.items()}
     if isinstance(template, list):
         item_t = template[0]
         if isinstance(value, dict):  # a single entity given as an object
             value = [value]
         items = value if isinstance(value, list) and value else [None]
-        return [fill(i, item_t) for i in items]
+        return [_fill(i, item_t) for i in items]
     return None if isinstance(value, (dict, list)) else value
-
-
-_fill = fill  # old name
 
 
 def complete(data: dict[str, Any], doc_class: str) -> dict[str, Any]:
     """Return data reshaped to the class schema: missing keys -> null, unknown keys dropped,
-    lists keep every item (completed) and get one all-null item when empty.
-    A class without schemas/<class>.json (defined by a recipe's output_schema) keeps data as the engine completed it."""
-    try:
-        skel = skeleton(doc_class)
-    except KeyError:
-        return data
-    return fill(data, skel)
+    lists keep every item (completed) and get one all-null item when empty."""
+    return _fill(data, skeleton(doc_class))
 
 
 def write_json(path: str | Path, data: Any) -> Path:

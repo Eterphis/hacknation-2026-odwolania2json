@@ -16,8 +16,6 @@ from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from odw2json import factory
-from odw2json.engine import RecipeError
 from odw2json.pipeline import process_case
 from odw2json.write import classes
 
@@ -102,10 +100,6 @@ async def process(files: list[UploadFile] = File(...), case: str = Form("sprawa"
             safe = _unique(safe, taken)
             (case_dir / safe).write_bytes(raw)
             originals[safe] = f.filename and _safe_name(f.filename) or safe
-        try:
-            factory.default_classifier()  # eager recipe load: show one clear message instead of an error per document
-        except RecipeError as e:
-            raise HTTPException(500, f"Błąd przepisu (recipes): {e}") from None
         res = process_case(case_dir)
         return {
             "case": res.case,
