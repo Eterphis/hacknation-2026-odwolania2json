@@ -93,3 +93,26 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** test ma prawdziwe, częściowo skanowane dokumenty; zawyżona liczba nie może kierować decyzjami ani trafić do pitchu jako „wynik na danych niewidzianych”.
 - **Kto:** człowiek (zgoda) + coordinator (zapis)
 - **Data:** 2026-11-21 18:00
+
+## D-015 Lokalny LLM dozwolony i punktowany; zewnętrzne API odpada
+- **Decyzja:** Zgodnie z mentorami UZP model uruchamiany lokalnie na 16 GB RAM (CPU) daje maksimum punktów w kategorii „moc modelu”; LLM po zewnętrznym API odkładamy całkowicie (bez kluczy, bez wysyłania danych). Ścieżka bez LLM (D-005) zostaje podstawą i musi działać sama; lokalny model (rodzina Qwen3 / Bielik / Basal, tylko Apache-2.0 lub MIT, runtime llama.cpp MIT) wchodzi jako opcjonalny „czytelnik” pól trudnych przy zmienionym układzie (role stron: nadawca/odbiorca), według wzorca z `qa-system-akygabattery` spec-extraction: model przepisuje tekst tak, jak jest wydrukowany, kod normalizuje, każda wartość jest ugruntowana (cytat musi istnieć w tekście strony), a wartość z recepty o pełnej pewności nie jest nadpisywana. Mniejszy model = więcej punktów (README: 1–20 pkt, im mocniejszy, tym mniej).
+- **Dlaczego:** test ma zmieniony układ dokumentów, a mentorzy wskazali ustalenie nadawcy/odbiorcy jako najtrudniejsze; reguły na stałych etykietach tego nie uogólnią. Lokalny mały model + ugruntowanie łączy F1 z transparentnością.
+- **Kto:** człowiek (odpowiedź mentorów) + coordinator
+- **Data:** 2026-11-21 19:00
+
+## D-016 Kontrakt wyjścia według zaktualizowanego README UZP
+- **Decyzja:** (1) Dokument odrzucony dostaje plik `<nazwa>.json` z pustym obiektem `{}` zamiast braku pliku (README i `dane/negatywne/readme.md`: „zwrócić pusty plik .json”); tryb przełączalny w konfiguracji (`output.rejected: empty_object | empty_file | none`), dopóki Q-004 pyt. 1 nie rozstrzygnie. (2) Klasyfikacja wyłącznie po treści (nazwy plików nic nie znaczą; `przelew.pdf` zamiast `potwierdzenie_przelewu.pdf`). (3) `czynnosc_powod_id` 1–12 według `oczekiwane-json/czynnosc_powod_id_dict.md` (12 = „Projektowane postanowienia umowy”). (4) Imiona i nazwiska pełnomocnika i mocodawcy w mianowniku.
+- **Dlaczego:** ocena = podmiana `input` i porównanie `output` z CLI; brak pliku dla negatywu może być liczony jako błąd.
+- **Kto:** coordinator (domyślne założenie do potwierdzenia w Q-004)
+- **Data:** 2026-11-21 19:00
+
+## D-017 Dane UZP można upubliczniać; nowe zbiory ewaluacyjne
+- **Decyzja:** Dane treningowe i testowe UZP są generowane i wolno je upublicznić: małe próbki mogą trafić do `tests/fixtures/`, a cały zbiór zostaje klonem w `uzp-data/` (rozmiar). Ewaluacja od teraz na czterech zbiorach: syntetyczne 01–40 (strojenie), 41–60 (odłożone, częściowo skażone wg D-014), `dane/skany` (30 skanów ze złotymi JSON — główna niezależna miara, bliska prawdziwemu testowi) i `dane/negatywne` (12 dokumentów do odrzucenia; miara: odsetek poprawnie odrzuconych).
+- **Dlaczego:** prawdziwy test ma zmieniony układ i skany; syntetyczne sprawy przestały być dobrą miarą uogólniania.
+- **Kto:** człowiek (odpowiedź mentorów) + coordinator
+- **Data:** 2026-11-21 19:00
+
+## D-018 Właściciel przejmuje implementację; teammate'om tylko handoffy na żądanie
+- **Decyzja:** Prace implementacyjne znowu idą w sesji właściciela (koordynator deleguje do coderów tutaj); handoffy dla teammate'ów piszemy tylko, gdy właściciel o to poprosi. D-013 przestaje obowiązywać.
+- **Kto:** człowiek
+- **Data:** 2026-11-21 19:00
