@@ -93,7 +93,7 @@
         "below": {"type": "boolean", "description": "after_label: also look in the line below in the same column (default true)."},
         "start": {"type": "string"},
         "end": {"type": "string"},
-        "dictionary": {"type": "string", "description": "lookup: dictionaries/<name>.yaml with entries {id, label, triggers}."},
+        "dictionary": {"type": "string", "description": "lookup: dictionaries/<name>.yaml with entries {id, label, triggers}; triggers are regular expressions (a space matches optional whitespace), so escape literal punctuation."},
         "return": {"type": "string", "description": "lookup: entry key to return (id, label, ...)."},
         "if_set": {"type": "string", "description": "derived: sibling path; value when it is non-null, else 'else'."},
         "else": {}
