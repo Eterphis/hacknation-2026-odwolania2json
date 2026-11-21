@@ -39,3 +39,6 @@ CLAUDE.md
 
 # UZP challenge data clone (licence unclear, never committed): C:/Users/jasiu/workspace/uzp-data
 uzp-data/
+
+# acceptance-check scratch dirs
+.acc/

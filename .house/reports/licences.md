@@ -62,6 +62,10 @@ Not a legal opinion; verify with the UZP legal team before the pitch.
 | Qwen2.5-3B-Instruct | "qwen-research" (HF) | https://huggingface.co/Qwen/Qwen2.5-3B-Instruct | RISK (Qwen Research licence) |
 | Qwen3 small (0.6B-4B) | "All our open-weight models are licensed under Apache 2.0" (QwenLM/Qwen3 README). Qwen3-1.7B card did not expose a licence field to the fetcher | https://github.com/QwenLM/Qwen3 ; https://huggingface.co/Qwen/Qwen3-1.7B | OK (confirm on each card) |
 | Mistral-7B-Instruct-v0.3 | Apache-2.0 (HF) | https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3 | OK (7B, too slow on CPU) |
+| Basal-mini: basal-1.5-mini (1.5B, Oct 2026) and basal-2.0-mini (1.5B, 2026-10-12) by Remek Kinas; Bielik-1.5B base; typed-decision classifier (probabilities per option, no text generation) | Apache-2.0 (HF card YAML and HF API cardData); base Bielik-1.5B-v3.0-Instruct Apache-2.0 | https://huggingface.co/Remek/basal-1.5-mini ; https://huggingface.co/Remek/basal-2.0-mini | OK on card (self-declared; not legal review). Quality numbers are author-reported. See reports/model-basal.md |
+| Basal-pico: basal-omni-pico (0.75B, 2026-10-22); base Qwen3.5-0.8B-Base; distilled from basal-omni-1.0-ultra (Gemma 4 31B teacher) | Apache-2.0 (HF card and HF API cardData); base Qwen3.5-0.8B-Base Apache-2.0 (HF API) | https://huggingface.co/Remek/basal-omni-pico | OK on card; RISK to check: Gemma-4 teacher licence not verified. See reports/model-basal.md |
+| basal inference engine (rkinas/basal, needed to run typed decisions; pins transformers==5.17.0, torch>=2.11) | Apache-2.0 (pyproject.toml at v1.5.0; LICENSE text read) | https://github.com/rkinas/basal | OK (Python 3.13 wheels not verified) |
+| basal-omni-1.0 / 1.1 / 2.0-mini-preview (Gemma 4 base: mini E4B, max 12B, ultra 31B) | HF cardData says apache-2.0, but base is google/gemma-4-*; Gemma licence not checked | https://huggingface.co/Remek/basal-omni-1.0-ultra | RISK until Gemma 4 licence is checked. Out of scope for CPU use |
 
 ## Questions asked in the brief
 

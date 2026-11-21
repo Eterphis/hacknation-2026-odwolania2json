@@ -50,8 +50,8 @@ scoring:            # build: rubryka; optimize: metryka + sprawdzarka — z regu
   stages: "Stage 1 preselection: 100% F1 on the hidden test set (>= 10 real cases). Stage 2 final: at most 3 teams (task regulamin §2.4b, overrides the event's top 5), 5 min pitch + 5 min Q&A; jury picks one winner (20 000 PLN gross)."
   metric: extraction F1 (max)   # F1 granularity (per field? exact match? normalisation? list matching?) NOT defined in the brief; see Q-002
   direction: max
-  local_scorer: null   # proposed: `python eval/score.py --pred output/ --gold <cases>/` printing `score: <F1>`, field-level micro F1 over leaf values with light normalisation; first task, revised once UZP defines F1
-  scorer_files: []
+  local_scorer: "python -m eval.score --pred <output dir> --gold C:/Users/jasiu/workspace/uzp-data/dane --cases 41-60   # T002; last line `score: <exact F1>`; dev = cases 01-40, held-out = 41-60; noisy proxy = uzp-data-noisy (T010)"
+  scorer_files: [eval/score.py]   # protected from workers once T002 is merged
   leaderboard: none    # single hidden test set, no public leaderboard
 
 timeline:           # z regulaminu
@@ -86,7 +86,9 @@ deliverables:       # co trzeba oddać — researcher sprawdza w regulaminie; ni
   ai_apis_allowed: "open-source models only (brief s.5); closed commercial APIs not allowed"
   external_data_allowed: null
   cloud_deploy_allowed: null
-  format: "Python 3.13+ repo on GitHub: requirements.txt (pip), CLI/start.bat; reads ./input/<case>/*.pdf, writes ./output/<case>/<same basename>.json per document, JSON shape per oczekiwane-json/{odwolanie,pelnomocnictwo,przelew}.json; optional own F1 test results (we ship eval/ and its report)"
+  hardware: "target and demo machine: 16 GB RAM, NO GPU (human, 2026-11-21). Everything incl. OCR and any optional model must run within that on CPU."
+  hosting: "optional at the end: free public demo on AWS free tier or Vercel (human). Coordinator note: free AWS instances have ~1 GB RAM and Vercel Python functions have size/time limits, so the hosted demo runs the light no-LLM mode (or a static UI with precomputed results); the full pipeline is shown locally / via docker compose."
+  format:"Python 3.13+ repo on GitHub: requirements.txt (pip), CLI/start.bat; reads ./input/<case>/*.pdf, writes ./output/<case>/<same basename>.json per document, JSON shape per oczekiwane-json/{odwolanie,pelnomocnictwo,przelew}.json; optional own F1 test results (we ship eval/ and its report)"
 
 mode: copilot       # copilot (pytaj o trudne decyzje) | autopilot (decyduj sam, pytaj tylko w końcówce)
 

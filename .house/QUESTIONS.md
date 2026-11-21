@@ -16,7 +16,7 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
 - **Odpowiedź:** —
 ```
 
-## Q-001 [open] Zatwierdzenie proponowanych wartości ze spec.yaml
+## Q-001 [answered 2026-11-21] Zatwierdzenie proponowanych wartości ze spec.yaml
 - **Kontekst:** Intake ODWOŁANIA2JSON wypełnił `spec.yaml` z decku UZP i postów na Discordzie. Propozycje coordinatora (do zatwierdzenia): (1) mapowanie poziomów rubryki: F1 → 1 = <0,5, 3 ≈ 0,75, 5 ≥ 0,9 na naszych odłożonych zestawach; elastyczność → 1 = typy zaszyte w kodzie, 3 = nowe pole przez konfigurację, 5 = nowy typ dokumentu wyłącznie konfiguracją + dowód dla każdego pola (strona/fragment/pewność) w UI; (2) lokalna sprawdzarka `python eval/score.py --pred output/ --gold <sprawy>/` drukująca `score: <F1>`, budowana jako pierwsze zadanie; (3) kamienie: sob 18:00 golden path (komenda → JSON-y + F1 na 60 sprawach treningowych, świeży klon na Pythonie 3.13 bez GPU), nd 00:00 runda sędziego, nd 09:30 zamrożenie funkcji, nd 10:30 zgłoszenie na Hacktribe; (4) tryb `copilot`, maks. 3 agentów równolegle.
 - **Opcje:** A) zatwierdzam wszystko B) zatwierdzam z poprawkami (napisz które)
 - **Rekomendacja:** A — wartości wynikają wprost z decku; po publikacji pełnej treści o 11:00 i tak przejdą korektę.
@@ -24,7 +24,7 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
 - **Poziom:** krytyczny
 - **Termin:** 2026-11-21 12:00
 - **Domyślnie:** A
-- **Odpowiedź:** —
+- **Odpowiedź:** A (człowiek, 2026-11-21 ~14:00): zatwierdzone; ewentualne poprawki później. (Uwaga: finał to 3 kryteria 50/30/20 wg PDF, D-006.)
 
 ## Q-002 [open] Pytania do UZP (stoisko / Discord) przed zamrożeniem architektury
 - **Kontekst:** Pełna treść zadania jest już w README repo UZP (github.com/Urzad-Zamowien-Publicznych/hacknation-2026). Regulaminu zadania nadal nie ma (karta na hacknation.pl ma puste pola zasad). Szczegóły i źródła: `.house/reports/rules-check.md`.
@@ -52,7 +52,7 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
 - **Poziom:** zawsze człowiek
 - **Odpowiedź:** —
 
-## Q-003 [open] Wybór koncepcji rozwiązania (ideacja 1)
+## Q-003 [answered 2026-11-21] Wybór koncepcji rozwiązania (ideacja 1)
 - **Kontekst:** Ideator dał 5 koncepcji (`.house/reports/ideation-1.md`), researcherzy karty prior-art (`reports/prior-art-I-00N.md`, licencje: `reports/licences.md`), sędzia ocenił je rubryką 50/30/20 (w nawiasie wariant regulaminu 50/50; `reports/ideation-1-judge.md`). Ranking:
   1. **I-001 Recepty** — 3,80 [4,00]. Klasa dokumentu = jeden plik YAML (klasyfikacja, sekcje, pola, normalizatory), jeden silnik dla wszystkich klas. Najbliższe: invoice2data (szablony YAML, MIT). Obrona: polskie normalizatory prawne, dowód dla każdego pola, nowa klasa dodana na żywo bez kodu. Najłatwiejsze do zrobienia, ale „to już istnieje”.
   2. **I-005 Dowód na stronie** — 3,80 [4,00]. Skany i PDF-y cyfrowe → słowa z ramkami; UI rysuje ramkę przy każdym polu, poprawka kliknięciem zapisuje się do konfiguracji. Najbliższe: Docling (MIT), Azure Document Intelligence, Rossum, Label Studio. Obrona: korekta zapisywana do otwartego YAML. Ryzyko: pracochłonne.
@@ -65,4 +65,4 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
 - **Poziom:** krytyczny
 - **Termin:** 2026-11-21 14:30
 - **Domyślnie:** A
-- **Odpowiedź:** —
+- **Odpowiedź:** A (człowiek, 2026-11-21 ~13:45). Dodatkowo: sprzęt docelowy 16 GB RAM bez GPU; na koniec ewentualnie darmowy hosting (AWS free tier / Vercel); rozważyć modele Basal-mini/pico jako klasyfikator („system one”, prawdopodobnie z fine-tuningiem); research OCR robi sesja teammate'a. → D-007, D-008.

@@ -45,3 +45,27 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** `UZP - Pełna treść zadania konkursowego.pdf` i `UZP - Regulamin zadania konkursowego.pdf` (Downloads) różnią się od README; regulamin zadania ma pierwszeństwo przed regulaminem wydarzenia. PDF z treścią dodaje też §9: UZP szuka podstawy uniwersalnego narzędzia PDF → dane.
 - **Kto:** coordinator
 - **Data:** 2026-11-21 12:10
+
+## D-007 Koncepcja: silnik recept YAML + model „słowa z ramkami” + spójność sprawy, LLM jako dodatek
+- **Decyzja:** Wariant A z Q-003: chudy, konfigurowalny silnik recept (I-001), na wspólnym modelu stron „słowa + ramki” dla PDF-ów cyfrowych i skanów (I-005), z lekkimi kontrolami spójności między dokumentami sprawy (I-002: mocodawca = odwołujący, numer sprawy w tytule przelewu) i dowodem dla każdego pola w UI. Otwarty LLM (I-004) tylko jako dodatek wyłączony domyślnie. Kolejność cięcia: klik-korekta → LLM → ramki na obrazie strony → edytor w przeglądarce.
+- **Dlaczego:** najwyższy szacowany wynik sędziego (4,3 przy 50/30/20, 4,5 przy 50/50), pewna ścieżka F1 bez sieci (D-005), elastyczność przez konfigurację i przejrzystość premiowane przez UZP.
+- **Kto:** człowiek
+- **Data:** 2026-11-21 13:45
+
+## D-008 Sprzęt 16 GB RAM bez GPU; OCR z sesji teammate'a; hosting opcjonalny na końcu
+- **Decyzja:** Wszystko (OCR, opcjonalne modele) musi działać na CPU w 16 GB RAM. Wybór silnika OCR przychodzi z researchu w sesji teammate'a; u nas OCR jest wymiennym adapterem za interfejsem „strona → słowa z ramkami”, z RapidOCR (Apache-2.0, pip) jako tymczasowym domyślnym do testów. Darmowy hosting (AWS free tier / Vercel) dopiero po zamrożeniu funkcji, w lekkim trybie bez LLM. Modele Basal-mini/pico sprawdza researcher (`reports/model-basal.md`) jako kandydat na klasyfikator.
+- **Dlaczego:** decyzja człowieka; darmowe instancje mają ok. 1 GB RAM, więc pełny pipeline pokazujemy lokalnie / przez docker compose.
+- **Kto:** człowiek + coordinator
+- **Data:** 2026-11-21 13:45
+
+## D-009 Basal tylko jako opcjonalny klasyfikator, po porównaniu z TF-IDF
+- **Decyzja:** Proponowane wartości ze spec.yaml zatwierdzone (Q-001 = A). Rodzina Basal (Remek/basal-*, Apache-2.0, 0,75–1,6 mld parametrów) wchodzi najwyżej jako opcjonalny backend klasyfikacji z klasą „odrzuć”, za tym samym interfejsem co klasyfikator regułowy, i tylko jeśli na naszej ewaluacji pobije tani baseline TF-IDF + regresja logistyczna. Nie robimy fine-tuningu (16 GB CPU, mało czasu); Basal nie wyciąga pól.
+- **Dlaczego:** `reports/model-basal.md`: licencja czysta, mieści się na CPU, ale jakość podana tylko przez autora, a biblioteki (transformers 5.x, torch 2.11) nie są sprawdzone na Pythonie 3.13; klasyfikacja 3 typów + odrzucenie jest prosta dla reguł i TF-IDF.
+- **Kto:** coordinator (sugestia człowieka do rozważenia)
+- **Data:** 2026-11-21 14:05
+
+## D-010 Plan: 10 zadań w 4 falach, kontrakt danych od coordinatora
+- **Decyzja:** Kontrakt `odw2json/model.py` (Word/Page/Document, Evidence, Classification, Extraction, CaseResult, protokoły Ingestor/Classifier/Extractor) pisze coordinator na main, żeby fala 1 ruszyła równolegle. Fale: (1) T001 szkielet + CLI + zapis kompletnych JSON-ów, T002 sprawdzarka F1 (dokładne dopasowanie jako `score`, znormalizowane obok; sprawy 01–40 do strojenia, 41–60 odłożone), T003 wczytywanie słów z ramkami + OCR; (2) T004 silnik recept z odrzucaniem (zero nazw klas w `odw2json/engine`), T007 UI, T010 zaszumiony zbiór skanów; (3) T005 recepty przelew + pełnomocnictwo (F1 ≥ 0,95 / 0,90 na 41–60), T006 recepta odwołania (≥ 0,85), T008 Docker Compose + dokumentacja + CI; (4) T009 spójność sprawy (całość ≥ 0,90). Pomocnicze sprawdzarki akceptacji w `.house/accept/` (poza zasięgiem workerów). Wspólny venv Pythona 3.13: `C:/Users/jasiu/workspace/.venv`. Dodatki (druga klasa tylko w YAML, ramki na obrazie strony, LLM/Basal) planujemy po rundzie sędziego o 00:00.
+- **Dlaczego:** kamień 18:00 wymaga golden path (T001–T006); progi F1 na odłożonych sprawach pilnują uogólniania, a grep po `odw2json/engine` dowodzi „nowa klasa = tylko konfiguracja” (30% finału).
+- **Kto:** coordinator
+- **Data:** 2026-11-21 14:40
