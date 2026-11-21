@@ -1,7 +1,7 @@
 ---
 id: T002
 title: Local F1 scorer with dev/held-out split
-status: review
+status: done
 owner: coder
 branch: task/T002-local-scorer
 depends_on: []
