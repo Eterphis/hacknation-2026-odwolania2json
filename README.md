@@ -104,4 +104,4 @@ python -m eval.bench --profiles ocr --sets heldout,skany,negatywne --workers 1,4
 
 ## Licencja i dane
 Dane konkursowe UZP są generowane i publiczne, ale nie są częścią repozytorium (rozmiar). Pobiera się je osobno do
-`uzp-data/`, które jest wykluczone z gita. Informacje dla zespołu: [TEAM.md](TEAM.md).
+`uzp-data/`, które jest wykluczone z gita.

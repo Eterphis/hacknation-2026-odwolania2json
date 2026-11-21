@@ -5,8 +5,9 @@ from pathlib import Path
 
 from odw2json.ingest import PdfIngestor, get_backend, register_backend
 from odw2json.ingest.pdf import lines_to_words
+from tests.uzp_data import UZP
 
-DATA = Path("C:/Users/jasiu/workspace/uzp-data")
+DATA = UZP
 DIGITAL = DATA / "dane" / "przyklad_07" / "odwolanie.pdf"
 SCAN = DATA / "szablon-aplikacja" / "input" / "case1" / "przyklad odwolanie.pdf"
 

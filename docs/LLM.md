@@ -56,5 +56,5 @@ pełnomocników (lista osób), numer BZP, numer postępowania, nazwy stron odwo�
 
 Na naszym laptopie testowym (i5-1035G1, 4 rdzenie, współdzielony z innymi zadaniami) model 1,7B daje około 12 tokenów
 promptu na sekundę, więc jedno wywołanie na 1-2 stronach to 1-3 minuty. Dlatego wywołań jest mało (kilka na 60
-dokumentów) i profil `llm` nie jest domyślny. Aktualna tabela F1/czas/RAM dla `ocr` kontra `llm`: `.house/reports/T016-bench.md`
-i `python -m eval.bench --profiles ocr,llm ...` (opis w [PROFILES.md](PROFILES.md)).
+dokumentów) i profil `llm` nie jest domyślny. Aktualną tabelę F1/czas/RAM dla `ocr` kontra `llm` daje
+`python -m eval.bench --profiles ocr,llm ...` (opis w [PROFILES.md](PROFILES.md)).

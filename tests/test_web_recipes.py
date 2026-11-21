@@ -15,9 +15,10 @@ from odw2json.engine.recipes import check_recipe_text
 from odw2json.pipeline import process_case
 from web import app as webapp
 from web import recipes_api
+from tests.uzp_data import UZP
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = Path("C:/Users/jasiu/workspace/uzp-data/dane/przyklad_07")
+DATA = UZP / "dane" / "przyklad_07"
 
 WEZWANIE = """class: wezwanie
 description: Wezwanie do zapłaty

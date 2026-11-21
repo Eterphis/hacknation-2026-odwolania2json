@@ -28,7 +28,7 @@ reader: null              # miejsce na lokalny model (T016)
 
 `ingest.preprocess: none | levels` (domyślnie `levels`, zmienna `ODW2JSON_PREPROCESS` ma pierwszeństwo) czyści obraz strony
 przed OCR (rozjaśnia przebijający tekst z drugiej strony skanu); strony z warstwą tekstową nie są dotykane, a ustawienie
-wchodzi do klucza cache OCR.  Pomiary: `.house/reports/T019.md`.
+wchodzi do klucza cache OCR.  Pomiar na 30 skanach UZP (pusty cache OCR): F1 0,9639 -> 0,9673, czas OCR +23%, mediana bez zmian.
 
 Nieznany klucz albo nieznany `reader` kończy się błędem (`profile error`, kod wyjścia 2), a nie cichym użyciem innego
 profilu.

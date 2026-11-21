@@ -8,8 +8,9 @@ from fastapi.testclient import TestClient
 
 from odw2json.model import CaseResult, Check, Classification, DocumentResult, Evidence, Extraction
 from web import app as webapp
+from tests.uzp_data import UZP
 
-DATA = Path("C:/Users/jasiu/workspace/uzp-data/dane/przyklad_07")
+DATA = UZP / "dane" / "przyklad_07"
 
 
 def fake_case(case_dir):

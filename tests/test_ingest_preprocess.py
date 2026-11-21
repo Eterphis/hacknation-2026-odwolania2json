@@ -7,8 +7,9 @@ from PIL import Image
 
 from odw2json.ingest import PdfIngestor
 from odw2json.ingest.preprocess import PREPROCESSORS, merge_lines, needs_retry, preprocess_image, shaky_bands
+from tests.uzp_data import UZP
 
-SCAN = Path("C:/Users/jasiu/workspace/uzp-data/dane/skany/odwolania/0005/0005.pdf")
+SCAN = UZP / "dane" / "skany" / "odwolania" / "0005" / "0005.pdf"
 
 
 class PreprocessImageTests(unittest.TestCase):

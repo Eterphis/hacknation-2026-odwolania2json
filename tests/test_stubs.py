@@ -3,6 +3,7 @@ from pathlib import Path
 
 from odw2json import stubs
 from odw2json.model import Document, Page
+from tests.uzp_data import UZP
 
 
 def doc(text):
@@ -52,7 +53,7 @@ class TieAndPriorityTests(unittest.TestCase):
         self.assertEqual(stubs.KeywordClassifier().classify(doc(text)).doc_class, "przelew")
 
 
-DATA = Path("C:/Users/jasiu/workspace/uzp-data/dane")
+DATA = UZP / "dane"
 
 
 @unittest.skipUnless(DATA.is_dir(), "UZP training data not available")
