@@ -1,0 +1,38 @@
+# czynnosc_powod_id -> czynnosc_opis (fixed 1:1 code list, ids 1-11 seen in training; id 12 unknown).
+# triggers: phrases describing the contested act (matched diacritics- and case-insensitive, a space matches
+# any whitespace). The trigger occurring FIRST in the searched scope wins, so put negated forms
+# ("nie odrzucil") in their own entry: they start earlier than the plain verb and win the tie.
+entries:
+  - id: 1
+    label: "Decyzja o odrzuceniu oferty"
+    triggers: ["poinformował o odrzuceniu oferty", "odrzucił ofertę", "odrzuceniu oferty"]
+  - id: 2
+    label: "Ogłoszenie wyboru oferty"
+    triggers: ["ogłosił wybór oferty", "wyboru oferty najkorzystniejszej", "wyborze oferty najkorzystniejszej", "wybrał ofertę"]
+  - id: 3
+    label: "Decyzja o wykluczeniu wykonawcy"
+    triggers: ["poinformował o wykluczeniu", "wykluczył z postępowania", "wykluczeniu odwołującego"]
+  - id: 4
+    label: "Publikacja specyfikacji warunków zamówienia (SWZ)"
+    triggers: ["opublikował specyfikację warunków zamówienia", "opublikował swz", "publikacji specyfikacji warunków zamówienia"]
+  - id: 5
+    label: "Modyfikacja treści SWZ"
+    triggers: ["zmodyfikował treść specyfikacji", "zmodyfikował treść swz", "modyfikacji treści swz", "zmienił treść specyfikacji"]
+  - id: 6
+    label: "Odpowiedzi i wyjaśnienia do SWZ"
+    triggers: ["przekazał wykonawcom odpowiedzi", "odpowiedzi i wyjaśnienia do treści", "udzielił odpowiedzi"]
+  - id: 7
+    label: "Zaniechanie odrzucenia oferty"
+    triggers: ["nie odrzucił oferty", "zaniechał odrzucenia", "zaniechania odrzucenia"]
+  - id: 8
+    label: "Zaniechanie wykluczenia wykonawcy"
+    triggers: ["nie wykluczył", "zaniechał wykluczenia", "zaniechania wykluczenia"]
+  - id: 9
+    label: "Decyzja o unieważnieniu postępowania"
+    triggers: ["unieważni\\w*ł postępowanie", "unieważnieniu postępowania"]
+  - id: 10
+    label: "Zaniechanie unieważnienia postępowania"
+    triggers: ["zaniechał unieważnienia", "nie unieważnił", "zaniechania unieważnienia"]
+  - id: 11
+    label: "Opis przedmiotu zamówienia (OPZ)"
+    triggers: ["udostępnił opis przedmiotu zamówienia", "opublikował opis przedmiotu zamówienia"]

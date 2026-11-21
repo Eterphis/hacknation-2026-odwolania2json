@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 
 from .pipeline import process_input
@@ -11,7 +12,10 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="odw2json", description="PDF cases -> JSON (UZP contract)")
     ap.add_argument("--input", default="./input", help="folder with <case>/*.pdf (default ./input)")
     ap.add_argument("--output", default="./output", help="folder for <case>/<name>.json (default ./output)")
+    ap.add_argument("--recipes", default=None, help="folder with <class>.yaml recipes (default ./recipes or env ODW2JSON_RECIPES)")
     args = ap.parse_args(argv)
+    if args.recipes:
+        os.environ["ODW2JSON_RECIPES"] = args.recipes
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     results = process_input(args.input, args.output)
     total = sum(len(r.documents) for r in results)
