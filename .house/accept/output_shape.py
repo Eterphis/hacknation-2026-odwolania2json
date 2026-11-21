@@ -8,11 +8,12 @@ usage: output_shape.py <input_dir> <output_dir> [--expect-reject NAME ...]
 Prints "ok: N files" and exits 0, or lists problems and exits 1.
 """
 import json
+import os
 import re
 import sys
 from pathlib import Path
 
-SCHEMAS = Path("C:/Users/jasiu/workspace/uzp-data/oczekiwane-json")
+SCHEMAS = Path(os.environ.get("UZP_DATA", "C:/Users/jasiu/workspace/uzp-data")) / "oczekiwane-json"  # teammates: set UZP_DATA
 
 
 def load_commented(path: Path):

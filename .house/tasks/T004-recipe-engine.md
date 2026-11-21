@@ -2,7 +2,7 @@
 id: T004
 title: Generic recipe engine and classifier with reject (zero class-specific code)
 status: todo
-owner: null
+owner: teammate-session
 branch: null
 depends_on: [T001, T003]
 review: always

@@ -69,3 +69,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** kamień 18:00 wymaga golden path (T001–T006); progi F1 na odłożonych sprawach pilnują uogólniania, a grep po `odw2json/engine` dowodzi „nowa klasa = tylko konfiguracja” (30% finału).
 - **Kto:** coordinator
 - **Data:** 2026-11-21 14:40
+
+## D-011 T004 i T010 robi sesja teammate'a
+- **Decyzja:** T004 (silnik recept) i T010 (zaszumiony zbiór) wykonuje sesja Claude teammate'a jako worker, według `.house/handoff/T004-T010-teammate.md`: pracuje na gałęziach `task/T004-recipe-engine` i `task/T010-noisy-heldout`, pushuje je, raport w `handoff-reports/` na gałęzi. Bramka (house check, review dla T004, merge) zostaje u coordinatora na maszynie właściciela. Pomocnicze sprawdzarki czytają ścieżkę danych z `UZP_DATA`.
+- **Dlaczego:** decyzja człowieka; odciąża limit 3 równoległych agentów tutaj, a jedna bramka scalania na jednej maszynie zachowuje zamrożone kryteria i spójny main.
+- **Kto:** człowiek
+- **Data:** 2026-11-21 16:00
