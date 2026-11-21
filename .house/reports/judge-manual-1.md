@@ -271,3 +271,32 @@ Minor: the bench's `model MB` column shows 30 for `llm` in this run (1780 before
 **Verdict: PASS** under the D-024 text, recorded with `house check`. My recommendation stands: keep `llm` opt-in. On
 current main it adds 0 F1 for about 5 GB RAM and model latency, so its value now is as a grounded fallback hook for
 new classes, not as a score lever.
+
+---
+
+## T019 AC-4: page-image preprocessing before OCR (criterion refrozen as D-022, budget +40 % OCR time)
+
+Read: `.house/reports/T019.md`, `.house/reports/misses-1.md`, `checks/T019.json`. Branch `task/T019-ocr-preprocess`
+(worktree `.worktrees/T019-ocr-preprocess`, HEAD 3547f8c). Main checkout not touched; no heavy runs.
+
+| Clause | Result | Evidence |
+|---|---|---|
+| Variants measured on the 30 scans, cold cache | pass | 4 variants (none, levels always on, auto full-page, auto banded), `eval.bench --sets skany --cold`, w1 and w4, F1, wrong leaves, sum/median/p95 s, peak RSS; raw runs in the worktree `.acc/bench-{none,levels,auto,auto2,neg}/` |
+| F1 per type | pass (computed by me; the report gives only per-document deltas) | `eval/score.py --types` (sha256 matches the protected hash) on the coder's raw w4 outputs: odwołanie 0.9886 -> **0.9943**, pełnomocnictwo 0.9211 -> 0.9211, przelew 0.9444 -> 0.9444 (none -> auto banded) |
+| Chosen default and why | pass | default `auto` with a banded second pass (`test_default_is_auto`): F1 0.9639 -> 0.9673 (not lower), wrong leaves 18 -> 16, OCR time sum +23 % at w1 and w4 (<= +40 %); always-on levels rejected (0.8546), full-page auto rejected (+73-79 %). Median unchanged (4.9 -> 4.2 s w1); p95 per document rises about +80 % (dense show-through pages trigger the band pass), and the report says so. Negatives 100 % reject. Peak RSS 696-2270 MB, not higher than baseline in practice. |
+| Rows 1-4 and 18 with OCR line before/after | pass | rows 1-4 (odw 0005): recovered at OCR level, before `nr referencyjny:` + `Z e ien` / `1a n z tf y:`, after `ZP/12/2026, ogłoszenie o zamówieniu nr 2026/BZP 00879135/03 ...` and the OPZ line; 2 of 4 leaves now filled, the other 2 are named as a recipe matter. Row 18 (prz 0008): not recovered, with the variants tried and the best reading `Maknowsku` |
+
+**Spot checks (mine, own cache `ODW2JSON_OCR_CACHE_DIR=$J/ocrcache-env`, script `$J/t019_ocr.py`, run with the worktree code):**
+- Cold OCR of `skany/odwolania/0005/0005.pdf` page 1: `none` (10.7 s) -> no `ZP/12/2026`, the line after `nr referencyjny:`
+  is garbage; `auto` (24.2 s, one page on a loaded machine) -> `ZP/12/2026, ogłoszenie o zamówieniu nr 2026/BZP 00879135/03
+  opublikowane w Biuletynie Zamówień` and `1. postanowień Opisu Przedmiotu Zamówienia (OPZ), ...` present. Matches the report.
+- Cache key: `odw2json/ingest/pdf.py:155` hashes `|{index}|{dpi}|{min_conf}|{backend}|{preprocess}|{_CACHE_VERSION}`
+  (`_CACHE_VERSION = 2`, line 20); `tests/test_ingest_preprocess.py:111` asserts different keys for `none`/`levels`
+  and that a `levels` run is not served from the `none` cache. My run left 2 cache files (one per mode) in my own dir.
+- Output diff none vs auto banded (coder's raw w4 runs): only `odw_0005/0005.json` changes (`numer_bzp`, `numer_postepowania` filled).
+
+**Report inaccuracies (minor, not blocking):** it says pel_0010 `mocodawca.data.nazwa` also changed; the raw outputs
+differ only in odw_0005. "F1 per type" is not in the report as a table (computed above). The +80 % p95 per document
+should be kept in mind for the jury laptop: the total is within budget, the slowest document is not +40 %.
+
+**Verdict: PASS.**

@@ -1,7 +1,7 @@
 ---
 id: T019
 title: Experiment - page image preprocessing before OCR against show-through and faint scans
-status: review
+status: merged
 owner: coder
 branch: task/T019-ocr-preprocess
 depends_on: []
