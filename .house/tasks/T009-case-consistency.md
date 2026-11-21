@@ -1,7 +1,7 @@
 ---
 id: T009
 title: Case-level consistency checks and cross-document value voting
-status: review
+status: blocked
 owner: coder
 branch: task/T009-case-consistency
 depends_on: [T005, T006]

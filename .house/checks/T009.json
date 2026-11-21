@@ -30,5 +30,33 @@
     "protected": {}
   },
   "frozen_at": "2026-11-21T11:59:52+01:00",
-  "results": {}
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmp4y9ftz96\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 222 tests in 43.249s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T19:29:21+01:00",
+      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "copied 60 pdfs to .acc\\input\nINFO profile ocr, 4 worker(s)\n20 cases, 60 pdfs, 60 json written, 0 rejected/failed\nwarning: pred case folders with no gold folder (ignored): template_case1\ncases scored: 20\n  odwolanie       P=0.9976 R=1.0000 F1=0.9988 (TP=411 FP=1 FN=0)\n  pelnomocnictwo  P=1.0000 R=0.9943 F1=0.9971 (TP=174 FP=0 FN=1)\n  przelew         P=1.0000 R=1.0000 F1=1.0000 (TP=120 FP=0 FN=0)\nnormalized: 0.9986\nscore: 0.9986",
+      "ran_at": "2026-11-21T19:29:34+01:00",
+      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "",
+      "ran_at": "2026-11-21T19:29:35+01:00",
+      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+    }
+  },
+  "reverted": {
+    "base": "04660065e89de5b220fbe95f53acd0804c581c83"
+  }
 }
