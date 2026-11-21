@@ -29,3 +29,4 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - Judge (ręczne AC): T008 AC-4 PASS (zapisane); T011 AC-4, T015 AC-3, T016 AC-4 częściowo - raport reports/judge-manual-1.md
 - 2026-11-21 · judge · re-check po poprawkach (8bdac0c): T011 AC-4 PASS i T015 AC-3 PASS (zapisane); 375 px bez przewijania w bok, jeden klawisz prime, nagłówek mieści się; zapis klasy w Dockerze działa · reports/judge-manual-1.md
 - Poprawki UI po judge (Pobierz JSON, jeden przycisk główny, nagłówek 375 px, zapis receptur w Dockerze); T011 AC-4 i T015 AC-3 PASS po ponownym sprawdzeniu. Analiza pomyłek: reports/misses-1.md (20 pomyłek, 4 naprawia llm, większość do naprawy regułami)
+- 2026-11-21 T018: PESEL per pelnomocnik, koniec sekcji Odwolujacy, dedupe i sklejone imiona w recepturach; skany 0.9639 -> 0.9755, 41-60 = 1.0000, 01-40 = 1.0000.
