@@ -1,21 +1,27 @@
 # odw2json: od dokumentów do danych
 
 Zamienia sprawę odwoławczą KIO, czyli PDF-y odwołania, pełnomocnictwa i potwierdzenia przelewu, w pliki JSON zgodne
-z modelem Urzędu Zamówień Publicznych. Rozpoznaje rodzaj dokumentu, odrzuca dokumenty spoza sprawy, wyciąga dane
-i przy każdej wartości pokazuje dowód: stronę, fragment tekstu, regułę i pewność.
+z modelem Urzędu Zamówień Publicznych. Rozpoznaje rodzaj dokumentu po treści, odrzuca dokumenty spoza tych klas,
+wyciąga dane i przy każdej wartości pokazuje dowód: stronę, fragment tekstu, regułę i pewność.
 
-- **Bez chmury i bez LLM:** działa lokalnie na CPU, dane nie opuszczają komputera.
-- **Skany też:** strony bez warstwy tekstowej czyta OCR (RapidOCR).
-- **Nowy typ dokumentu = plik YAML,** bez programowania: [docs/ADDING_A_DOCUMENT_CLASS.md](docs/ADDING_A_DOCUMENT_CLASS.md).
+- **Lokalnie, na CPU:** dane nie opuszczają komputera. Domyślna ścieżka nie używa żadnego modelu językowego.
+- **Skany też:** strony bez warstwy tekstowej czyta OCR (RapidOCR, ONNX).
+- **Nowy typ dokumentu = plik YAML,** bez programowania, także z interfejsu webowego:
+  [docs/ADDING_A_DOCUMENT_CLASS.md](docs/ADDING_A_DOCUMENT_CLASS.md).
+- **Spójność sprawy:** po ekstrakcji porównuje dokumenty tej samej sprawy (np. NIP mocodawcy z NIP-em Odwołującego,
+  numer postępowania w tytule przelewu) i pokazuje wynik. Wartości w JSON-ie zostają takie, jak w dokumencie.
+- **Opcjonalnie lokalny LLM:** profil `llm` dokłada mały model (Qwen3-1.7B, Apache-2.0, CPU) tylko dla pól, których
+  reguły nie odczytały: [docs/LLM.md](docs/LLM.md).
 - Projekt na HackNation 2026 (wyzwanie UZP „Odwołania2json”).
 
 ## Szybki start
 
-Wejście: `input/<sprawa>/*.pdf`. Wyjście: `output/<sprawa>/<nazwa_pdf>.json` (dokument odrzucony nie dostaje pliku).
+Wejście: `input/<sprawa>/*.pdf`. Wyjście: `output/<sprawa>/<nazwa_pdf>.json`. Dokument odrzucony dostaje plik z pustym
+JSON-em `{}` (inne tryby: `--rejected-json empty|none`).
 
 ### Windows (Python 3.13)
 ```
-start.bat            :: przetwarza .\input -> .\output (pierwsze uruchomienie instaluje zależności)
+start.bat            :: przetwarza .\input -> .\output (pierwsze uruchomienie tworzy .venv i instaluje zależności)
 start.bat web        :: interfejs w przeglądarce: http://127.0.0.1:8000
 ```
 
@@ -34,45 +40,62 @@ python -m odw2json --profile text --workers 4      # profil i liczba procesów, 
 python -m web --port 8000                         # interfejs webowy
 ```
 
+Domyślnie działa profil `ocr` na `min(4, rdzenie / 2)` procesach. Profil `llm` przy pierwszym uruchomieniu pobiera
+wagi modelu (1,8 GB, suma kontrolna sha256): `python -m odw2json --profile llm` albo wcześniej
+`python -m odw2json.llm.fetch`.
+
 ## Co dostaje użytkownik
-| Dokument | Plik wynikowy | Najważniejsze pola |
-|---|---|---|
-| Odwołanie do KIO | `odwolanie.json` | data i miejscowość, zaskarżona czynność (kod 1–11 i dzień), Odwołujący (nazwa, KRS, NIP, REGON, pełnomocnik), Zamawiający, numer BZP/TED, numer i tytuł postępowania |
-| Pełnomocnictwo | `pelnomocnictwo.json` | mocodawcy (także konsorcjum), osoby podpisujące, pełnomocnicy |
-| Potwierdzenie przelewu | `przelew.json` | kwota, data, rachunki, numer transakcji, tytuł |
+| Klasa dokumentu | Najważniejsze pola |
+|---|---|
+| Odwołanie do KIO | data i miejscowość, zaskarżona czynność (kod 1–12 i dzień), Odwołujący (nazwa, KRS, NIP, REGON, pełnomocnik), Zamawiający, numer BZP/TED, numer i tytuł postępowania |
+| Pełnomocnictwo | mocodawcy (także konsorcjum), osoby podpisujące, pełnomocnicy |
+| Potwierdzenie przelewu | kwota, data, rachunki, numer transakcji, tytuł |
 
-Format i komplet pól: `schemas/*.json` (zgodne z `oczekiwane-json` UZP). Pole, którego nie ma w dokumencie, ma wartość `null`.
+Nazwa pliku wynikowego to nazwa PDF-u, klasa wynika wyłącznie z treści. Format i komplet pól: `schemas/*.json`
+(zgodne z `oczekiwane-json` UZP). Pole, którego nie ma w dokumencie, ma wartość `null`. Sprawa może zawierać kilka
+dokumentów tej samej klasy (np. dwa pełnomocnictwa) i dokumenty spoza klas; każdy PDF jest przetwarzany osobno.
 
-Interfejs webowy pozwala wgrać PDF-y sprawy i pokazuje klasę z punktacją, JSON oraz tabelę dowodów z pewnością
-każdego pola. Wyniki można pobrać jako ZIP.
+Interfejs webowy pozwala wgrać PDF-y sprawy i pokazuje dla każdego pliku klasę z punktacją, JSON, tabelę dowodów
+z pewnością każdego pola oraz wynik sprawdzeń spójności sprawy. Wyniki można pobrać jako ZIP o tym samym układzie co
+`output/`. Zakładka „Klasy dokumentów” to edytor receptur: nowa klasa z szablonu, walidacja, próba na PDF-ie, zapis.
 
 | | |
 |---|---|
 | ![Wgrywanie sprawy](docs/screenshots/desktop-night-upload.jpg) | ![Wynik JSON](docs/screenshots/desktop-night-json.jpg) |
-| ![Tabela dowodów](docs/screenshots/desktop-daylight-evidence.jpg) | ![Telefon](docs/screenshots/mobile-daylight-results.jpg) |
+| ![Spójność sprawy](docs/screenshots/desktop-daylight-results.jpg) | ![Tabela dowodów](docs/screenshots/desktop-daylight-evidence.jpg) |
 
-*Zrzuty z prototypu na danych przykładowych (mock); do podmiany na zrzuty z bieżącej wersji.*
+<img src="docs/screenshots/mobile-daylight-results.jpg" alt="Wynik na telefonie" width="300">
+
+*Zrzuty z bieżącej wersji: sprawa przyklad_07 z danych UZP oraz dokument negatywny z szablonu UZP.*
 
 ## Jak mierzyliśmy jakość
 Lokalny miernik `eval/score.py`: F1 na poziomie pól, dokładne porównanie wartości (opis miary w nagłówku pliku).
-Strojenie na przykładach 01–40, kontrola na odłożonych 41–60 ze zbioru treningowego UZP:
+Zbiory z danych UZP:
 
-| Typ | F1 (41–60) |
-|---|---|
-| odwołanie | *do uzupełnienia po scaleniu T005/T006* |
-| pełnomocnictwo | *do uzupełnienia* |
-| przelew | *do uzupełnienia* |
+| Zbiór | Do czego | F1 (profil `ocr`) | odwołanie | pełnomocnictwo | przelew |
+|---|---|---|---|---|---|
+| `dane/skany` (30 skanów) | główna miara niezależna, najbliżej prawdziwego testu | **0,964** | 0,989 | 0,921 | 0,944 |
+| przykłady 41–60 | odłożone | 0,999 | 0,999 | 0,997* | 1,000 |
+| przykłady 01–40 | strojenie reguł | 1,000 | 1,000 | 1,000 | 0,998 |
+| `dane/negatywne` (12) | odrzucanie | 12/12 dokumentów dostaje `{}` | | | |
+
+\* Układ pełnomocnictw z 41–60 był oglądany przy strojeniu, więc ten wynik traktujemy jako zawyżony.
+Na skanach słownik polskich znaków zawiera też słowa ze skanów; zbudowany tylko z przykładów 01–60 daje 0,957.
+Profil `llm` podnosi wynik na skanach do 0,971, ale kosztuje 1-3 minuty na wywołanie modelu na CPU, dlatego jest
+opcjonalny. Czas i pamięć: [docs/PROFILES.md](docs/PROFILES.md) (OCR na zimno ok. 6 s mediany na dokument).
 
 ```
 python -m eval.score --pred output --gold <katalog z wzorcowymi JSON> --cases 41-60 --report raport.md
+python -m eval.bench --profiles ocr --sets heldout,skany,negatywne --workers 1,4    # F1 + czas + RAM
 ```
 
 ## Dokumentacja
 - [Architektura](docs/ARCHITECTURE.md): moduły, przepływ danych, decyzje, punkty rozszerzeń.
 - [Profile, równoległość i pomiar kosztu](docs/PROFILES.md): `--profile`, `--workers`, `python -m eval.bench`.
-- [Dodawanie klasy dokumentu](docs/ADDING_A_DOCUMENT_CLASS.md): samouczek i pełny opis receptur.
+- [Lokalny model językowy](docs/LLM.md): profil `llm`, co model robi i czego nigdy.
+- [Dodawanie klasy dokumentu](docs/ADDING_A_DOCUMENT_CLASS.md): samouczek, edytor w interfejsie, pełny opis receptur.
 - [Komponenty zewnętrzne i licencje](docs/EXTERNAL_COMPONENTS.md): wyłącznie licencje permisywne, bez AGPL/GPL.
 
 ## Licencja i dane
-Dane konkursowe UZP nie są częścią repozytorium (licencja nieustalona). Pobiera się je osobno do `uzp-data/`, które
-jest wykluczone z gita. Informacje dla zespołu: [TEAM.md](TEAM.md).
+Dane konkursowe UZP są generowane i publiczne, ale nie są częścią repozytorium (rozmiar). Pobiera się je osobno do
+`uzp-data/`, które jest wykluczone z gita. Informacje dla zespołu: [TEAM.md](TEAM.md).

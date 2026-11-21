@@ -29,18 +29,11 @@ reader: null              # miejsce na lokalny model (T016)
 Nieznany klucz albo nieznany `reader` kończy się błędem (`profile error`, kod wyjścia 2), a nie cichym użyciem innego
 profilu.
 
-### Miejsce na profil `llm` (T016)
+### Profil `llm`
 
-Lokalny mały model (D-015: bez API) dochodzi jako trzeci profil, bez zmian w kodzie pipeline'u: T016 rejestruje rodzaj
-czytnika w `odw2json.profiles.READERS` i fabryce, a profil to plik
-
-```yaml
-description: text layer + OCR + lokalny model dla słabych pól
-ocr: {enabled: true}
-reader: {kind: llm, model: models/<plik>.gguf}
-```
-
-Do czasu T016 taki plik jest odrzucany z czytelnym komunikatem. `eval.bench` policzy rozmiar modelu z `reader.model`.
+Trzeci profil (`profiles/llm.yaml`): to samo co `ocr` plus lokalny model Qwen3-1.7B (GGUF, CPU) dla pól, których
+reguły nie odczytały. Włącza się świadomie (`--profile llm`), wagi pobiera się przy pierwszym użyciu. Opis, koszt
+i gwarancje: [LLM.md](LLM.md). `eval.bench` liczy rozmiar modelu z `reader.model`.
 
 ## Równoległość: `--workers N`
 

@@ -121,7 +121,10 @@ function saveBlob(name, blob) {
 $("#zip").addEventListener("click", async () => {
   if (!last) return;
   const filesObj = {};
-  last.documents.forEach((d) => { if (d.output_name && d.data) filesObj[d.output_name] = d.data; });
+  last.documents.forEach((d) => {  // same tree as the CLI: a rejected document gets an empty JSON {}
+    if (d.output_name && d.data) filesObj[d.output_name] = d.data;
+    else if (d.input_name) filesObj[d.input_name.replace(/\.pdf$/i, "").replace(/[^\p{L}\p{N}_.\- ()]/gu, "_") + ".json"] = {};
+  });
   const r = await fetch("/api/zip", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ case: last.case, files: filesObj }) });
   if (!r.ok) { showError("Nie udało się zbudować archiwum ZIP", "Przetwórz sprawę jeszcze raz i ponów pobieranie."); return; }
   saveBlob(last.case + ".zip", await r.blob());
@@ -133,7 +136,7 @@ function render(res) {
   const total = res.documents.length;
   const acc = res.documents.filter((d) => d.output_name).length;
   const rej = total - acc;
-  $("#summary").textContent = "Rozpoznane: " + acc + ". Odrzucone: " + rej + (rej ? " (bez pliku JSON)." : ".");
+  $("#summary").textContent = "Rozpoznane: " + acc + ". Odrzucone: " + rej + (rej ? " (pusty JSON {})." : ".");
   $("#zip").disabled = acc === 0;
   notice(toast("live", "Przetworzono sprawę", total + " " + plural(total, "plik", "pliki", "plików") + ", " + acc + " rozpoznane, " + rej + " odrzucone."));
 
