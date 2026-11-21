@@ -23,7 +23,8 @@ def group_lines(words: list[Word]) -> list[list[Word]]:
 
     A word joins a line when its vertical centre is within half of the smaller height (word vs. the line's
     typical word) of the line's centre. The line's band does not grow with each word: on scans a slightly skewed
-    OCR line has a tall box, and a growing union of boxes used to swallow the neighbouring lines.
+    OCR line has a tall box, and a growing union of boxes used to swallow the neighbouring lines. A word that
+    overlaps a word already in the line horizontally belongs to another line.
     """
     lines: list[list] = []  # [sum of centres, count, typical height, words]
     for word in sorted(words, key=lambda x: (x.y0 + x.y1) / 2):
@@ -32,7 +33,8 @@ def group_lines(words: list[Word]) -> list[list[Word]]:
         for line in reversed(lines[-8:]):
             lcy, lh = line[0] / line[1], line[2]
             tol = _LINE_OVERLAP * min(h, lh) if h > 0 and lh > 0 else 0
-            if abs(cy - lcy) <= tol:
+            # words of one visual line never overlap horizontally: an overlap means a neighbouring line
+            if abs(cy - lcy) <= tol and not any(w.x0 < word.x1 - 1 and word.x0 < w.x1 - 1 for w in line[3]):
                 line[0] += cy
                 line[1] += 1
                 line[3].append(word)

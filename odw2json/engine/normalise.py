@@ -139,6 +139,31 @@ def title(s: str) -> str | None:
     return " ".join(w[:1].upper() + w[1:].lower() for w in v.split(" ")) if v else None
 
 
+@register_normaliser("ocr_digits")
+def ocr_digits(s: str) -> str | None:
+    """Digits of an identifier read by OCR: letters that look like digits (o/O -> 0, l/I/| -> 1) are mapped first."""
+    return digits(s.translate(str.maketrans("oOlI|", "00111")))
+
+
+@register_normaliser("person")
+def person(s: str) -> str | None:
+    """A person's name: whitespace collapsed; ALL-CAPS ("JAN KOWALSKI-NOWAK") -> "Jan Kowalski-Nowak"."""
+    v = strip(s)
+    if not v or v != v.upper():
+        return v
+    return re.sub(r"[^\W\d_]+", lambda m: m[0][0] + m[0][1:].lower(), v)
+
+
+@register_normaliser("company")
+def company(s: str) -> str | None:
+    """A company name with common OCR slips in the legal form fixed ("Sp. z 0.o." -> "Sp. z o.o.")."""
+    v = strip(s)
+    if not v:
+        return v
+    v = re.sub(r"\b([zZ])\s*[0oO]\s*\.\s*[0oO]\s*\.", r"\1 o.o.", v)
+    return v.strip(' "„”')
+
+
 def _weighted(d: str, weights: list[int], mod: int) -> int:
     return sum(int(a) * b for a, b in zip(d, weights)) % mod
 
