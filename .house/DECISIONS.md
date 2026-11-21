@@ -27,3 +27,15 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** automatyczna ocena UZP uruchomi kod na 3.13+; różnice wersji wychodziłyby dopiero u nich.
 - **Kto:** człowiek
 - **Data:** 2026-11-21 10:37
+
+## D-004 Intake zaktualizowany z pełnej treści zadania (README repo UZP)
+- **Decyzja:** Źródłem prawdy jest `README.md` z github.com/Urzad-Zamowien-Publicznych/hacknation-2026 (deck tylko pomocniczo). Wiążące ustalenia: kontrakt `./input/<sprawa>/*.pdf → ./output/<sprawa>/<ta sama nazwa>.json` uruchamiany CLI/`start.bat`; schematy z komentarzami w `oczekiwane-json/` traktujemy jako specyfikację pól; prawdą referencyjną są pliki JSON w `dane/przyklad_NN/` (60 spraw, nie 39; brak `ground_truth.yaml`); zgłoszenie = tytuł + link do GitHub działającego prototypu z wgrywaniem dokumentów i podglądem wyników.
+- **Dlaczego:** pełna treść opublikowana 2026-11-21 11:00 zastępuje deck i wpisy z Discorda.
+- **Kto:** coordinator
+- **Data:** 2026-11-21 11:30
+
+## D-005 Ścieżka bez LLM musi dawać pełny wynik F1
+- **Decyzja:** Rdzeń ekstrakcji działa deterministycznie (tekst PDF + reguły/konfiguracja) i sam generuje kompletne JSON-y. LLM to opcjonalny adapter wyłącznie z otwartymi modelami (wymóg „wyłącznie komponenty open source, w tym otwarto-źródłowe modele językowe”), włączany konfiguracją; bez klucza/sieci aplikacja nie może się wywrócić ani zgubić pól.
+- **Dlaczego:** preselekcja to 100% F1 z automatycznej sprawdzarki UZP; nie wiemy, czy da nam sieć i klucz API (Q-002). Dane treningowe mają warstwę tekstową i powtarzalny układ, więc reguły są realne; zamknięte modele (Claude/GPT) są wykluczone treścią zadania.
+- **Kto:** coordinator
+- **Data:** 2026-11-21 11:30

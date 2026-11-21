@@ -1,116 +1,132 @@
 # ODWOLANIA2JSON (HackNation 2026, partner UZP): rules and task contract check
 
-- Agent / model: researcher (haiku), 2026-11-21
-- Status: PARTIAL. The full task brief and the per-task regulamin could not be read. Only the general HackNation regulamin and the partner deck were checked.
+- Agent / model: researcher (haiku), second pass, 2026-11-21 (replaces the partial first pass)
+- Status: Task brief, README, schemas and training folders are now readable. The per-task regulamin, F1 definition, grader, ground_truth.yaml and data license are NOT published in any source read here.
 
 ## Answer first
 
-1. The full ODWOLANIA2JSON brief is not readable from this environment yet. hacknation.pl/zadania timed out (WebFetch and curl, several attempts). hacknation.pl/zadania/odwolania2json returns HTTP 404. Re-check at 11:00 (Sat 21.11) when the brief is published.
-2. The challenge repo is not public. github.com/Urzad-Zamowien-Publicznych lists exactly one public repo, `open-mercato-ezd`. It is a fork of open-mercato/open-mercato (MIT, TypeScript, updated 2026-02-13) with no PDF, KIO or ground-truth content. The deck's "Dokumentacja, schematy JSON i zestawy treningowe: github.com/Urzad-Zamowien-Publicznych/" therefore points at an org where the challenge material is not visible yet. Likely reasons: the material is published at 11:00 with the brief, or it sits in a private repo.
-3. The general HackNation regulamin says nothing about AI tools, LLM APIs, autonomous agents, open source, or starter code. Those rules must come from the per-task regulamin. Status: UNCLEAR until the task regulamin is published.
-4. The general regulamin does allow the partner (as promiser of the prize) to acquire author rights to a solution, via a per-task rule under art. 921 par. 3 kc. Status: CONFIRMED that this is possible in principle. Whether ODWOLANIA2JSON does it: UNCLEAR.
+1. The task brief is public: the repo README (`hacknation-2026/README.md`) gives the I/O contract, the F1 metric and the tech rules. Task page `hacknation.pl/zadania` now loads (HTTP 200); its per-task `rules`, `details` and `materials` fields are all `null`, so NO per-task regulamin is published there.
+2. Confirmed hard requirements (README): Python 3.13+; `requirements.txt`; ONLY open-source components "(w tym otwarto-zrodlowe modele jezykowe)"; runs on-premise without GPU, "(LLM po API)"; CLI or wrapper script (e.g. `start.bat`); `input/` and `output/` folders in the project root.
+3. The LLM-via-API question is the main rules risk. Literal reading: a proprietary hosted LLM is NOT an open-source component, so it is NOT allowed. The parenthesis "(LLM po API)" could mean an open-source model served through a local API. UNCLEAR, needs organizer confirmation before we design around a hosted model.
+4. Data: 60 training folders (`dane/przyklad_01` to `przyklad_60`), not 39 as the deck says. Each has 3 reference JSON files and 3 PDFs. NO `ground_truth.yaml` in any folder checked (przyklad_01 returns 404 for it). No license file in the repo (LICENSE 404).
+5. F1 definition, grader command, time limits and scoring details: NOT FOUND in any source. The README only says "Podstawowa miara jakosci bedzie wskaznik F1" and links to Wikipedia.
+6. Submission: README section 4 requires a title and a GitHub link to a working prototype where documents are uploaded and extraction results are read. Repo, technical docs and own test results are optional. Video and slides are NOT mentioned in the README.
 
 ## Sources
 
 | # | Source | Used for | Access |
 |---|---|---|---|
-| S1 | HackNation general regulamin, PDF: https://hacknation.pl/api/public/dokumenty/28c74284-6390-4665-b8aa-bf4367db79c0/regulamin-hacknation_19.11.pdf | Sections 1-11, rules, IP, jury, timeline | Read via WebFetch (saved locally) and `pdftotext`. Text copy: `C:/Users/jasiu/AppData/Local/Temp/claude/ab89df811496cc91/32e4944d-0964-4318-9ffd-6edb916c9b8f/scratchpad/regulamin/regulamin.txt`. Document says "Regulamin obowiazuje od 28 wrzesnia 2026" (sic, file name says 19.11). |
-| S2 | UZP / HackNation 2026 partner deck (text extract): `C:/Users/jasiu/AppData/Local/Temp/claude/ab89df811496cc91/32e4944d-0964-4318-9ffd-6edb916c9b8f/scratchpad/uzp.txt` | Task summary, dataset, scoring, technical rules, contact | Local copy from the earlier intake. Treated as data. |
-| S3 | https://github.com/Urzad-Zamowien-Publicznych (org page) and the GitHub REST API for the org | Repo list | Org page read via WebFetch: 1 public repo. API unauthenticated call hit the rate limit. `gh` is not authenticated on this machine. |
-| S4 | https://github.com/Urzad-Zamowien-Publicznych/open-mercato-ezd | Checked whether it holds challenge data | WebFetch summary: fork of Open Mercato, MIT, no KIO/PDF/ground-truth content. Not cloned. |
-| S5 | https://hacknation.pl/zadania | Full task brief, per-task regulamin | NOT REACHED: WebFetch timeout (x3). `curl` returns 000 for the root hacknation.pl; the regulamin PDF URL returns 200. |
-| S6 | WebSearch lead (not a primary source): a gov.pl tender specification (OPZ) for a KIO appeal-review tool that uses PDF-to-JSON extraction, n8n nodes, Karta Odwolania (DOCX/JSON), ground_truth.yaml. Example URLs: https://www.gov.pl/attachment/e42cbf99-4374-42d5-86fa-a4845fb3215a and https://www.gov.pl/attachment/bdb47781-f494-472a-aebb-a68b53e7cc4e | Possibly the source spec behind this challenge. Not confirmed as the same project. Not read in full. |
+| S1 | https://raw.githubusercontent.com/Urzad-Zamowien-Publicznych/hacknation-2026/main/README.md (saved: `C:/Users/jasiu/AppData/Local/Temp/claude/b8fc54a61b30a2eb/ecb978e1-2d2f-4bdf-92ae-67103c3a68f5/scratchpad/odw/README.md`) | I/O contract, tech rules, F1, submission | curl, HTTP 200 |
+| S2 | https://raw.githubusercontent.com/Urzad-Zamowien-Publicznych/hacknation-2026/main/oczekiwane-json/odwolanie.json, `pelnomocnictwo.json`, `przelew.json` (saved in the same scratchpad folder) | Reference JSON schemas | curl, HTTP 200 |
+| S3 | https://github.com/Urzad-Zamowien-Publicznych/hacknation-2026/tree/main/dane and `/przyklad_01` ... `/przyklad_60` (HTML folder listings) | Training folder layout and count | curl on HTML listing; GitHub REST API rate-limited (403), not used |
+| S4 | https://raw.githubusercontent.com/Urzad-Zamowien-Publicznych/hacknation-2026/main/dane/przyklad_01/{odwolanie,pelnomocnictwo,przelew}.json | Sample filled reference output | curl, HTTP 200 |
+| S5 | https://github.com/Urzad-Zamowien-Publicznych/hacknation-2026/tree/main/szablon-aplikacja | Template folder: I/O example only, no code | curl on HTML listing |
+| S6 | https://hacknation.pl/zadania (saved HTML, scratchpad `odw/zadania.html`; the ODWOLANIA2JSON entry is in the embedded data) | Task card: initiator, prize, rules/details/materials fields | curl, HTTP 200 (earlier WebFetch timeouts; curl worked on retry) |
+| S7 | https://hacknation.pl/api/public/dokumenty/28c74284-6390-4665-b8aa-bf4367db79c0/regulamin-hacknation_19.11.pdf (saved; text via `pdftotext`) | General regulamin: jury, IP, deadlines | curl, HTTP 200. Legacy encoding; read via pdftotext. Its own text says "Regulamin obowiazuje od 28 wrzesnia 2026 r." (sec. 6 at end), the file name says 19.11 |
+| S8 | https://github.com/Urzad-Zamowien-Publicznych (org) | Other repos | WebFetch: 2 public repos: `hacknation-2026` (updated 2026-11-21) and `open-mercato-ezd` (fork of an open-source CRM/ERP framework, MIT, unrelated) |
 
-Search for the exact term "ODWOLANIA2JSON" with hacknation returned no page that names the task.
+Not reached: `https://hacknation.pl/zadania/odwolania2json` returns 404 (the task is a card on `/zadania`, not a subpage). The "per-task regulamin" link is absent from the task card (`rules: null`).
+
+WebSearch lead (not a primary source, not used for any claim): gov.pl attachments with a KIO appeal-review spec. Not linked to this task by any source read.
 
 ## Task contract (I/O, schemas, grader)
 
-Confirmed from S2 (partner deck). The full schemas are NOT available yet.
+CONFIRMED (S1, README):
+- Input: one case folder per case, each with PDFs of one appeal (`input/caseN/*.pdf`). Three document types: odwolanie, pelnomocnictwo, przelew (potwierdzenie przelewu).
+- Output: `output/caseN/` with one JSON per input PDF, "nazwany tak samo jak plik z katalogu input ktoremu odpowiada". Example tree in README: `odwolanie_nr_1.json`, `pelnomocnictwo_nr_1.json`, `przelew_nr_1.json`.
+- Run: "interfejs ... CLI, wrapper script (np. plik start.bat), lub inne analogiczne rozwiazanie."
 
-- Input: PDF files of one KIO appeal case. Three document types: odwolanie (appeal), pelnomocnictwo (power of attorney), potwierdzenie przelewu (transfer confirmation). Each PDF describes a different fragment of the same case.
-- Steps in the deck: classify the document, extract fields, return JSON that matches the schema for that document type.
-- Output: JSON per document, one schema per type. The deck shows an example with top-level keys `"OdwolanieKIO"` (with `"czynnosc_powod_id": 9`, `"miejscowosc": null`) and `"Odwolujacy": [ ... ]`. The example is a preview, not a full schema.
-- Reference outputs: `odwolanie.json`, `pelnomocnictwo.json`, `przelew.json`.
-- Training data: 39 example sets, 117 PDFs, 3 reference JSON files. Each set also has `ground_truth.yaml`. Format of the YAML: UNCLEAR (no example read).
-- Grader I/O (CLI signature, input folder layout, output file names): UNCLEAR. Not in the deck. Expected to be in the brief or the repo.
-- Dictionary / ID fields such as `czynnosc_powod_id`: the code list source is UNCLEAR. Not in the deck.
-- Data license: UNCLEAR.
-- Data download: the deck names the org repo as the source for the data. The org currently exposes no data repo, so data is NOT downloadable from here yet.
+CONFLICT (S1 vs S4): the README example names inputs `odwolanie_nr_1.pdf`, the training folders use `odwolanie.pdf`, `pelnomocnictwo.pdf`, `potwierdzenie_przelewu.pdf` and reference JSON `odwolanie.json`, `pelnomocnictwo.json`, `przelew.json`. The rule "same name as the input PDF" then gives `potwierdzenie_przelewu.json`, not `przelew.json`. UNCLEAR which naming the grader uses.
 
-## Scoring details
+Reference schemas (S2, S4). The files contain `//` comments and are NOT valid JSON (`odwolanie.json` is missing a comma after `"nazwa"` in `pelnomocnik`). Keys:
 
-Confirmed from S2:
-- Stage 1 (preselection, automated): 100% extraction F1 on a hidden test set. The deck says results are checked on a test set not published before.
-- Stage 2 (final): 50% extraction F1, 50% flexibility and extensibility. Flexibility covers new document types and fields without rebuilding the system.
-- Premium features listed in the deck: new document classes, configuration without code changes, extraction transparency.
+- `odwolanie.json`: top key `OdwolanieKIO` with `data` (date from the header, ISO), `czynnosc_dzien` (ISO date of the act that starts the appeal deadline for the first charge, or null), `czynnosc_powod_id` (integer 1-12, from the FIRST charge only), `czynnosc_opis` (canonical description 1:1 with the id, from the first charge only), `miejscowosc` (from the header). Plus `Odwolujacy` (list: `krs`, `nazwa`, `nip`, `regon`, `przez-pelnomocnika` as 1/0 with a hyphen in the key, `pelnomocnik` {`imie_nazwisko`, `nazwa`, `mail`}), `Zamawiajacy` (list: `krs`, `nazwa`, `nip`, `regon`, `prowadzacy_postepowanie` null/1/0), `ZamowieniePubliczne` (`numer_bzp`, `numer_postepowania`, `numer_ted`, `tytul`).
+- `pelnomocnictwo.json`: `mocodawca` (list: `data` {`imie_nazwisko`, `krs`, `nazwa`, `nip`, `typ` "osoba_prawna"/"osoba_fizyczna"}, `podpisujacy` (list of {`imie_nazwisko`})), `pelnomocnicy` (list: `imie_nazwisko`, `pesel`).
+- `przelew.json`: `przelew_bankowy` with `data_operacji`, `kwota` (number), `na_rachunek`, `numer_transakcji` (nullable), `tytul`, `z_rachunku`.
 
-UNCLEAR:
-- How F1 is computed (per field, exact match, normalisation, list handling). Not stated in S2. Needs the brief or the grader.
-- Whether Stage 1 is also used for the jury's Stage I (the general regulamin says the jury scores Hacktribe submissions in Stage I, top 5 go to Stage II). The deck's Stage 1 / Stage 2 names may not match the regulamin's Stage I / II. Confirm.
+Code list for `czynnosc_powod_id` (1-12): no published list, but the coordinator read all 60 gold `odwolanie.json` files (2026-11-21) and recovered ids 1-11, always 1:1 with `czynnosc_opis`: 1 Decyzja o odrzuceniu oferty; 2 Ogłoszenie wyboru oferty; 3 Decyzja o wykluczeniu wykonawcy; 4 Publikacja specyfikacji warunków zamówienia (SWZ); 5 Modyfikacja treści SWZ; 6 Odpowiedzi i wyjaśnienia do SWZ; 7 Zaniechanie odrzucenia oferty; 8 Zaniechanie wykluczenia wykonawcy; 9 Decyzja o unieważnieniu postępowania; 10 Zaniechanie unieważnienia postępowania; 11 Opis przedmiotu zamówienia (OPZ). Id 12: NOT FOUND (ask UZP). (The researcher's first pass saw only ids 4 and 9.)
+Data note (coordinator): the training data is synthetic (KRS/NIP/REGON start with 999, `*.example` mails), so personal-data concerns about the PDFs are low; the licence question stays open.
 
-Confirmed from S1 (general regulamin):
-- Section 5.4: a jury may award no prize if no solution reaches at least 50% of the maximum points.
-- Section 5.6: Stage I = Hacktribe submissions scored by the jury (minimum 3 members). Top 5 teams per task go to Stage II.
-- Section 5.6c: Stage II = 5 minutes pitch and 5 minutes Q&A.
-- Section 5.9: no changes after the deadline are considered.
-- Section 5.5: per-task criteria are published with the full brief, at the latest on the start day at 11:00.
-- Section 4.6: team size up to 6.
-- Section 4.19: prize pool per task 11,000 to 34,000 PLN gross.
+Sample reference (S4, przyklad_01): `data` null, `czynnosc_dzien` "2026-03-20", `czynnosc_powod_id` 9, `miejscowosc` null, `numer_ted` "999137-2026", `numer_bzp` "2026/BZP00999778". Note `numer_bzp` format in the schema comment: `YYYY/BZP ########`, but the sample has no space.
+
+Dataset (S3): folders `dane/przyklad_01` to `przyklad_60`. The listing of all 60 folders shows the same six files in each: `odwolanie.pdf`, `odwolanie.json`, `pelnomocnictwo.pdf`, `pelnomocnictwo.json`, `potwierdzenie_przelewu.pdf`, `przelew.json`. Total: 60 sets, 180 PDFs, 180 JSON references. The deck said 39 sets and 117 PDFs. Count from the repo is authoritative for now; the deck numbers are stale or refer to a different snapshot. I did not open the PDFs.
+
+## ground_truth.yaml
+
+NOT FOUND. No `ground_truth.yaml` in `przyklad_01` (HTTP 404) or at `dane/`. The reference is the per-folder JSON (`odwolanie.json`, `pelnomocnictwo.json`, `przelew.json`), which is the same format as the schema above. The deck mentioned `ground_truth.yaml`; that name is not used in the public repo. UNCLEAR whether the hidden grader reads YAML or JSON.
+
+## Scoring
+
+CONFIRMED (S1 README sec. 6-7):
+- "Podstawowa miara jakosci bedzie wskaznik F1" (linked to Wikipedia F-score).
+- Stage I (preselection): "Jakosc ekstrakcji danych (F1 Score) - 100%", against reference data "na nieznanym zbiorze testowym".
+- Stage II (final): F1 50%; "Elastycznosc i mozliwosc rozbudowy rozwiazania" 50% ("Latwosc dodawania nowych typow dokumentow i nowych klas danych bez koniecznosci przebudowy calego systemu").
+- Hidden test set: "kompletne sprawy administracyjne przygotowane przez organizatora".
+
+NOT FOUND:
+- Exact F1 definition: per field vs per document vs micro/macro; exact match vs normalisation of dates, amounts, NIP, whitespace; list handling; null handling; how wrong document classification counts. None of the sources define it.
+- Grader command, timeouts, output encoding.
+
+General regulamin (S7) for Stage I/II: "Etap I - jury danego Konkursu ocenia rozwiazania przeslane przez Uczestnikow za posrednictwem platformy Hacktribe" and top 5 go to Stage II (sec. 5.6a); Stage II = 5 min pitch + max 5 min Q&A (sec. 5.6c). Jury may award nothing below 50% of max points (sec. 5.4). Changes after the deadline are not considered (sec. 5.9).
+
+The deck's "Stage 1 / Stage 2" (preselection / final) and the regulamin's "Etap I / II" are the same two stages in the public text, but the README calls them "Etap 1 - preselekcja" and "Etap 2 - wybor finalny" — consistent.
 
 ## Rules verdict
 
-Items below apply to ODWOLANIA2JSON, using the general regulamin (S1) and the partner deck (S2). The per-task regulamin is NOT read.
-
 | Item | Verdict | Evidence |
 |---|---|---|
-| allowed_ai (general) | UNCLEAR | S1 contains no AI rule. The only AI mention is in the definition of Mentor (sztuczna inteligencja expert, sec. 1.1b). |
-| allowed_ai (task) | UNCLEAR | Deck S2 slide 05: "bez GPU – LLM po API" is listed next to "Lokalne uruchomienie" and "Open source" under "WYMAGANE". The deck implies an LLM accessed through an API is acceptable. It is not a rule text. Need the per-task regulamin. |
-| allowed_autonomous_agents | UNCLEAR | Not mentioned in S1 or S2. |
-| LLM APIs (hosted) | UNCLEAR, deck suggests allowed | S2: "bez GPU – LLM po API" (listed as a requirement). Conflicts with "Open source" unless the LLM client is open source and the model may be remote. Ask the organizer. |
-| Open source constraint | CONFIRMED as a deck requirement, not as a regulamin rule | S2 slide 05: "WYMAGANE: Open source; Lokalne uruchomienie". Whether this counts for the model weights, a hosted LLM, or only the code: UNCLEAR. |
-| Local run without GPU | CONFIRMED as a deck requirement | S2 slide 05: "Lokalne uruchomienie", "bez GPU". |
-| Python 3.13+ / requirements.txt / CLI or .bat | Stated in the intake brief from the Discord post, NOT verified from a primary source here | Not in S1 or S2. |
-| Starter code prepared before the event | UNCLEAR | S1 does not forbid pre-event code. Per-task regulamin needed. |
-| IP transfer to partner | UNCLEAR (possible) | S1 sec. 6.1-6.3: each participant keeps author rights to their contribution; the per-task regulamin may transfer author rights to the organiser of the task under art. 921 par. 3 kc (public promise) by agreement. |
-| Partner promise of prize (art. 919 par. 1 kc) | CONFIRMED that it can be the partner | S1 sec. 4.9-4.11: the partner may be the promiser; the organiser is one only if the task regulamin says so. |
-| Submission method | CONFIRMED for the general event | S1 sec. 5.6a: solutions go through the Hacktribe platform. Dedicated page for submissions opens 21.11 11:00, closes 22.11 11:00 (S1 sec. 4.3). |
-| Deadline | CONFIRMED from the event timeline (spec.yaml, from the same regulamin) | Coding ends 22.11 11:00. S1 sec. 4.3. |
-| Sending a solution means accepting the task rules | CONFIRMED | S1 sec. 4.12. |
-| Registration | Conditioned on a ticket | S1 sec. 3: registration on eventory.cc/event/hacknation-2026. |
+| Hosted proprietary LLM via API | UNCLEAR, literal reading NOT ALLOWED | S1 README sec. 5: "wykorzystywac wylacznie komponenty open source (w tym otwarto-zrodlowe modele jezykowe)". A proprietary hosted model is not an open-source component. Parenthesis: "umozliwiac uruchomienie w srodowisku lokalnym (on-premise) bez GPU (LLM po API)". Reading A: open-source model served through a local API (allowed). Reading B: any LLM via API (conflicts with the first sentence). Organizer must confirm. |
+| Open-source requirement scope | CONFIRMED that it applies; scope UNCLEAR | "wylacznie komponenty open source" applies to components. Whether our own code needs an OSI licence: not stated. |
+| Local run without GPU | CONFIRMED | S1 sec. 5: "uruchomienie w srodowisku lokalnym (on-premise) bez GPU". |
+| Python 3.13+ | CONFIRMED | S1 sec. 5: "Python 3.13+". |
+| requirements.txt | CONFIRMED | S1 sec. 5: "plik requirements.txt pozwalajacy na szybkie zainstalowanie pozostalych zaleznosci (np. poprzez pip install)". |
+| Run method | CONFIRMED | S1 sec. 3: CLI or wrapper (e.g. `start.bat`). |
+| AI tools / autonomous agents (general) | UNCLEAR | Not mentioned in S1 README, S7 regulamin, or the task card. The regulamin mentions AI only as a Mentor's expertise (sec. 1.1). |
+| Starter code / pre-event code | UNCLEAR | Not forbidden by S7; not addressed by S1. Template folder `szablon-aplikacja` has I/O examples only, no code (S5). |
+| IP / author rights | CONFIRMED general rule; task-specific transfer NOT FOUND | S7 sec. 6.1: each participant keeps author rights ("przysluguje mu pelnia autorskich praw majatkowych do swojego wkladu"). S7 sec. 6.3: per-task regulamin "moga przewidywac zasady nabycia przez organizatora ... na zasadach okreslonych w art. 921 par. 3 kodeksu cywilnego (przyrzeczenie publiczne)". The task card has `rules: null`, so no transfer is stated for this task. |
+| Partner as promiser of prize | CONFIRMED for the event | S7 sec. 4.9-4.10: the Partner may be the promiser (art. 919 par. 1 kc); the Organizer is one only if the task regulamin says so (sec. 4.11). Task card: initiator URZAD ZAMOWIEN PUBLICZNYCH. |
+| Sending a solution = accepting the task rules | CONFIRMED | S7 sec. 4.12. |
+| Submission window | CONFIRMED | S7 sec. 5.3 (sic, page item 3): dedicated site available "od godz. 11.00, 21 listopada 2026 r. do godz. 11.00, 22 listopada 2026 r." |
+| Per-task criteria published | CONFIRMED that they will be; NOT in the task card | S7 sec. 5.5: criteria "opublikowane wraz z pelnym opisem Zadania, najpozniej w dniu rozpoczecia Wydarzenia o godz. 11:00". Task card: no criteria text. |
+| Per-task regulamin | NOT FOUND | Task card `rules: null`, `details: null`, `materials: null`. Re-check at the start. |
+| Data license / publishing the training sets in a public repo | UNCLEAR | No LICENSE file (404). The org repo is public and hosts the data, but that does not grant a licence to copy it. Our public repo: do not copy the `dane/` folder without written permission. |
+| Personal data in training PDFs | UNCLEAR | Schemas include `pesel` and PESEL-like fields (S2). Sample values look synthetic (domains like `example`, names like "Belmoria"). Not verified against the PDFs. |
 
 ## Deliverables
 
-Each value comes from the source named. null = unknown.
-
 | Deliverable | Value | Source |
 |---|---|---|
-| video_required | null | Not in S1 or S2 |
-| video_max_seconds | null | Not in S1 or S2 |
-| live_demo | true (Stage II is a live pitch to the jury, 5 + 5 min) | S1 sec. 5.6c. Whether a running app is needed: UNCLEAR |
-| slides | null | Not in S1 or S2 |
-| repo_submission | null (repo link or ZIP unknown) | Not in S1 or S2 |
-| starter_code_allowed | null | Not in S1 or S2 |
-| ai_apis_allowed | null (deck suggests LLM API is OK) | S2 slide 05 only |
-| external_data_allowed | null | Not in S1 or S2 |
-| cloud_deploy_allowed | null | Not in S1 or S2 |
-| format | null (deck implies JSON output per document) | S2 slide 02 |
+| Project title | required | S1 sec. 4 |
+| GitHub link to a working prototype (upload PDFs, read extraction results) | required | S1 sec. 4 |
+| Repo, technical docs, own quality test results | optional | S1 sec. 4 |
+| Live demo | Stage II pitch is live (5 + 5 min) | S7 sec. 5.6c; whether a running app is required on the day: UNCLEAR |
+| Video | NOT FOUND (not in README or task card) | |
+| Slides | NOT FOUND | |
+| Repo as ZIP vs link | link to GitHub required (S1 sec. 4) | |
+| Cloud deploy allowed | NOT FOUND | |
+| External data allowed | NOT FOUND | |
+| Format | JSON per input PDF, schema per type; file naming see contract | S1 sec. 3 and S2 |
 
 ## Open questions for organizers (UZP booth / Discord)
 
-1. Does "LLM po API" mean a hosted API (e.g. a commercial model endpoint) is allowed, given the "Open source" requirement? Which parts must be open source: code only, or model weights too?
-2. Is the Stage 1 automatic F1 the same as the regulamin's Stage I jury score, or a separate preselection? Please give the exact F1 definition: per field, per document, exact match, normalisation, list handling, null handling.
-3. Which document types and fields are in the hidden test set? Can the test set have document types not in the 3 listed?
-4. Grader contract: CLI command, input folder layout, output file names and location, JSON key order and encoding, timeouts, and whether a Docker image or Python version is checked.
-5. ground_truth.yaml: format and meaning of each key. Are the dictionary IDs (e.g. czynnosc_powod_id) defined in a published code list? Where is it?
-6. Data license for the 39 example sets and the 3 reference JSON schemas. Can we use them in a public repo? Is the repo going to be public?
-7. Is the per-task regulamin going to transfer author rights to UZP (art. 921 par. 3 kc)? If yes, is it limited to the solution, or does it cover the whole repo?
-8. Starter code and pre-event work: allowed? Pre-existing open-source libraries (e.g. PDF parsers, OCR, LLM clients) allowed?
-9. Deliverables: video (length), slides, repo or ZIP, public demo, cloud deploy, the format of the submission on Hacktribe.
-10. Is the wider HackNation AI rule (any AI-tool use, agents) identical to the general regulamin, or is there an extra rule for this task?
+Answered by this pass (removed from the list): the schema file names and top-level keys; the output tree layout; the Python 3.13 and requirements.txt rule; the GitHub-link submission requirement; the fact that there is no `ground_truth.yaml` in the public data.
 
-## Open points for the coordinator
+Still open:
+1. Does "(LLM po API)" allow a hosted proprietary LLM? If not, is an open-source model served through a local API acceptable? Which parts must be open source: our code, the model weights, or only the runtime?
+2. Exact F1 definition: per field vs per document; micro vs macro; exact match vs normalisation (dates, amounts, NIP, whitespace); list handling; null handling; how a wrong document type counts.
+3. Grader contract: CLI command, time limit per case, whether it reads `output/` as in the README tree, and the exact output file name rule (`odwolanie_nr_1.json` in the README vs `odwolanie.json`/`przelew.json` in the data; `potwierdzenie_przelewu.json` vs `przelew.json`).
+4. Which document types and fields are in the hidden test set; can it contain other document types?
+5. The full list of 12 `czynnosc_powod_id` codes and their descriptions: where is the published code list?
+6. Is `ground_truth.yaml` in the grader? The public data uses JSON.
+7. Data licence for the 60 training sets and whether they may be published in our public repo (no LICENSE in the repo).
+8. Per-task regulamin: will it transfer author rights to UZP under art. 921 par. 3 kc, and does it cover only the solution or the whole repo?
+9. Starter code, pre-event work, and open-source libraries (PDF/OCR parsers, LLM clients): allowed?
+10. Deliverables beyond the GitHub link: video (length), slides, live demo requirement on the day, and the exact Hacktribe submission format.
+11. Whether AI-coding tools and agents (used by us to build the solution) are allowed under the general rules: the regulamin says nothing; this is a generic question, low priority.
 
-- Re-run this check after 11:00 on 21.11 when hacknation.pl/zadania and the org repo may be readable. Then mark the unknown items above.
-- If the repo stays empty, the schemas and grader are unknown. Plan the design around the deck only, and ask the organizers (question list above).
-- Do not clone anything from the org. Only `open-mercato-ezd` exists and it is an unrelated fork.
-- The gov.pl tender spec (S6) may be the procurement source for this challenge. It was not verified as such, and it is not a rules source.
+## Points for the coordinator
+
+- Do not design around a hosted proprietary LLM until question 1 is answered. Plan a local open-source model path as the default.
+- The F1 definition is needed before the local scorer (`eval/score.py`) is built. Until then, the local scorer should only compare field by field and record the rule used.
+- The reference JSON files have `//` comments and are not valid JSON; parse them with a comment-tolerant loader or strip comments before using them as gold data.
+- The repo `hacknation-2026` is public and contains the training data; the coordinator's own clone should not be pushed anywhere that copies `dane/`.

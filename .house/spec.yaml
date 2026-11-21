@@ -7,36 +7,47 @@ contest:            # człowiek
   url: https://hacknation.pl/zadania
   organizer: UZP (task partner and jury); event by Ministerstwo Cyfryzacji / GovTech Polska / Miasto Bydgoszcz
   language: pl    # język konkursu (pitch/README w tym języku)
-  materials: https://github.com/Urzad-Zamowien-Publicznych/   # docs, JSON schemas, training sets (deck slide 8)
-  deck: C:/Users/jasiu/Downloads/ODWOLANIA2JSON_HackNation2026.pdf
+  materials: https://github.com/Urzad-Zamowien-Publicznych/hacknation-2026   # full brief (README.md), schemas (oczekiwane-json/), 60 training cases (dane/przyklad_01..60)
+  brief: https://github.com/Urzad-Zamowien-Publicznych/hacknation-2026/blob/main/README.md   # source of truth for the task since 2026-11-21 11:00
+  deck: C:/Users/jasiu/Downloads/ODWOLANIA2JSON_HackNation2026.pdf   # pre-event deck; superseded by the brief where they differ
   prize: 20000 PLN (main prize)
 
 kind: build         # build | optimize — człowiek; build with a measurable core (F1) and a final pitch
 
-goal: "Aplikacja, ktora automatycznie rozpoznaje dokumenty PDF sprawy KIO (odwolanie, pelnomocnictwo, potwierdzenie przelewu), wyodrebnia z nich istotne informacje i zapisuje je w ustrukturyzowanym formacie JSON zgodnym ze schematem wlasciwym dla dokumentu. Przeplyw: rozpoznaj dokument -> wyodrebnij dane (z zachowaniem relacji miedzy informacjami) -> zwroc JSON. Prototyp: wgraj PDF -> uruchom analize -> sprawdz i pobierz JSON. Musi dac sie rozszerzyc o nowe typy dokumentow i pola bez przebudowy systemu."
+goal: "Aplikacja w Pythonie 3.13+, ktora zamienia wielodokumentowa sprawe odwolawcza KIO w JSON: przyjmuje PDF-y sprawy (tresc odwolania, pelnomocnictwo/a, potwierdzenie przelewu), rozpoznaje rodzaj kazdego dokumentu, wyodrebnia informacje biznesowe wlasciwe dla typu i zapisuje po jednym JSON-ie na dokument zgodnym z oczekiwane-json/{odwolanie,pelnomocnictwo,przelew}.json. Kontrakt: foldery ./input/<case>/*.pdf -> ./output/<case>/<ta sama nazwa>.json, uruchamiane przez CLI lub start.bat. Do zgloszenia: link do GitHub dzialajacego prototypu, w ktorym da sie wgrac dokumenty i odczytac wyniki ekstrakcji. Premiowane: nowe klasy dokumentow tylko przez pliki konfiguracyjne, transparentnosc ekstrakcji."
+
+task:               # facts from the brief + training data (checked by coordinator 2026-11-21)
+  document_types:
+    odwolanie: {schema: oczekiwane-json/odwolanie.json, top_keys: [OdwolanieKIO, Odwolujacy, Zamawiajacy, ZamowieniePubliczne]}
+    pelnomocnictwo: {schema: oczekiwane-json/pelnomocnictwo.json, top_keys: [mocodawca, pelnomocnicy], note: "a case can hold more than one pelnomocnictwo (brief example: 2)"}
+    przelew: {schema: oczekiwane-json/przelew.json, top_keys: [przelew_bankowy], note: "training input file is potwierdzenie_przelewu.pdf, gold file is przelew.json"}
+  schemas_are_annotated: "schema files are JSON with // comments that define each field's extraction rule (e.g. czynnosc_powod_id = int 1-12 decided ONLY from the first zarzut; numer_ted normalised to NNNNNN-YYYY; numer_bzp without spaces). Treat the comments as the field spec."
+  dictionary: "czynnosc_powod_id -> czynnosc_opis is a fixed 1:1 code list; ids 1-11 seen in training (12 not seen, its label unknown); full list in reports/rules-check.md"
+  training_data: "60 cases (not 39 as in the deck), each odwolanie.pdf + pelnomocnictwo.pdf + potwierdzenie_przelewu.pdf with gold odwolanie.json / pelnomocnictwo.json / przelew.json. No ground_truth.yaml in the repo: the gold JSONs are the ground truth. Data is synthetic (KRS/NIP/REGON start with 999); all 180 training PDFs have a text layer, but the brief says real cases include scans."
+  test_data: "hidden; 'complete administrative cases prepared by the organiser'; compared against expert reference data"
 
 scoring:            # build: rubryka; optimize: metryka + sprawdzarka — z regulaminu
-  rubric:           # from the UZP deck slide 7 + Discord post; final weights 50/50
-    - name: Jakosc ekstrakcji (F1)
-      what: "F1 of extracted fields on a hidden test set. Preselection (Stage I, automated) = 100% of the score; final = 50%."
+  rubric:           # from the brief section 7 (confirmed); levels are our proposed mapping
+    - name: Jakosc ekstrakcji danych (F1 Score)
+      what: "Agreement of our JSONs with the reference data on the hidden test set, measured with F1. Stage 1 (preselection) = 100%; Stage 2 (final) = 50%."
       weight: 0.5
-      levels: "1 = F1 < 0.5; 3 = F1 ~ 0.75; 5 = F1 >= 0.9 on our held-out sets (proposed mapping)"
-    - name: Elastycznosc i rozbudowa
-      what: "New document types and fields without rebuilding the system; configuration without code changes; transparency of extraction (premiowane per deck slide 6)."
+      levels: "1 = F1 < 0.5; 3 = F1 ~ 0.75; 5 = F1 >= 0.9 on our held-out training cases (proposed mapping)"
+    - name: Elastycznosc i mozliwosc rozbudowy
+      what: "Ease of adding new document types and new data classes without rebuilding the whole system. Premiowane (brief s.5): new document classes configured only through config files, transparency of the extraction process."
       weight: 0.5
       levels: "1 = hardcoded per type; 3 = new field via config; 5 = new document type via config only, with per-field evidence (page/snippet/confidence) shown in the UI (proposed mapping)"
-  stages: "Stage I preselection: 100% F1 (automated grader). Stage II final: 50% F1 + 50% flexibility, after a 5 min pitch + 5 min Q&A."
-  metric: extraction F1 (max)   # proposed: we build a local copy of the grader from ground_truth.yaml
+  stages: "Stage 1 preselection: 100% F1 on the hidden test set. Stage 2 final: 50% F1 + 50% flexibility; HackNation regulamin: top 5 per task, 5 min pitch + 5 min Q&A."
+  metric: extraction F1 (max)   # F1 granularity (per field? exact match? normalisation? list matching?) NOT defined in the brief; see Q-002
   direction: max
-  local_scorer: null   # proposed: `python eval/score.py --pred out/ --gold data/` printing `score: <F1>`; built in the first task once the F1 definition is confirmed
+  local_scorer: null   # proposed: `python eval/score.py --pred output/ --gold <cases>/` printing `score: <F1>`, field-level micro F1 over leaf values with light normalisation; first task, revised once UZP defines F1
   scorer_files: []
-  leaderboard: none    # single hidden test set, no public leaderboard (deck slide 7)
+  leaderboard: none    # single hidden test set, no public leaderboard
 
 timeline:           # z regulaminu
   start: "2026-11-21T11:00+01:00"   # full task briefs + criteria published, coding starts
   end: "2026-11-22T11:00+01:00"     # coding ends; submission on Hacktribe; later changes are ignored
   milestones:
-    - {at: "2026-11-21T18:00+01:00", what: "golden path end-to-end: run command PDF set -> classified JSONs + local F1 score on all 39 training sets; fresh-clone install on Python 3.13 without GPU checked"}
+    - {at: "2026-11-21T18:00+01:00", what: "golden path end-to-end: run command PDF set -> classified JSONs in ./output + local F1 score on all 60 training cases; fresh-clone install on Python 3.13 without GPU checked"}
     - {at: "2026-11-22T00:00+01:00", what: "judge round; wow feature chosen"}
     - {at: "2026-11-22T09:30+01:00", what: "feature freeze: only bugs, fallback demo video, README, pitch"}
     - {at: "2026-11-22T10:30+01:00", what: "Hacktribe submission done (30 min buffer)"}
@@ -47,7 +58,7 @@ rules:              # sprawdza researcher PRZED startem
   url: https://hacknation.pl/api/public/dokumenty/28c74284-6390-4665-b8aa-bf4367db79c0/regulamin-hacknation_19.11.pdf
   allowed_ai: null              # general rules say nothing; check the task's own regulamin at 11:00
   allowed_autonomous_agents: null
-  task_requirements: "UZP (Discord, automated grading): Python 3.13+; extra dependencies in requirements.txt with a simple install (pip); ONLY open-source components; runs locally without GPU; simple run method (run command with arguments, or a .bat file). Deck slide 6: required = open source, local run without GPU (LLM via API); premiowane = new document classes, configuration without code changes, transparency of extraction."
+  task_requirements: "Brief s.5 (confirmed): Python 3.13+; requirements.txt for a quick pip install; ONLY open-source components, including open-source language models; runs locally (on-premise) without GPU ('LLM po API'). Brief s.3: CLI, wrapper script (e.g. start.bat) or similar; folders ./input and ./output in the app root; ./output/<case>/<name of the input PDF>.json. Reading (coordinator): closed hosted models (Claude, GPT, Gemini) are out; an open-weights model reached over an API is in. Unclear: whether a third-party hosted endpoint counts as 'on-premise', and whether the grader gives us network or an API key -> the pipeline must score without any LLM (Q-002)."
   notes: "Teams up to 6. Per-task criteria come with the full brief (Sat 11:00). Stage I = jury (3+) scores Hacktribe submissions, top 5 per task go to Stage II = 5 min pitch + 5 min Q&A. Jury may award nothing below 50% of points. Prize per task 11-34k PLN. Task regulamin may transfer IP to the partner (art. 921 par. 3 kc): check it."
 
 deliverables:       # co trzeba oddać — researcher sprawdza w regulaminie; nie zakładaj niczego (null = nieznane)
@@ -55,12 +66,13 @@ deliverables:       # co trzeba oddać — researcher sprawdza w regulaminie; ni
   video_max_seconds: null
   live_demo: true              # Stage II is a live pitch to the jury
   slides: null
-  repo_submission: null
+  repo_submission: true         # brief s.4: required = project title + GitHub link to a working prototype that lets you upload documents and read the extraction results; optional = project repo, technical docs, own quality test results
+  upload_ui: true               # "wgranie dokumentów i odczytanie rezultatów" -> a simple upload/view UI on top of the CLI
   starter_code_allowed: null    # czy wolno użyć kodu przygotowanego przed eventem
-  ai_apis_allowed: null         # UNCLEAR: deck says "bez GPU - LLM po API", Discord says only open-source components; ask UZP
+  ai_apis_allowed: "open-source models only (brief s.5); closed commercial APIs not allowed"
   external_data_allowed: null
   cloud_deploy_allowed: null
-  format: "Python 3.13+ project: requirements.txt (pip), CLI run command with arguments or .bat; output JSON per document type schema (odwolanie.json, pelnomocnictwo.json, przelew.json)"
+  format: "Python 3.13+ repo on GitHub: requirements.txt (pip), CLI/start.bat; reads ./input/<case>/*.pdf, writes ./output/<case>/<same basename>.json per document, JSON shape per oczekiwane-json/{odwolanie,pelnomocnictwo,przelew}.json; optional own F1 test results (we ship eval/ and its report)"
 
 mode: copilot       # copilot (pytaj o trudne decyzje) | autopilot (decyduj sam, pytaj tylko w końcówce)
 
