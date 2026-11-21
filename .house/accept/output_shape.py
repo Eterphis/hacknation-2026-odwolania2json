@@ -2,7 +2,9 @@
 
 usage: output_shape.py <input_dir> <output_dir> [--expect-reject NAME ...]
 - every input PDF not listed in --expect-reject must have <output>/<case>/<basename>.json
-- every listed PDF must have NO json
+- a listed PDF must be rejected: no json, an empty file or `{}` (D-016: rejected documents get an empty JSON)
+- an unlisted PDF may be rejected too (negatives inside the training cases); with --check-class it must not be
+  rejected when its file name implies a class; rejected files are not counted in "ok: N"
 - each json must have exactly the key structure of one of the three UZP reference schemas
   (lists: every item has the keys of the reference item); values are not checked
 Prints "ok: N files" and exits 0, or lists problems and exits 1.
@@ -74,6 +76,12 @@ def expected_class(name: str) -> str | None:
     return None
 
 
+def is_rejected(js: Path) -> bool:
+    """D-016: a rejected document's JSON is an empty file or an empty object."""
+    text = js.read_text(encoding="utf-8").strip()
+    return text in ("", "{}")
+
+
 def main() -> None:
     inp, outp = Path(sys.argv[1]), Path(sys.argv[2])
     rejects = set(sys.argv[sys.argv.index("--expect-reject") + 1 :]) if "--expect-reject" in sys.argv else set()
@@ -82,12 +90,17 @@ def main() -> None:
     n = 0
     for pdf in sorted(inp.glob("*/*.pdf")):
         js = outp / pdf.parent.name / (pdf.stem + ".json")
+        rejected = js.exists() and is_rejected(js)
         if pdf.name in rejects:
-            if js.exists():
-                probs.append(f"{js}: should not exist (reject)")
+            if js.exists() and not rejected:
+                probs.append(f"{js}: should be a rejected document (no file, empty file or {{}})")
             continue
         if not js.exists():
             probs.append(f"{js}: missing")
+            continue
+        if rejected:  # D-016: a rejected document gets an empty JSON; fine unless its name implies a class
+            if "--check-class" in sys.argv and expected_class(pdf.name):
+                probs.append(f"{js}: rejected, expected {expected_class(pdf.name)}")
             continue
         data = json.loads(js.read_text(encoding="utf-8"))
         best = None

@@ -1,0 +1,75 @@
+{
+  "task": "T014",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.prep_skany .acc/sk && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/sk/input --output .acc/sk/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred .acc/sk/output --gold .acc/sk/gold",
+        "expect": "score >= 0.80",
+        "text": null,
+        "timeout": 2400
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/prep_input.py .acc/input 41-60 && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/input --output .acc/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred .acc/output --gold C:/Users/jasiu/workspace/uzp-data/dane --cases 41-60",
+        "expect": "score >= 0.94",
+        "text": null,
+        "timeout": 1800
+      },
+      {
+        "id": "AC-4",
+        "kind": "run",
+        "run": "! grep -rniE 'odwolanie|odwołanie|pelnomocnictw|pełnomocnictw|przelew|mocodawca|OdwolanieKIO|Zamawiajacy|Odwolujacy' odw2json/engine",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T16:56:50+01:00",
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "C:\\Users\\jasiu\\workspace\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n...........................................................przyklad_41: done\nprzyklad_41: done\n..........every PDF failed; check the log above (dependencies installed? pip install -r requirements.txt)\n.........................warning: skipping unreadable pred C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmp0tv7f1c4\\pred\\przyklad_01\\bad.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n................................C:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n................\n----------------------------------------------------------------------\nRan 142 tests in 132.662s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T17:39:39+01:00",
+      "commit": "e689802214d77293fb9a10b8cf9c98b95f6eff76"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "scans: 30 pdfs, negatives: 12 pdfs -> .acc/sk\n31 cases, 42 pdfs, 30 json written, 12 rejected/failed\nwarning: pred case folders with no gold folder (ignored): negatywne\ncases scored: 30\n  odwolanie       P=1.0000 R=0.9774 F1=0.9886 (TP=173 FP=0 FN=4)\n  pelnomocnictwo  P=0.9459 R=0.8974 F1=0.9211 (TP=70 FP=4 FN=8)\n  przelew         P=0.9444 R=0.9444 F1=0.9444 (TP=51 FP=3 FN=3)\nnormalized: 0.9639\nscore: 0.9639",
+      "ran_at": "2026-11-21T17:40:56+01:00",
+      "commit": "e689802214d77293fb9a10b8cf9c98b95f6eff76"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "copied 60 pdfs to .acc\\input\n20 cases, 60 pdfs, 60 json written, 0 rejected/failed\ncases scored: 20\n  odwolanie       P=0.9976 R=1.0000 F1=0.9988 (TP=411 FP=1 FN=0)\n  pelnomocnictwo  P=1.0000 R=0.9943 F1=0.9971 (TP=174 FP=0 FN=1)\n  przelew         P=1.0000 R=1.0000 F1=1.0000 (TP=120 FP=0 FN=0)\nnormalized: 0.9986\nscore: 0.9986",
+      "ran_at": "2026-11-21T17:42:48+01:00",
+      "commit": "e689802214d77293fb9a10b8cf9c98b95f6eff76"
+    },
+    "AC-4": {
+      "id": "AC-4",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "",
+      "ran_at": "2026-11-21T17:42:50+01:00",
+      "commit": "e689802214d77293fb9a10b8cf9c98b95f6eff76"
+    }
+  }
+}

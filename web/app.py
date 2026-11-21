@@ -19,13 +19,14 @@ from pydantic import BaseModel
 from odw2json import factory
 from odw2json.engine import RecipeError
 from odw2json.pipeline import process_case
-from odw2json.write import classes
+from . import recipes_api
 
 STATIC = Path(__file__).parent / "static"
 MAX_FILES = 40
 MAX_BYTES = 60 * 1024 * 1024
 
 app = FastAPI(title="odwolania2json", docs_url="/api/docs", openapi_url="/api/openapi.json")
+app.include_router(recipes_api.router)
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
 
@@ -77,7 +78,7 @@ def index() -> HTMLResponse:
 
 @app.get("/api/recipes")
 def recipes() -> dict[str, Any]:
-    return {"classes": classes()}
+    return recipes_api.listing()
 
 
 @app.post("/api/process")
