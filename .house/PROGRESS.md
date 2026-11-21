@@ -24,3 +24,8 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - T012 gotowe do przeglądu: profile text/ocr, --workers (domyślnie 4, wynik identyczny), eval.bench z bramką; F1 heldout 0,944, skany 0,734, skany na zimno 4,5 dok./min przy 2,3 GB RAM.
 - 2026-11-21 · coder · T016 gotowe do przeglądu: lokalny czytelnik LLM (Qwen3-1,7B, Apache-2.0, 1,8 GB) z ugruntowaniem cytatów i bez nadpisywania; profil llm opt-in: skany 0,9639 -> 0,9707 (PESEL-e), heldout bez zmian, 5,1 GB RAM, ~2 min na wywołanie na tym laptopie · reports/T016.md
 - 2026-11-21 19:38 T009 cofnięte po scaleniu: regresja w T004: AC-4 (exit 1)
+- README i zrzuty ekranu zaktualizowane do bieżącej wersji (F1 per zbiór, {} dla odrzuconych, profil llm, spójność sprawy, edytor klas); ZIP w UI zawiera {} dla odrzuconych jak CLI
+- 2026-11-21 21:12 · judge · kryteria ręczne: T008 AC-4 PASS (zapisane; ale edytor klas w Dockerze daje 500 przez recipes:ro), T011 AC-4 PARTIAL (375 px: przycisk 'Pobierz …json' ucięty), T015 AC-3 PARTIAL (przepływ działa, 2 klawisze prime + łamanie nagłówka), T016 AC-4 PARTIAL (+0,0068 zamiast +0,05; zostaje opt-in) · reports/judge-manual-1.md
+- Judge (ręczne AC): T008 AC-4 PASS (zapisane); T011 AC-4, T015 AC-3, T016 AC-4 częściowo - raport reports/judge-manual-1.md
+- 2026-11-21 · judge · re-check po poprawkach (8bdac0c): T011 AC-4 PASS i T015 AC-3 PASS (zapisane); 375 px bez przewijania w bok, jeden klawisz prime, nagłówek mieści się; zapis klasy w Dockerze działa · reports/judge-manual-1.md
+- Poprawki UI po judge (Pobierz JSON, jeden przycisk główny, nagłówek 375 px, zapis receptur w Dockerze); T011 AC-4 i T015 AC-3 PASS po ponownym sprawdzeniu. Analiza pomyłek: reports/misses-1.md (20 pomyłek, 4 naprawia llm, większość do naprawy regułami)
