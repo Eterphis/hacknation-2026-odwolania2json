@@ -44,9 +44,25 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
   5. Jaki jest opis dla `czynnosc_powod_id` = 12?
   6. Licencja danych treningowych: czy wolno je umieścić w publicznym repo (np. w testach)?
   7. Wagi finału: PDF z treścią podaje 50% F1 / 30% elastyczność / 20% architektura i jakość, a regulamin zadania 50% F1 / 50% elastyczność — które obowiązują? Czy wymagane są wideo/slajdy, czy tylko link do repo? Czy wolno użyć kodu przygotowanego przed eventem?
-  8. Czy realne sprawy testowe mają tę samą strukturę wejścia (jeden odwołanie, ≥1 pełnomocnictwo, przelew na sprawę), czy mogą zawierać inne dokumenty (np. dowody, załączniki), które mamy pominąć?
+  8. Szablon w repo (`szablon-aplikacja/input/case1`) ma „negatywny przyklad.pdf” (ogłoszenie TED) bez pliku wynikowego, a oczekiwany `przyklad odwolanie.json` jest pusty: czy dla dokumentu spoza 3 klas mamy nie tworzyć żadnego pliku? Czy przykładowe wartości w `oczekiwane-json/odwolanie.json` to prawda referencyjna dla tego zeskanowanego odwołania?
+  9. Czy realne sprawy testowe mają tę samą strukturę wejścia (jeden odwołanie, ≥1 pełnomocnictwo, przelew na sprawę), czy mogą zawierać inne dokumenty (np. dowody, załączniki), które mamy pominąć?
 - **Opcje:** A) ktoś z drużyny pyta na stoisku UZP i wpisuje odpowiedzi tutaj B) pytamy na Discordzie wyzwania
 - **Rekomendacja:** A — odpowiedź od razu; do tego czasu budujemy ścieżkę bez LLM (D-005), lokalną sprawdzarkę z naszą definicją F1 (pola-liście, lekka normalizacja) i obsługujemy obie konwencje nazw plików.
 - **Blokuje:** ostateczną definicję F1 w lokalnej sprawdzarce (pyt. 2); wybór hostingu LLM (pyt. 1) — nic z tego nie blokuje startu prac
 - **Poziom:** zawsze człowiek
+- **Odpowiedź:** —
+
+## Q-003 [open] Wybór koncepcji rozwiązania (ideacja 1)
+- **Kontekst:** Ideator dał 5 koncepcji (`.house/reports/ideation-1.md`), researcherzy karty prior-art (`reports/prior-art-I-00N.md`, licencje: `reports/licences.md`), sędzia ocenił je rubryką 50/30/20 (w nawiasie wariant regulaminu 50/50; `reports/ideation-1-judge.md`). Ranking:
+  1. **I-001 Recepty** — 3,80 [4,00]. Klasa dokumentu = jeden plik YAML (klasyfikacja, sekcje, pola, normalizatory), jeden silnik dla wszystkich klas. Najbliższe: invoice2data (szablony YAML, MIT). Obrona: polskie normalizatory prawne, dowód dla każdego pola, nowa klasa dodana na żywo bez kodu. Najłatwiejsze do zrobienia, ale „to już istnieje”.
+  2. **I-005 Dowód na stronie** — 3,80 [4,00]. Skany i PDF-y cyfrowe → słowa z ramkami; UI rysuje ramkę przy każdym polu, poprawka kliknięciem zapisuje się do konfiguracji. Najbliższe: Docling (MIT), Azure Document Intelligence, Rossum, Label Studio. Obrona: korekta zapisywana do otwartego YAML. Ryzyko: pracochłonne.
+  3. **I-004 Schemat UZP jako prompt + LLM z weryfikacją** — 3,50. Konfiguracją są skomentowane schematy UZP, otwarty model (Bielik-1.5B, Apache-2.0) poprawia tylko niepewne pola, weryfikator przyjmuje tylko wartości znalezione w tekście. Najbliższe: NuMind (YC S22), LangExtract, ContextGem. Ryzyko: wysoka „wtórność” i zależność od tego, czy sprawdzarka ma LLM.
+  4. **I-002 Sprawa jako graf** — 3,20. Głosowanie wartości między dokumentami sprawy, sumy kontrolne do naprawy OCR, kontrola formalna dla urzędnika KIO. Najbliższe: Parsewise (YC S25), Splink (MIT). Uwaga sędziego: pomysł „za niska opłata” odpada — wszystkie 60 przelewów to opłata skarbowa od pełnomocnictwa (sprawdzone), nie wpis; trzymają się tylko kontrole spójności (mocodawca = odwołujący, numer sprawy w tytule przelewu).
+  5. **I-003 Naucz na przykładach** — 2,80. Konfiguracja generowana z 5–10 par PDF+JSON. Najbliższe: Azure custom models, indukcja wrapperów (WIEN). Do odłożenia.
+- **Opcje:** A) połączenie wg sędziego: chudy silnik recept I-001 na jednym modelu „słowa + ramki” z I-005 (OCR dla skanów), lekka spójność między dokumentami z I-002, LLM z I-004 tylko jako dodatek wyłączony domyślnie (szacunek sędziego 4,3 [4,5]); B) samo I-001 (najszybciej, najmniej „wow”); C) I-004 jako rdzeń (LLM-first z regułami jako podłogą); D) inny wybór / zmiany
+- **Rekomendacja:** A — I-001 daje pewny wynik F1 i elastyczność przez konfigurację, model słów z ramkami jest konieczny i tak (skany), a dowód na stronie i spójność dają przejrzystość, za którą UZP wprost daje punkty. Kolejność cięcia pod presją czasu: klik-korekta → LLM → ramki na obrazie strony → edytor w przeglądarce.
+- **Blokuje:** planowanie (T001 kontrakt + szkielet, T002 sprawdzarka F1 z podziałem 01–40 / 41–60, T003 wczytywanie z OCR — wszystkie trzy niezależne)
+- **Poziom:** krytyczny
+- **Termin:** 2026-11-21 14:30
+- **Domyślnie:** A
 - **Odpowiedź:** —
