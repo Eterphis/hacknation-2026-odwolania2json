@@ -38,5 +38,38 @@
     "protected": {}
   },
   "frozen_at": "2026-11-21T11:59:46+01:00",
-  "results": {}
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "C:\\Users\\jasiu\\workspace\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n..........................................................przyklad_41: done\nprzyklad_41: done\n.....every PDF failed; check the log above (dependencies installed? pip install -r requirements.txt)\n.............warning: skipping unreadable pred C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpsv2kgbx3\\pred\\przyklad_01\\bad.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n................................C:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n................\n----------------------------------------------------------------------\nRan 124 tests in 38.290s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T15:27:31+01:00",
+      "commit": "89b6b28677c666f02e76908d41642cd9569a701d"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "copied 60 pdfs to .acc\\input\n20 cases, 60 pdfs, 60 json written, 0 rejected/failed\ncases scored: 20\n  przelew         P=1.0000 R=1.0000 F1=1.0000 (TP=120 FP=0 FN=0)\nnormalized: 1.0000\nscore: 1.0000",
+      "ran_at": "2026-11-21T15:27:54+01:00",
+      "commit": "89b6b28677c666f02e76908d41642cd9569a701d"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "copied 60 pdfs to .acc\\input\n20 cases, 60 pdfs, 60 json written, 0 rejected/failed\ncases scored: 20\n  pelnomocnictwo  P=1.0000 R=0.9943 F1=0.9971 (TP=174 FP=0 FN=1)\nnormalized: 0.9971\nscore: 0.9971",
+      "ran_at": "2026-11-21T15:28:17+01:00",
+      "commit": "89b6b28677c666f02e76908d41642cd9569a701d"
+    },
+    "AC-4": {
+      "id": "AC-4",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "",
+      "ran_at": "2026-11-21T15:28:17+01:00",
+      "commit": "89b6b28677c666f02e76908d41642cd9569a701d"
+    }
+  }
 }

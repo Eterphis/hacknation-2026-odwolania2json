@@ -87,3 +87,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** decyzja człowieka: limit właściciela 80%, teammate'a 30%, reset o 14:30.
 - **Kto:** człowiek
 - **Data:** 2026-11-21 17:00
+
+## D-014 Sprawy odłożone 41–60 nie są już w pełni niezależne dla pełnomocnictwa
+- **Decyzja:** Teammate w T005, za zgodą właściciela (czat), obejrzał układ tekstu pełnomocnictw w sprawach 41–60, żeby dobić do progu 0,90 (bez kopiowania wartości z gold). Wynik pełnomocnictwa na 41–60 (0,997) traktujemy jako zawyżony. Niezależne miary uogólniania to od teraz: zaszumiony zbiór T010 (OCR), skan z szablonu i odwołanie (T006 nie zaglądało w 41–60).
+- **Dlaczego:** test ma prawdziwe, częściowo skanowane dokumenty; zawyżona liczba nie może kierować decyzjami ani trafić do pitchu jako „wynik na danych niewidzianych”.
+- **Kto:** człowiek (zgoda) + coordinator (zapis)
+- **Data:** 2026-11-21 18:00
