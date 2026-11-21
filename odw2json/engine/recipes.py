@@ -201,7 +201,7 @@ def check_recipe_text(text: str, dictionaries: str | os.PathLike | None = None) 
     except RecipeError as e:
         where = getattr(e, "where", "")
         path = [int(p) if p.isdigit() else p for p in where.split("/") if p]
-        errors.append(err(path, str(e).split(": ", 1)[-1]))
+        errors.append(err(path, "bad regex" + str(e).split("bad regex", 1)[-1] + " (check brackets and escape literal characters with a backslash)"))
 
     def walk(fields: list, base: list) -> None:
         for i, f in enumerate(fields or []):
