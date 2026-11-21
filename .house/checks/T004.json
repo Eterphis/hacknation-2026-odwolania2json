@@ -1,0 +1,42 @@
+{
+  "task": "T004",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/prep_input.py .acc/input 01-60 --template && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/input --output .acc/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/output_shape.py .acc/input .acc/output --expect-reject 'negatywny przyklad.pdf' --check-class",
+        "expect": "ok: 181 files",
+        "text": null,
+        "timeout": 1800
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "! grep -rniE 'odwolanie|odwołanie|pelnomocnictw|pełnomocnictw|przelew|OdwolanieKIO|mocodawca|Zamawiajacy' odw2json/engine",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      },
+      {
+        "id": "AC-4",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import sys,jsonschema,json,yaml,glob; s=json.load(open('recipes/recipe.schema.json',encoding='utf-8')); fs=glob.glob('recipes/*.yaml'); [jsonschema.validate(yaml.safe_load(open(f,encoding='utf-8')),s) for f in fs]; print(len(fs),'recipes valid'); sys.exit(0 if len(fs)>=3 else 1)\"",
+        "expect": null,
+        "text": null,
+        "timeout": 120
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T11:59:44+01:00",
+  "results": {}
+}
