@@ -22,3 +22,13 @@ Thumbs.db
 
 # claude local settings
 .claude/settings.local.json
+
+# house: generated per machine by `house adapt` (absolute paths of that machine), never committed
+AGENTS.md
+CLAUDE.md
+.claude/agents/
+.claude/skills/
+.house/tools.json
+.house/generated.json
+.house/tmp/
+.worktrees/
