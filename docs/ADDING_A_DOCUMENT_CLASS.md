@@ -90,6 +90,13 @@ zapis i usuwanie zwracają komunikat „tylko do odczytu". Te same operacje są 
 fraza (wyrażenie regularne, spacja = dowolny odstęp) występuje w zakresie **najwcześniej**. Przykład:
 `dictionaries/czynnosc_powod.yaml` (kody czynności Zamawiającego 1–11).
 
+### Słownik polskich znaków (`restore_diacritics`)
+`dictionaries/polish_words.txt` to lista poprawnych polskich wyrazów, po jednym w wierszu. Plik powstaje skryptem
+`python dictionaries/build_polish_words.py <uzp-data/dane>` z wartości w publicznych wzorcowych JSON-ach
+(`przyklad_*`, `skany`) oraz ręcznej listy `dictionaries/polish_words.extra.txt` (słownictwo dziedzinowe); wyraz
+zostaje, tylko gdy jego pisownia bez ogonków nie występuje sama w źródłach. Dopisanie wyrazu = dopisanie go do
+`polish_words.extra.txt` i ponowne uruchomienie skryptu.
+
 ## Dokumentacja receptury
 Pełna, formalna definicja: `recipes/recipe.schema.json` (walidowana przy wczytaniu).
 
@@ -123,13 +130,15 @@ Daje to regułę ogólną z precyzyjną regułą na wierzchu.
 ### Strategie (`use:`)
 | Strategia | Klucze | Co robi |
 |---|---|---|
-| `regex` | `pattern`, `all`, `raw` | dopasowanie wzorca; wartość to grupa `v` (albo grupa 1, albo całe dopasowanie); `raw: true` *(gałąź T013)* = z wielkością liter na oryginalnym tekście |
+| `regex` | `pattern`, `all`, `raw`, `nth` | dopasowanie wzorca; wartość to grupa `v` (albo grupa 1, albo całe dopasowanie); `raw: true` *(gałąź T013)* = z wielkością liter na oryginalnym tekście; `nth: N` *(T014)* = tylko N-te różne trafienie (0 pierwsze, -1 ostatnie), np. rachunek nadawcy, potem odbiorcy |
 | `after_label` | `labels`, `value`, `max_lines`, `below` | wartość na prawo od etykiety (do przerwy kolumnowej) albo w linii pod etykietą w tej samej kolumnie (siatki bankowe); `value` = wymagany kształt wartości |
 | `between` | `start`, `end` | tekst między dwoma wzorcami (domyślnie do pustej linii), łączy przeniesienia wierszy |
 | `lookup` | `dictionary`, `return` | wpis słownika z najwcześniej występującą frazą; zwraca `id` (lub `label`, ...) |
 | `const` | `value` | stała |
 | `derived` | `if_set`, `value`, `else` | `value`, gdy pole `if_set` jest ustawione, inaczej `else` |
 | `segments` | `value`, `exclude`, `not_after`, `raw` | *(gałąź T005, po scaleniu)* wartości w kolumnach linii (np. podpisy pod kropkami); `raw: true` = dopasowanie z wielkością liter |
+
+*(T014)* Każda strategia może mieć `section: <nazwa>`: szuka wtedy tylko w tej sekcji receptury (jedno pole: najpierw wzorzec z całego dokumentu, potem z sekcji; gdy sekcji nie ma, strategia jest pomijana).
 
 *(gałąź T005, po scaleniu)* `list_of_blocks` dostaje `min_blocks` (mniej początków bloków niż N = jeden blok na
 cały zakres, np. jeden mocodawca zamiast konsorcjum) i `merge` (bloki dołączane po kolei do istniejącej listy, np.
@@ -150,6 +159,9 @@ grupy podpisów „W imieniu X:” do mocodawców).
 | `upper`, `title` | wielkie litery / każde słowo wielką literą |
 | `person` | *(gałąź T013)* imię i nazwisko; zapis WERSALIKAMI zamieniony na „Jan Kowalski-Nowak” |
 | `company` | *(gałąź T013)* nazwa firmy z poprawką typowych błędów OCR w formie prawnej („Sp. z 0.o.” → „Sp. z o.o.”) |
+| `ocr_text` | *(T014)* tekst po OCR: litery z tyldą (Ñ → Ń) i dwukropek w numerze sprawy zamiast kropki (`DA.ZP:242.13.2026`) |
+| `restore_diacritics` | *(T014)* przywraca polskie znaki wyrazom ze słownika `dictionaries/polish_words.txt` (zachowuje wielkość liter, naprawia też złe akcenty: „Lódź” → „Łódź”; wyrazów niejednoznacznych i nieznanych nie rusza) |
+| `flag` | *(T014)* 1, gdy fraza-znacznik została znaleziona (treść dopasowania jest bez znaczenia) |
 | `ocr_digits` | *(gałąź T013)* cyfry identyfikatora po OCR: `o`/`O` → 0, `l`/`I` → 1 |
 
 ### Walidatory (`validate:`)

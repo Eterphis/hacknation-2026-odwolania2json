@@ -82,10 +82,17 @@ def regex(ctx: Context, spec: dict, scope: Scope) -> Iterator[Candidate]:
         pat, hay = re.compile(spec["pattern"], re.MULTILINE), t.raw
     else:
         pat, hay = compile_pattern(spec["pattern"]), t.low
-    for m in pat.finditer(hay, scope.start, scope.end):
-        a, b = _group_span(m)
-        if b > a:
-            yield _span_candidate(t, a, b)
+    spans = [_group_span(m) for m in pat.finditer(hay, scope.start, scope.end)]
+    spans = [(a, b) for a, b in spans if b > a]
+    if "nth" in spec:  # only the n-th distinct value (0 = first, -1 = last), e.g. sender then recipient account
+        seen: dict[str, tuple[int, int]] = {}
+        for a, b in spans:
+            seen.setdefault(re.sub(r"\s+", "", hay[a:b]), (a, b))
+        picked = list(seen.values())
+        n = int(spec["nth"])
+        spans = [picked[n]] if -len(picked) <= n < len(picked) else []
+    for a, b in spans:
+        yield _span_candidate(t, a, b)
 
 
 def join_lines(s: str) -> str:

@@ -112,7 +112,7 @@ class RecipeEngine:
             if "list_of_blocks" in f:
                 self._blocks(f, text, sections, fscope, item, prefix, evidence)
             else:
-                self._field(f, text, fscope, item, prefix, evidence)
+                self._field(f, text, fscope, item, prefix, evidence, sections)
 
     def _blocks(self, f, text, sections, scope, item, prefix, evidence) -> None:
         spec = f["list_of_blocks"]
@@ -142,14 +142,22 @@ class RecipeEngine:
             return
         _set(item, f["path"], items)
 
-    def _field(self, f, text, scope, item, prefix, evidence) -> None:
+    def _field(self, f, text, scope, item, prefix, evidence, sections=None) -> None:
         ctx = Context(text, item, self.dictionary)
         path = f["path"]
         for strat in f["strategies"]:
             fn = STRATEGIES[strat["use"]]
+            scope_ = scope
+            if strat.get("section"):  # this strategy alone searches inside a named section
+                sec = (sections or {}).get(strat["section"])
+                if sec is None:
+                    continue
+                scope_ = Scope(max(scope.start, sec.start), min(scope.end, sec.end))
+                if scope_.end <= scope_.start:
+                    continue
             if strat.get("all"):
                 found, seen = [], set()
-                for c in fn(ctx, strat, scope):  # every distinct value once, in document order
+                for c in fn(ctx, strat, scope_):  # every distinct value once, in document order
                     v = _normalise(f, c.value)
                     if v is not None and v not in seen:
                         seen.add(v)
@@ -166,7 +174,7 @@ class RecipeEngine:
                     _set(item, head, rows)
                     return
                 continue
-            for c in fn(ctx, strat, scope):
+            for c in fn(ctx, strat, scope_):
                 v = _normalise(f, c.value)
                 if v is not None:
                     _set(item, path, v)
