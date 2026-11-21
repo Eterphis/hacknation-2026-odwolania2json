@@ -1,7 +1,7 @@
 ---
 id: T003
 title: Ingest to word-box pages with per-page OCR fallback
-status: doing
+status: done
 owner: coder
 branch: task/T003-ingest-ocr
 depends_on: []
