@@ -246,10 +246,14 @@ def merge_task(contest: Path, task_id: str, worktree: Path | None = None,
     merge_sha = _git(contest, "rev-parse", "HEAD").stdout.strip()
     try:
         red_after = {}
-        for tid in [task_id, *[t for t in frozen_done if t != task_id]]:
-            after = checks.run_checks(house, tid, contest)
-            if not after.green:
-                red_after[tid] = _failures(after)
+        checks.RUN_CACHE = {}  # same command at the same merge commit runs once (shared unit-test command)
+        try:
+            for tid in [task_id, *[t for t in frozen_done if t != task_id]]:
+                after = checks.run_checks(house, tid, contest)
+                if not after.green:
+                    red_after[tid] = _failures(after)
+        finally:
+            checks.RUN_CACHE = None
         already_red = _red_before(contest, house, [t for t in red_after if t != task_id], pre_head)
         regressions = {t: why for t, why in red_after.items() if t not in already_red}
     except KeyboardInterrupt:  # Ctrl+C during the re-checks: undo the merge, then stop
