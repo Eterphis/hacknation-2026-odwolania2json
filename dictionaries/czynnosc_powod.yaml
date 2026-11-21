@@ -1,4 +1,4 @@
-# czynnosc_powod_id -> czynnosc_opis (fixed 1:1 code list, ids 1-11 seen in training; id 12 unknown).
+# czynnosc_powod_id -> czynnosc_opis (fixed 1:1 official code list 1-12, labels exactly as in uzp-data/oczekiwane-json/czynnosc_powod_id_dict.md).
 # triggers: phrases describing the contested act (matched diacritics- and case-insensitive, a space matches
 # any whitespace). The trigger occurring FIRST in the searched scope wins, so put negated forms
 # ("nie odrzucil") in their own entry: they start earlier than the plain verb and win the tie.
@@ -19,7 +19,7 @@ entries:
     label: "Modyfikacja treści SWZ"
     triggers: ["zmodyfikował treść specyfikacji", "zmodyfikował treść swz", "modyfikacji treści swz", "zmienił treść specyfikacji"]
   - id: 6
-    label: "Odpowiedzi i wyjaśnienia do SWZ"
+    label: "Odpowiedzi/wyjaśnienia do SWZ"
     triggers: ["przekazał wykonawcom odpowiedzi", "odpowiedzi i wyjaśnienia do treści", "udzielił odpowiedzi"]
   - id: 7
     label: "Zaniechanie odrzucenia oferty"
@@ -39,4 +39,4 @@ entries:
   # official code list: uzp-data/oczekiwane-json/czynnosc_powod_id_dict.md
   - id: 12
     label: "Projektowane postanowienia umowy"
-    triggers: ["projektowan\\w* postanowie\\w* umowy", "wzoru umowy", "wzorze umowy"]
+    triggers: ["projektowan\\w* postanowie\\w* umowy"]  # "wzór umowy" alone also appears in other charges

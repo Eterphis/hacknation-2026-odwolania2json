@@ -19,22 +19,29 @@ def _overlap(a0: float, a1: float, b0: float, b1: float) -> float:
 
 
 def group_lines(words: list[Word]) -> list[list[Word]]:
-    """Cluster words into lines by vertical overlap; each line sorted by x, lines sorted by y."""
-    lines: list[list[float | list[Word]]] = []  # [y0, y1, words]
+    """Cluster words into lines by vertical position; each line sorted by x, lines sorted by y.
+
+    A word joins a line when its vertical centre is within half of the smaller height (word vs. the line's
+    typical word) of the line's centre. The line's band does not grow with each word: on scans a slightly skewed
+    OCR line has a tall box, and a growing union of boxes used to swallow the neighbouring lines.
+    """
+    lines: list[list] = []  # [sum of centres, count, typical height, words]
     for word in sorted(words, key=lambda x: (x.y0 + x.y1) / 2):
+        cy, h = (word.y0 + word.y1) / 2, word.y1 - word.y0
         placed = False
-        for line in reversed(lines):
-            ly0, ly1 = line[0], line[1]
-            h = min(word.y1 - word.y0, ly1 - ly0)
-            if h > 0 and _overlap(word.y0, word.y1, ly0, ly1) >= _LINE_OVERLAP * h:
-                line[0], line[1] = min(ly0, word.y0), max(ly1, word.y1)
-                line[2].append(word)
+        for line in reversed(lines[-8:]):
+            lcy, lh = line[0] / line[1], line[2]
+            tol = _LINE_OVERLAP * min(h, lh) if h > 0 and lh > 0 else 0
+            if abs(cy - lcy) <= tol:
+                line[0] += cy
+                line[1] += 1
+                line[3].append(word)
                 placed = True
                 break
         if not placed:
-            lines.append([word.y0, word.y1, [word]])
-    lines.sort(key=lambda ln: ln[0])
-    return [sorted(ln[2], key=lambda x: x.x0) for ln in lines]
+            lines.append([cy, 1, h, [word]])
+    lines.sort(key=lambda ln: ln[0] / ln[1])
+    return [sorted(ln[3], key=lambda x: x.x0) for ln in lines]
 
 
 def build_text(words: list[Word]) -> str:
