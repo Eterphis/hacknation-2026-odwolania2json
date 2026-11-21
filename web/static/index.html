@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Odwołania do JSON</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>Odwołania&nbsp;&rarr;&nbsp;JSON</h1>
+    <p class="lede">Wgraj dokumenty jednej sprawy. Dla każdego pliku zobaczysz rozpoznany rodzaj pisma, wynik w formacie JSON i uzasadnienie każdego pola.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intake" aria-labelledby="h-upload">
+    <h2 id="h-upload" class="sr">Wgrywanie plików</h2>
+    <label class="drop" id="drop" for="file">
+      <input id="file" type="file" accept="application/pdf,.pdf" multiple>
+      <span class="drop-main">Przeciągnij tu pliki PDF sprawy</span>
+      <span class="drop-sub">albo kliknij, aby wybrać. Odwołanie, pełnomocnictwo, potwierdzenie przelewu i inne załączniki.</span>
+    </label>
+    <ul id="queue" class="queue" aria-live="polite"></ul>
+    <div class="row">
+      <label class="case">Nazwa sprawy <input id="case" value="sprawa" maxlength="60" autocomplete="off"></label>
+      <button id="go" type="button" disabled>Przetwórz sprawę</button>
+      <button id="clear" type="button" class="ghost" hidden>Wyczyść</button>
+    </div>
+  </section>
+
+  <section id="progress" class="progress" hidden role="status" aria-live="polite">
+    <div class="bar"><i></i></div>
+    <p id="progress-text">Czytam dokumenty. Skany mogą potrwać chwilę (rozpoznawanie tekstu OCR).</p>
+  </section>
+
+  <p id="error" class="error" hidden role="alert"></p>
+
+  <section id="results" hidden>
+    <div class="results-head">
+      <h2 id="case-title"></h2>
+      <div class="actions">
+        <button id="zip" type="button">Pobierz wszystko (ZIP)</button>
+      </div>
+    </div>
+    <p id="summary" class="summary"></p>
+    <div id="checks"></div>
+    <div id="docs"></div>
+  </section>
+</main>
+
+<footer class="wrap foot">Pliki są przetwarzane w pamięci tymczasowej serwera i usuwane zaraz po odpowiedzi.</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>
