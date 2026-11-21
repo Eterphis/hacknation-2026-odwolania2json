@@ -1,0 +1,54 @@
+# Bank transfer confirmation (potwierdzenie przelewu). Output: schemas/przelew.json.
+# Patterns are matched on folded text: lower case, no diacritics.
+class: przelew
+description: Potwierdzenie wykonania przelewu (wpis / opłata skarbowa)
+classify:
+  min_score: 4
+  margin: 1
+  signals:
+    - {pattern: "przelew", weight: 2, squash: true}
+    - {pattern: "przelew", weight: 1, head: 250, squash: true}
+    - {pattern: "potwierdz|polecenie", weight: 1, head: 250}
+    - {pattern: "rachun\\w* (odbiorcy|obciazany|nadawcy|zleceniodawcy|beneficjenta|platnika|uznawany)|z rachunku|na rachunek", weight: 1}
+    - {pattern: "kwot|wartosc", weight: 1}
+    - {pattern: "tytul\\w*|numer referencyjny|nr ref|numer transakcji", weight: 1}
+    - {pattern: "transakcj|operacj|bank", weight: 1}
+  forbidden:
+    - {pattern: "see the notice on ted website|ogloszenie o zamowieniu lub ogloszenie o koncesji", head: 600}
+
+fields:
+  - path: przelew_bankowy.kwota
+    strategies:
+      - {use: after_label, labels: ["kwota( operacji| przelewu| transakcji)?", "wartosc( operacji| przelewu| transakcji)?", "suma"], value: "\\d[\\d .]*,\\d{2}|\\d+\\.\\d{2}"}
+      - {use: regex, pattern: "w kwocie (?P<v>\\d[\\d .]*(,\\d{2})?)"}
+    normalize: amount_pl
+
+  - path: przelew_bankowy.data_operacji
+    strategies:
+      - {use: after_label, labels: ["data (operacji|transakcji|realizacji|wykonania|ksiegowania|zlecenia)"], value: "\\d{4}-\\d{2}-\\d{2}|\\d{1,2}[./-]\\d{2}[./-]\\d{4}|\\d{1,2} [a-z]+ \\d{4}"}
+      - {use: regex, pattern: "w dniu (?P<v>\\d{4}-\\d{2}-\\d{2}|\\d{1,2}[./-]\\d{2}[./-]\\d{4}|\\d{1,2} [a-z]+ \\d{4})"}
+    normalize: date_pl
+
+  - path: przelew_bankowy.z_rachunku
+    strategies:
+      - {use: after_label, labels: ["rachun\\w* (obciazany|nadawcy|zleceniodawcy|platnika)", "z rachunku( nr)?"], value: "(pl)?\\s?\\d{2}( ?\\d{4}){6}"}
+      - {use: after_label, labels: ["(dane )?(platnik|nadawc|zleceniodawc)\\w*"], value: "(pl)?\\s?\\d{2}( ?\\d{4}){6}", max_lines: 4}
+    normalize: iban_pl
+    validate: iban
+
+  - path: przelew_bankowy.na_rachunek
+    strategies:
+      - {use: after_label, labels: ["rachun\\w* (odbiorcy|beneficjenta|adresata|uznawany)", "na rachunek( nr)?"], value: "(pl)?\\s?\\d{2}( ?\\d{4}){6}"}
+      - {use: after_label, labels: ["(dane )?(odbiorc|beneficjen|adresat)\\w*"], value: "(pl)?\\s?\\d{2}( ?\\d{4}){6}", max_lines: 4}
+    normalize: iban_pl
+    validate: iban
+
+  - path: przelew_bankowy.numer_transakcji
+    strategies:
+      - {use: after_label, labels: ["nr ref\\.?", "numer referencyjny( operacji)?", "numer transakcji( operacji)?", "id transakcji", "identyfikator (transakcji|operacji)"], value: "[a-z0-9][a-z0-9/-]{5,}"}
+    normalize: unquote
+
+  - path: przelew_bankowy.tytul
+    strategies:
+      - {use: between, start: "^(tytul(em| przelewu)?|opis( przelewu)?)\\b\\s*:?\\s*", end: "\\n\\s*\\n|\\n(nr ref|numer|status|typ operacji|kanal|data|kwota|id transakcji|identyfikator|waluta|oplata|tryb)"}
+    normalize: unquote
