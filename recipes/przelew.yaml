@@ -70,3 +70,12 @@ fields:
       - {use: between, start: "^opis( przelewu)?\\s*:?\\s*\\n", end: "\\n\\s*\\n|\\n(nr ref|numer|status|typ|kanal|data|kwota|id transakcji|identyfikator|waluta|oplata|tryb|dane|rachunek|nazwa)"}
       - {use: between, start: "^opis( przelewu)?[ \\t]*:?[ \\t]+(?=\\S)", end: "\\n\\s*\\n|\\n(nr ref|numer|status|typ|kanal|data|kwota|id transakcji|identyfikator|waluta|oplata|tryb|dane|rachunek|nazwa)"}
     normalize: [unquote, ocr_text, restore_diacritics]
+
+# Optional local-LLM reader (profile `llm`, docs/LLM.md): only fields the rules left empty.
+llm:
+  context: {pages: 1, max_chars: 3500}
+  fields:
+    - path: przelew_bankowy.tytul
+      question: "The payment title (tytul przelewu / opis / szczegoly platnosci), exactly as printed."
+      normalize: [unquote, ocr_text, restore_diacritics]
+      when: 'tytu|szczegol|opis'
