@@ -147,3 +147,10 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** właściciel poprosił o nazwę projektu inną niż nazwa zadania; „ślad” = trace (identyfikacja Cold Trace) i główny wyróżnik: każde pole ma ślad w dokumencie (strona, fragment, reguła, pewność).
 - **Kto:** coordinator (na prośbę człowieka)
 - **Data:** 2026-11-21 22:40
+
+## D-024 Zmiana kryteriów T016
+
+- **Decyzja:** nowe kryteria akceptacji T016: AC-1 (run), AC-2 (run), AC-3 (run), AC-4 (manual)
+- **Dlaczego:** Właściciel: próg +0,05 F1 na skanach był ustawiony przy ocr = 0,73; przy ocr = 0,96-0,98 jest nieosiągalny. Nowy warunek: llm nie traci względem ocr na żadnym zbiorze i zostaje opcjonalny
+- **Kto:** coordinator
+- **Data:** 2026-11-21 22:59
