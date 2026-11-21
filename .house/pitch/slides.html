@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="pl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ślad: pitch, HackNation 2026</title>
+<!-- Fonty Anybody i Martian Mono (SIL OFL) z repozytorium; bez nich działają zapasowe kroje systemowe. Reszta pliku jest samodzielna. -->
+<link rel="stylesheet" href="../../web/static/coldtrace/fonts.css">
+<style>
+:root, [data-theme="dark"] {
+  --ct-ground: #000000; --ct-panel: #000000; --ct-ink: #EAF3F7; --ct-ink-2: #86A9BD;
+  --ct-line: #4E6E84; --ct-rule: #1E3546; --ct-well: #081624; --ct-sock: #1F3A4E;
+  --ct-key: #EAF3F7; --ct-key-ink: #000000;
+  --ct-live: #3DF5A0; --ct-signal: #38DDFF; --ct-arc: #A47BFF; --ct-fault: #FF8A3D;
+}
+[data-theme="light"] {
+  --ct-ground: #D6E5EE; --ct-panel: #F7FBFD; --ct-ink: #000000; --ct-ink-2: #3B5263;
+  --ct-line: #5A7689; --ct-rule: #A9C0CE; --ct-well: #BCD2DF; --ct-sock: #7FA6BF;
+  --ct-key: #000000; --ct-key-ink: #F7FBFD;
+  --ct-live: #00916A; --ct-signal: #0077AA; --ct-arc: #6A3FE0; --ct-fault: #A0400A;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0; }
+html, body { height: 100%; overflow: hidden; background: var(--ct-ground); color: var(--ct-ink); }
+body { font-family: 'Martian Mono', ui-monospace, Consolas, monospace; font-size: clamp(16px, 1.55vw, 30px); line-height: 1.5; }
+.wide { font-family: 'Anybody', 'Arial Black', Arial, sans-serif; font-stretch: 140%; font-weight: 800; }
+
+/* ----- slides ----- */
+.deck { position: fixed; inset: 0; }
+.slide { position: absolute; inset: 0; display: none; padding: 5vh 6vw 9vh; flex-direction: column; gap: 3vh; }
+.slide.is-on { display: flex; }
+.slide.is-on > * { animation: arrive 200ms cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .slide.is-on > * { animation: none; } }
+
+.kicker { color: var(--ct-ink-2); font-size: .6em; letter-spacing: .02em; display: flex; align-items: center; gap: .8em; }
+.kicker .t { color: var(--ct-ink-2); }
+h1, h2 { font-family: 'Anybody', 'Arial Black', Arial, sans-serif; font-stretch: 140%; font-weight: 800; line-height: 1.02; letter-spacing: 0; }
+h1 { font-size: clamp(64px, 14vw, 280px); text-transform: uppercase; }
+h2 { font-size: clamp(34px, 4.6vw, 96px); }
+.bus { height: 4px; width: 100%; max-width: 62vw; position: relative; background: linear-gradient(90deg, var(--ct-live), var(--ct-signal), var(--ct-arc)); }
+.bus::after { content: ""; position: absolute; right: -8px; top: -6px; width: 16px; height: 16px; border: 2px solid var(--ct-signal); border-radius: 50%; background: var(--ct-ground); }
+.lead { font-size: 1.2em; max-width: 34em; }
+.sub { color: var(--ct-ink-2); max-width: 40em; }
+
+/* via: the only circle */
+.v { display: inline-block; width: .55em; height: .55em; border: 2px solid var(--ct-signal); border-radius: 50%; flex: none; }
+.v--live { border-color: var(--ct-live); } .v--arc { border-color: var(--ct-arc); } .v--fault { border-color: var(--ct-fault); }
+
+/* chamfered frame: top-left and bottom-right cut at 45deg */
+.frame { --c: 14px; position: relative; background: var(--ct-line); padding: 2px;
+  clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c)); }
+.frame > .in { background: var(--ct-panel); height: 100%; padding: 2.2vh 1.8vw;
+  clip-path: polygon(calc(var(--c) - 1px) 0, 100% 0, 100% calc(100% - var(--c) + 1px), calc(100% - var(--c) + 1px) 100%, 0 100%, 0 calc(var(--c) - 1px)); }
+.frame--sig { background: var(--ct-signal); }
+.frame--well > .in { background: var(--ct-well); }
+
+.grid { display: grid; gap: 2vw; }
+.g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); }
+.fit { flex: 1; min-height: 0; align-content: start; }
+.card h3 { font-family: 'Anybody', Arial, sans-serif; font-stretch: 130%; font-weight: 800; font-size: 1.15em; margin-bottom: .5em; display: flex; align-items: center; gap: .6em; line-height: 1.15; }
+.card p, .card li { color: var(--ct-ink); font-size: .85em; }
+.card ul { list-style: none; display: grid; gap: .5em; }
+.card li { display: flex; gap: .7em; align-items: baseline; }
+.card li::before { content: ""; width: .45em; height: .45em; flex: none; border: 2px solid var(--ct-signal); border-radius: 50%; transform: translateY(-.05em); }
+code, .mono { font-family: 'Martian Mono', ui-monospace, Consolas, monospace; font-size: .92em; }
+.hint { color: var(--ct-ink-2); font-size: .6em; }
+.big { font-family: 'Anybody', Arial, sans-serif; font-stretch: 150%; font-weight: 900; font-size: clamp(34px, 5.4vw, 112px); line-height: 1; font-variant-numeric: tabular-nums; }
+.fault { color: var(--ct-fault); }
+
+/* steps */
+.steps { list-style: none; counter-reset: s; display: grid; gap: 1.6vh; }
+.steps li { counter-increment: s; display: flex; gap: 1em; align-items: baseline; font-size: .95em; }
+.steps li::before { content: counter(s); font-family: 'Anybody', Arial, sans-serif; font-stretch: 140%; font-weight: 800; min-width: 1.6em; padding: .05em .3em; border: 2px solid var(--ct-signal); text-align: center;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+
+/* quality traces */
+.traces { display: grid; gap: 4vh; align-content: center; }
+.tr { display: grid; grid-template-columns: 14em 1fr 5.5em; align-items: center; gap: 1.4vw; }
+.tr .name { font-size: 1.05em; }
+.tr .name small { display: block; color: var(--ct-ink-2); font-size: .72em; }
+.tr .rail { position: relative; height: 4px; background: var(--ct-rule); }
+.tr .fill { position: absolute; left: 0; top: 0; height: 4px; width: 0; background: var(--ct-live); transition: width 480ms cubic-bezier(.16, 1, .3, 1); }
+.tr .fill::after { content: ""; position: absolute; right: -9px; top: -7px; width: 18px; height: 18px; border: 2px solid var(--ct-live); border-radius: 50%; background: var(--ct-ground); }
+.tr .rail.arc .fill, .tr .rail.arc .fill::after { background: var(--ct-arc); border-color: var(--ct-arc); }
+.tr .rail.arc .fill::after { background: var(--ct-ground); }
+.tr .num { font-family: 'Anybody', Arial, sans-serif; font-stretch: 150%; font-weight: 900; font-size: 2.1em; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* diagram */
+svg.diag { width: 100%; height: auto; max-height: 34vh; display: block; }
+svg.diag .e { fill: none; stroke: var(--ct-line); stroke-width: 2; }
+svg.diag .e.live { stroke: var(--ct-live); stroke-width: 3; }
+svg.diag .box { fill: var(--ct-panel); stroke: var(--ct-ink); stroke-width: 2; }
+svg.diag .box.well { fill: var(--ct-well); stroke: var(--ct-line); }
+svg.diag .via { fill: var(--ct-ground); stroke: var(--ct-signal); stroke-width: 3; }
+svg.diag text { fill: var(--ct-ink); font-family: 'Martian Mono', ui-monospace, Consolas, monospace; font-size: 17px; }
+svg.diag text.h { font-family: 'Anybody', Arial, sans-serif; font-stretch: 130%; font-weight: 800; font-size: 21px; }
+svg.diag text.s { fill: var(--ct-ink-2); font-size: 14px; }
+
+/* chrome */
+.hud { position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 2vw; padding: 1.6vh 6vw; color: var(--ct-ink-2); font-size: .55em; z-index: 5; }
+.hud .pos { font-variant-numeric: tabular-nums; color: var(--ct-ink); }
+.hud .trk { flex: 1; height: 2px; background: var(--ct-rule); position: relative; }
+.hud .trk i { position: absolute; left: 0; top: 0; height: 2px; background: var(--ct-signal); width: 0; transition: width 220ms cubic-bezier(.16, 1, .3, 1); }
+.hud button { font: inherit; color: var(--ct-ink); background: transparent; border: 2px solid var(--ct-line); padding: .35em .9em; cursor: pointer; min-height: 44px;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.hud button:hover, .hud button:focus-visible { border-color: var(--ct-signal); outline: none; }
+.src { position: fixed; right: 6vw; top: 3vh; color: var(--ct-ink-2); font-size: .5em; z-index: 5; }
+
+/* hero slide */
+.s1 { justify-content: center; }
+.s1 .row { display: grid; grid-template-columns: 1.15fr 1fr; gap: 4vw; align-items: end; }
+.s1 ul { list-style: none; display: grid; gap: 1.2vh; font-size: .9em; }
+.s1 li { display: flex; gap: .8em; align-items: baseline; }
+
+@media print { html, body { overflow: visible; height: auto; } .slide { display: flex !important; position: relative; height: 100vh; page-break-after: always; } .hud, .src { display: none; } }
+@media (max-width: 800px) { .g2, .g3, .s1 .row { grid-template-columns: 1fr; } .tr { grid-template-columns: 1fr; } .slide { overflow-y: auto; } }
+</style>
+</head>
+<body>
+<div class="src" aria-hidden="true">Ślad · HackNation 2026 · UZP Odwołania2json</div>
+
+<main class="deck" id="deck">
+
+<!-- 1. Problem -->
+<section class="slide s1" data-title="Problem">
+  <div class="kicker"><span class="v v--live"></span><span>Eterphis · HackNation 2026 · wyzwanie UZP</span></div>
+  <h1>Ślad</h1>
+  <div class="bus"></div>
+  <div class="row">
+    <p class="lead">Z PDF-ów sprawy odwoławczej do JSON-a. Przy każdej wartości jej ślad.</p>
+    <ul class="mono">
+      <li><span class="v"></span><span>Sprawa to trzy rodzaje PDF-ów: odwołanie, pełnomocnictwo, potwierdzenie przelewu.</span></li>
+      <li><span class="v"></span><span>Dane trzeba odczytać z tekstu i ze skanów, i wpisać.</span></li>
+      <li><span class="v v--live"></span><span>Ślad oddaje JSON i pokazuje stronę, fragment, regułę i pewność.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 2. Demo A -->
+<section class="slide" data-title="Demo: sprawa">
+  <div class="kicker"><span class="v"></span><span>Na żywo · część A</span></div>
+  <h2>Sprawa przyklad_07 i dokument spoza klas</h2>
+  <div class="bus"></div>
+  <div class="grid g2 fit">
+    <div class="frame card"><div class="in">
+      <h3><span class="v v--live"></span>Wgrywamy</h3>
+      <ul>
+        <li>odwołanie, pełnomocnictwo, potwierdzenie przelewu</li>
+        <li>czwarty plik: ogłoszenie TED, spoza klas</li>
+        <li>klasa tylko po treści, nazwa pliku nic nie znaczy</li>
+      </ul>
+    </div></div>
+    <div class="frame card"><div class="in">
+      <h3><span class="v v--live"></span>Patrzymy na</h3>
+      <ul>
+        <li>trzy rozpoznane klasy z punktacją</li>
+        <li>jeden dokument odrzucony: <code>{}</code></li>
+        <li>tabela dowodów: strona, fragment, reguła, pewność</li>
+        <li>spójność sprawy: NIP, numer postępowania</li>
+      </ul>
+    </div></div>
+  </div>
+  <p class="hint">Przełącz na przeglądarkę: http://127.0.0.1:8000 · Plan B: docs/screenshots</p>
+</section>
+
+<!-- 3. Demo B -->
+<section class="slide" data-title="Demo: nowa klasa">
+  <div class="kicker"><span class="v"></span><span>Na żywo · część B</span></div>
+  <h2>Nowa klasa dokumentu, bez programowania</h2>
+  <div class="bus"></div>
+  <ol class="steps fit">
+    <li><span>Klasy dokumentów, <b>Nowa klasa z szablonu</b>, nazwa: <code>wezwanie</code></span></li>
+    <li><span><b>Sprawdź</b>: błąd wskazuje linię pliku i ścieżkę</span></li>
+    <li><span><b>Wypróbuj na PDF</b>: rozpoznanie i pola z dowodem, bez zapisu</span></li>
+    <li><span><b>Zapisz</b>: <code>recipes/wezwanie.yaml</code></span></li>
+    <li><span>Linia poleceń używa nowej klasy, bez restartu</span></li>
+  </ol>
+  <p class="hint">Zero linii kodu w Pythonie. W silniku nie ma nazw klas (sprawdza to test).</p>
+</section>
+
+<!-- 4. How it works -->
+<section class="slide" data-title="Jak działa">
+  <div class="kicker"><span class="v"></span><span>Architektura</span></div>
+  <h2>Reguły w YAML-u, każda wartość ze śladem</h2>
+  <div class="bus"></div>
+  <svg class="diag" viewBox="0 0 1200 250" role="img" aria-label="Przepływ: PDF, odczyt (tekst lub OCR), klasyfikacja po treści, ekstrakcja z receptur, JSON i dowody">
+    <!-- traces -->
+    <path class="e live" d="M130 95 H200"/><path class="e live" d="M390 95 H450"/><path class="e live" d="M640 95 H700"/>
+    <path class="e live" d="M890 95 H940"/>
+    <path class="e" d="M550 180 V135"/><path class="e" d="M800 180 V135"/>
+    <!-- boxes (chamfered via polygon) -->
+    <polygon class="box" points="26,55 130,55 130,135 16,135 16,65"/>
+    <text class="h" x="36" y="90">PDF</text><text class="s" x="36" y="116">sprawa</text>
+    <polygon class="box" points="210,55 390,55 390,135 200,135 200,65"/>
+    <text class="h" x="220" y="86">Odczyt</text><text class="s" x="220" y="108">warstwa tekstu</text><text class="s" x="220" y="126">albo OCR</text>
+    <polygon class="box" points="460,55 640,55 640,135 450,135 450,65"/>
+    <text class="h" x="470" y="86">Klasa</text><text class="s" x="470" y="108">po treści,</text><text class="s" x="470" y="126">albo odrzucenie</text>
+    <polygon class="box" points="710,55 890,55 890,135 700,135 700,65"/>
+    <text class="h" x="720" y="86">Ekstrakcja</text><text class="s" x="720" y="108">strategie</text><text class="s" x="720" y="126">z receptur</text>
+    <polygon class="box" points="950,25 1170,25 1170,135 940,135 940,35"/>
+    <text class="h" x="960" y="60">JSON</text><text class="s" x="960" y="86">+ dowody:</text><text class="s" x="960" y="106">strona, fragment,</text><text class="s" x="960" y="126">reguła, pewność</text>
+    <polygon class="box well" points="510,180 840,180 840,235 500,235 500,190"/>
+    <text class="h" x="522" y="205">recipes/*.yaml</text><text class="s" x="522" y="224">jedyna konfiguracja klas i pól</text>
+    <circle class="via" cx="130" cy="95" r="5"/><circle class="via" cx="200" cy="95" r="5"/><circle class="via" cx="390" cy="95" r="5"/>
+    <circle class="via" cx="450" cy="95" r="5"/><circle class="via" cx="640" cy="95" r="5"/><circle class="via" cx="700" cy="95" r="5"/>
+    <circle class="via" cx="890" cy="95" r="5"/><circle class="via" cx="940" cy="95" r="5"/>
+    <circle class="via" cx="550" cy="135" r="5"/><circle class="via" cx="800" cy="135" r="5"/>
+  </svg>
+  <div class="grid g3">
+    <div class="frame card"><div class="in"><h3><span class="v v--live"></span>Bez LLM domyślnie</h3><p>Deterministyczne reguły, lokalnie, CPU, 16 GB, bez GPU.</p></div></div>
+    <div class="frame card"><div class="in"><h3><span class="v"></span>Skany</h3><p>OCR (RapidOCR, ONNX). Strona to słowa z ramkami: ten sam kontrakt dla tekstu i skanu.</p></div></div>
+    <div class="frame card"><div class="in"><h3><span class="v v--arc"></span>Opcjonalny LLM</h3><p>Qwen3-1.7B lokalnie. Wartość przyjęta tylko z cytatem, który jest w tekście strony.</p></div></div>
+  </div>
+</section>
+
+<!-- 5. Quality -->
+<section class="slide" data-title="Jakość">
+  <div class="kicker"><span class="v"></span><span>Jakość ekstrakcji · dokładne F1 na polach</span></div>
+  <h2>30 skanów UZP: F1 <span class="mono" data-n="skany">0,9755</span></h2>
+  <div class="bus"></div>
+  <div class="traces fit">
+    <div class="tr"><div class="name">30 skanów UZP<small>główna miara niezależna</small></div><div class="rail"><div class="fill" data-w="skany"></div></div><div class="num" data-n="skany">0,9755</div></div>
+    <div class="tr"><div class="name">przykłady 41-60<small>odłożone, pełnomocnictwa częściowo oglądane</small></div><div class="rail arc"><div class="fill" data-w="heldout"></div></div><div class="num" data-n="heldout">1,000</div></div>
+    <div class="tr"><div class="name">przykłady 01-40<small>strojenie reguł</small></div><div class="rail arc"><div class="fill" data-w="dev"></div></div><div class="num" data-n="dev">1,000</div></div>
+    <div class="tr"><div class="name">12 negatywów<small>odrzucone: dostają <code>{}</code></small></div><div class="rail"><div class="fill" data-w="neg"></div></div><div class="num" data-n="negatywne">12/12</div></div>
+  </div>
+  <p class="hint">Skany wg klas: odwołania <span data-n="skany_odw">0,9886</span> · pełnomocnictwa <span data-n="skany_pel">0,9677</span> · przelewy <span data-n="skany_prz">0,9444</span>. Znamy pomyłki i mamy je spisane.</p>
+</section>
+
+<!-- 6. Extensibility, components -->
+<section class="slide" data-title="Rozbudowa i komponenty">
+  <div class="kicker"><span class="v"></span><span>Elastyczność · komponenty zewnętrzne</span></div>
+  <h2>Nowa klasa to jeden plik YAML</h2>
+  <div class="bus"></div>
+  <div class="grid g2 fit">
+    <div class="frame card"><div class="in">
+      <h3><span class="v v--live"></span>Rozbudowa</h3>
+      <ul>
+        <li>receptura: sygnały klasyfikacji, pola, strategie, normalizatory, walidatory</li>
+        <li>edytor w interfejsie, bez restartu</li>
+        <li>to samo narzędzie dla innych pism: baza pod uniwersalny PDF do danych</li>
+        <li>docs: architektura, dodawanie klasy, profile</li>
+      </ul>
+    </div></div>
+    <div class="frame card"><div class="in">
+      <h3><span class="v"></span>Komponenty (licencje)</h3>
+      <ul>
+        <li>pdfplumber MIT · pypdfium2 Apache-2.0/BSD</li>
+        <li>RapidOCR + PP-OCR Apache-2.0 · ONNX Runtime MIT</li>
+        <li>FastAPI MIT · fonty Anybody, Martian Mono OFL</li>
+        <li>opcja: Qwen3-1.7B Apache-2.0 · llama.cpp MIT</li>
+        <li class="fault">odrzucone: PyMuPDF, Ghostscript (AGPL), spaCy pl (GPL)</li>
+      </ul>
+    </div></div>
+  </div>
+  <p class="hint">Pełna lista: docs/EXTERNAL_COMPONENTS.md</p>
+</section>
+
+<!-- 7. Ask -->
+<section class="slide" data-title="Prośba">
+  <div class="kicker"><span class="v"></span><span>Prośba</span></div>
+  <h2>Czego chcemy od UZP</h2>
+  <div class="bus"></div>
+  <ol class="steps fit">
+    <li><span>Prawdziwe skany, na których Ślad zawiedzie: każdy to nowa reguła w YAML-u</span></li>
+    <li><span>Baza pod pilotaż: kod, Docker Compose, dokumentacja, dodawanie klas</span></li>
+    <li><span>Następny typ pisma ze spraw: pokażemy, ile zajmuje dodanie</span></li>
+  </ol>
+  <div class="frame frame--sig card" style="max-width: 46em"><div class="in">
+    <p class="mono">Repozytorium: <b>[wpisać link GitHub]</b></p>
+    <p class="hint">Ślad: każda wartość ma swój ślad.</p>
+  </div></div>
+</section>
+
+<!-- 8. Backup -->
+<section class="slide" data-title="Zapas: pomyłki">
+  <div class="kicker"><span class="v v--fault"></span><span>Zapas na pytania · znane pomyłki</span></div>
+  <h2>Co jeszcze nie działa</h2>
+  <div class="bus"></div>
+  <div class="grid g2 fit">
+    <div class="frame card"><div class="in">
+      <h3><span class="v v--fault"></span>Skany</h3>
+      <ul>
+        <li>linie zgubione przez OCR (prześwit druku z drugiej strony): obróbka obrazu w toku</li>
+        <li>konsorcjum: nie czytamy podpisującego drugiego członka</li>
+        <li>mocodawca jako osoba prowadząca działalność</li>
+      </ul>
+    </div></div>
+    <div class="frame card"><div class="in">
+      <h3><span class="v v--arc"></span>Decyzje i granice</h3>
+      <ul>
+        <li>prefiks <code>PL</code> w rachunku: zbiory UZP różnie, przyjęliśmy konwencję syntetyczną</li>
+        <li>41-60: pełnomocnictwa częściowo oglądane przy strojeniu</li>
+        <li>LLM opt-in: 1-3 min na wywołanie na CPU, zysk bliski zera</li>
+        <li>interfejs lokalny, bez uwierzytelniania</li>
+      </ul>
+    </div></div>
+  </div>
+</section>
+
+</main>
+
+<nav class="hud" aria-label="Nawigacja po slajdach">
+  <button id="prev" type="button" aria-label="Poprzedni slajd">Wstecz</button>
+  <span class="pos" id="pos" aria-live="polite">1 / 1</span>
+  <span class="trk" aria-hidden="true"><i id="bar"></i></span>
+  <span id="ttl"></span>
+  <button id="theme" type="button" aria-pressed="false">Daylight</button>
+  <button id="next" type="button" aria-label="Następny slajd">Dalej</button>
+</nav>
+
+<script>
+/* ===== Liczby do podmiany (jedno miejsce). Liczby z gwiazdką z pitch/script.md. ===== */
+var NUMS = {
+  skany: "0,9755",        // * dokładne F1, 30 skanów UZP
+  skany_odw: "0,9886",    // *
+  skany_pel: "0,9677",    // *
+  skany_prz: "0,9444",    // *
+  heldout: "1,000",       // * przykłady 41-60
+  dev: "1,000",           // * przykłady 01-40
+  negatywne: "12/12",     // * odrzucone negatywy
+  neg_frac: 1             // ułamek 12/12 do narysowania linii (odrzucone / wszystkie)
+};
+/* ===================================================================================== */
+
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var i = 0;
+  var pos = document.getElementById("pos"), bar = document.getElementById("bar"), ttl = document.getElementById("ttl");
+
+  function num(s) { return parseFloat(String(s).replace(",", ".")); }
+  function fill() {
+    document.querySelectorAll("[data-n]").forEach(function (e) { var k = e.getAttribute("data-n"); if (NUMS[k] != null) e.textContent = NUMS[k]; });
+    document.querySelectorAll("[data-w]").forEach(function (e) {
+      var k = e.getAttribute("data-w"), v = k === "neg" ? NUMS.neg_frac : num(NUMS[k]);
+      e.setAttribute("data-v", Math.max(0, Math.min(1, v)));
+    });
+  }
+  function grow() {
+    document.querySelectorAll(".slide.is-on [data-w]").forEach(function (e) { e.style.width = "0"; void e.offsetWidth; e.style.width = (parseFloat(e.getAttribute("data-v")) * 100) + "%"; });
+  }
+  function go(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function (s, k) { s.classList.toggle("is-on", k === i); });
+    pos.textContent = (i + 1) + " / " + slides.length;
+    bar.style.width = ((i + 1) / slides.length * 100) + "%";
+    ttl.textContent = slides[i].getAttribute("data-title") || "";
+    try { history.replaceState(null, "", "#" + (i + 1)); } catch (e) {}
+    grow();
+  }
+  function setTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    document.getElementById("theme").setAttribute("aria-pressed", String(t === "light"));
+    try { localStorage.setItem("slad-theme", t); } catch (e) {}
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var k = e.key;
+    if (k === "ArrowRight" || k === "ArrowDown" || k === "PageDown" || k === " " || k === "Enter") { go(i + 1); e.preventDefault(); }
+    else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp" || k === "Backspace") { go(i - 1); e.preventDefault(); }
+    else if (k === "Home") { go(0); e.preventDefault(); }
+    else if (k === "End") { go(slides.length - 1); e.preventDefault(); }
+    else if (k === "t" || k === "T") { setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"); }
+    else if (/^[1-9]$/.test(k)) { go(parseInt(k, 10) - 1); }
+  });
+  document.getElementById("prev").addEventListener("click", function () { go(i - 1); this.blur(); });
+  document.getElementById("next").addEventListener("click", function () { go(i + 1); this.blur(); });
+  document.getElementById("theme").addEventListener("click", function () { setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light"); this.blur(); });
+  var x0 = null;
+  document.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", function (e) { if (x0 == null) return; var dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 60) go(i + (dx < 0 ? 1 : -1)); x0 = null; }, { passive: true });
+
+  try { var t = localStorage.getItem("slad-theme"); if (t === "light" || t === "dark") setTheme(t); } catch (e) {}
+  fill();
+  var h = parseInt((location.hash || "").slice(1), 10);
+  go(isNaN(h) ? 0 : h - 1);
+})();
+</script>
+</body>
+</html>

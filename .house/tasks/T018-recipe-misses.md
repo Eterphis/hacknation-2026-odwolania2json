@@ -1,7 +1,7 @@
 ---
 id: T018
 title: Fix the rule-fixable misses - PESEL per attorney, Odwolujacy section end, duplicate and glued person names
-status: review
+status: done
 owner: coder
 branch: task/T018-recipe-misses
 depends_on: []

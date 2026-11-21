@@ -141,3 +141,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** Właściciel: akceptowalne wydłużenie OCR przez obróbkę obrazu to do +40% (było +30%)
 - **Kto:** coordinator
 - **Data:** 2026-11-21 21:56
+
+## D-023 Nazwa produktu: Ślad
+- **Decyzja:** Produkt nazywa się **Ślad** (ASCII: `slad`); pod tą nazwą powstaje publiczna kopia z `house export`. Pakiet Pythona zostaje `odw2json`, CLI `python -m odw2json`.
+- **Dlaczego:** właściciel poprosił o nazwę projektu inną niż nazwa zadania; „ślad” = trace (identyfikacja Cold Trace) i główny wyróżnik: każde pole ma ślad w dokumencie (strona, fragment, reguła, pewność).
+- **Kto:** coordinator (na prośbę człowieka)
+- **Data:** 2026-11-21 22:40

@@ -43,33 +43,33 @@
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmprx53vgc7\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 244 tests in 39.474s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-21T20:23:06+01:00",
-      "commit": "3e9716692735f03051aa3a440c5695aa24d51a33"
+      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpekcdvdvr\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 255 tests in 60.184s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T22:35:31+01:00",
+      "commit": "a20a14b2854f4eb8f9a60c8140e8dde99db2cdb9"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
       "output_tail": "copied 60 pdfs to .acc\\input\nINFO profile ocr, 4 worker(s)\n20 cases, 60 pdfs, 60 json written, 0 rejected/failed\nwarning: pred case folders with no gold folder (ignored): template_case1\ncases scored: 20\n  przelew         P=1.0000 R=1.0000 F1=1.0000 (TP=120 FP=0 FN=0)\nnormalized: 1.0000\nscore: 1.0000",
-      "ran_at": "2026-11-21T20:23:18+01:00",
-      "commit": "3e9716692735f03051aa3a440c5695aa24d51a33"
+      "ran_at": "2026-11-21T22:36:02+01:00",
+      "commit": "a20a14b2854f4eb8f9a60c8140e8dde99db2cdb9"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
-      "output_tail": "copied 60 pdfs to .acc\\input\nINFO profile ocr, 4 worker(s)\n20 cases, 60 pdfs, 60 json written, 0 rejected/failed\nwarning: pred case folders with no gold folder (ignored): template_case1\ncases scored: 20\n  pelnomocnictwo  P=1.0000 R=0.9943 F1=0.9971 (TP=174 FP=0 FN=1)\nnormalized: 0.9971\nscore: 0.9971",
-      "ran_at": "2026-11-21T20:23:29+01:00",
-      "commit": "3e9716692735f03051aa3a440c5695aa24d51a33"
+      "output_tail": "copied 60 pdfs to .acc\\input\nINFO profile ocr, 4 worker(s)\n20 cases, 60 pdfs, 60 json written, 0 rejected/failed\nwarning: pred case folders with no gold folder (ignored): template_case1\ncases scored: 20\n  pelnomocnictwo  P=1.0000 R=1.0000 F1=1.0000 (TP=175 FP=0 FN=0)\nnormalized: 1.0000\nscore: 1.0000",
+      "ran_at": "2026-11-21T22:36:29+01:00",
+      "commit": "a20a14b2854f4eb8f9a60c8140e8dde99db2cdb9"
     },
     "AC-4": {
       "id": "AC-4",
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T20:23:30+01:00",
-      "commit": "3e9716692735f03051aa3a440c5695aa24d51a33"
+      "ran_at": "2026-11-21T22:36:29+01:00",
+      "commit": "a20a14b2854f4eb8f9a60c8140e8dde99db2cdb9"
     }
   }
 }
