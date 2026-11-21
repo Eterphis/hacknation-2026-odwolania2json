@@ -1,7 +1,7 @@
 ---
 id: T001
 title: Package skeleton, schema-complete writer and CLI input/output contract
-status: review
+status: done
 owner: coder
 branch: task/T001-skeleton-cli
 depends_on: []
