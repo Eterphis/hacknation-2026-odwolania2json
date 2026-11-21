@@ -1,0 +1,34 @@
+{
+  "task": "T001",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 600
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/prep_input.py .acc/input 01-60 && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/input --output .acc/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/output_shape.py .acc/input .acc/output",
+        "expect": "ok: 180 files",
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "test -f start.bat && test -f input/.gitkeep && test -f output/.gitkeep && grep -qi pdfplumber requirements.txt && grep -q '^.acc/' .gitignore",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T11:59:39+01:00",
+  "results": {}
+}
