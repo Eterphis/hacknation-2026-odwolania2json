@@ -122,6 +122,8 @@ pole jest pomijane.
 | `strategies` | lista prób w kolejności; wygrywa pierwszy kandydat, który przejdzie normalizację |
 | `normalize` | nazwa lub lista normalizatorów (poniżej) |
 | `validate` | walidator sumy kontrolnej; niezgodność obniża pewność do 0,5, wartość zostaje |
+| `dedupe` | *(T018)* `{fuzzy: N}` na polu listy (`lista[].pole` z `all: true` albo lista scalana przez `list_of_blocks.merge`): scala elementy, które wskazują tę samą osobę. Imiona są takie same po zwinięciu wielkości liter i polskich znaków albo różnią się o najwyżej `fuzzy` znaków (błąd OCR: `Zawadżki` / `Zawadzki`). Zostaje zapis z małymi literami zamiast WERSALIKÓW, a przy remisie późniejszy (podpis) |
+| `attach_to`, `window` | *(T018)* pole `lista[].pole` z `attach_to: lista[].klucz`: wartość drukowana obok każdego elementu już odczytanej listy, szukana osobno dla każdego elementu w tekście za jego wystąpieniem, do wystąpienia następnego elementu (najwyżej `window` znaków, domyślnie 200). Przykład: PESEL każdego pełnomocnika. Gdy imię występuje kilka razy (np. w nagłówku kancelarii), liczy się pierwsze wystąpienie, po którym jest wartość |
 | `list_of_blocks` + `fields` | lista obiektów: każdy `start` otwiera blok (opcjonalnie `end`, `max`), pola zagnieżdżone liczone w bloku |
 
 Kilka wpisów o tej samej ścieżce wykonuje się po kolei, a późniejszy nadpisuje wcześniejszy, jeśli znajdzie wartość.
@@ -157,7 +159,7 @@ grupy podpisów „W imieniu X:” do mocodawców).
 | `strip` | pojedyncze spacje, bez przecinków/dwukropków na brzegach |
 | `unquote` | jak `strip` i bez cudzysłowów |
 | `upper`, `title` | wielkie litery / każde słowo wielką literą |
-| `person` | *(gałąź T013)* imię i nazwisko; zapis WERSALIKAMI zamieniony na „Jan Kowalski-Nowak” |
+| `person` | *(gałąź T013)* imię i nazwisko; zapis WERSALIKAMI zamieniony na „Jan Kowalski-Nowak”; *(T018)* sklejone słowa „HalinaBaran” → „Halina Baran” (obie części wielką literą i co najmniej 2 litery; tylko tu, nazwy firm jak `BudMax` zostają) |
 | `company` | *(gałąź T013)* nazwa firmy z poprawką typowych błędów OCR w formie prawnej („Sp. z 0.o.” → „Sp. z o.o.”) |
 | `ocr_text` | *(T014)* tekst po OCR: litery z tyldą (Ñ → Ń) i dwukropek w numerze sprawy zamiast kropki (`DA.ZP:242.13.2026`) |
 | `restore_diacritics` | *(T014)* przywraca polskie znaki wyrazom ze słownika `dictionaries/polish_words.txt` (zachowuje wielkość liter, naprawia też złe akcenty: „Lódź” → „Łódź”; wyrazów niejednoznacznych i nieznanych nie rusza) |

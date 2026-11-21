@@ -75,9 +75,10 @@ fields:
       # who signs for this principal: "reprezentowana przez: X – Prezes Zarządu, Y – Prokurent" or an e-signature
       - path: podpisujacy[].imie_nazwisko
         strategies:
-          - {use: regex, all: true, raw: true, pattern: '(?:[Pp]rzez:?\s*|,\s*|^)(?P<v>[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)? [A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?)\s*[–-]\s*(?:Prezes|Wiceprezes|Członek|Prokurent|Dyrektor|Wspólnik|Właściciel|Pełnomocnik|Komplementariusz|Partner|Likwidator|Kierownik)'}
+          - {use: regex, all: true, raw: true, pattern: '(?:[Pp]rzez:?\s*|,\s*|^)(?P<v>[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?(?: |(?=[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]))[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?)\s*[–-]\s*(?:Prezes|Wiceprezes|Członek|Prokurent|Dyrektor|Wspólnik|Właściciel|Pełnomocnik|Komplementariusz|Partner|Likwidator|Kierownik)'}
           - {use: regex, all: true, raw: true, pattern: '[Pp]odpisan\w* (?:elektronicznie )?przez:?\s*(?P<v>[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)? [A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?)'}
-        normalize: person
+        normalize: person  # also splits "HalinaBaran" (OCR lost the space)
+        dedupe: {fuzzy: 1}
 
   # Signatories, grouped per principal by "W imieniu X:" / "Za X" captions (merged into the principals in order);
   # without such groups every signatory belongs to the (first) principal.
@@ -101,12 +102,14 @@ fields:
               - 'adw\.|adwokat|r\.\s?pr\.|radc'
               - 'miejsce|podpis|pieczec|data\b|oplata|dowod|zalacznik'
             not_after: ['adw\.?', 'r\.\s?pr\.?', 'radca prawny', 'adwokat', 'mec\.?']
-        normalize: strip
+        normalize: person
+        dedupe: {fuzzy: 1}  # "Zawadżki" in the body, "Zawadzki" at the signature
 
   - path: pelnomocnicy[].imie_nazwisko
     strategies:
       - {use: regex, all: true, pattern: '(?:r\.\s?pr\.|adw\.|radca prawny|adwokat(?![a-z]))\s+(?P<v>[a-z]+\s+[a-z-]+)'}
-    normalize: strip
+    normalize: person
+    dedupe: {fuzzy: 1}  # the letterhead prints the same attorney in capitals
 
   # "... udziela pełnomocnictwa: 1. Jan Kowal – adwokat ... 2. ..." or "X (adwokat, ...) oraz Y (radca prawny, ...)";
   # runs after the title-based rule above and replaces its list when this list is found
@@ -115,6 +118,17 @@ fields:
     strategies:
       - {use: regex, all: true, raw: true, pattern: '(?<![\w.])(?P<v>[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?\s+[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?|[A-ZĄĆĘŁŃÓŚŹŻ]{2,}(?:-[A-ZĄĆĘŁŃÓŚŹŻ]{2,})?\s+[A-ZĄĆĘŁŃÓŚŹŻ]{2,}(?:-[A-ZĄĆĘŁŃÓŚŹŻ]{2,})?)(?![\w])'}
     normalize: person
+    dedupe: {fuzzy: 1}
+
+  # The PESEL printed beside each attorney: "(radca prawny, nr wpisu PO-4973, PESEL: 6910...)", "- adwokat, nr wpisu X,
+  # PESEL: ...", "r. pr. Jan Kowal, PESEL 8507..." (no colon). Searched after the name up to the next attorney.
+  - path: pelnomocnicy[].pesel
+    attach_to: pelnomocnicy[].imie_nazwisko
+    window: 150
+    strategies:
+      - {use: regex, pattern: 'pesel\W{0,3}(?P<v>\d{11})(?!\d)'}
+    normalize: digits
+    validate: pesel
 
 # Optional local-LLM reader (profile `llm`, docs/LLM.md): the PESEL of each attorney is printed beside the name in the
 # attorney list, in a layout the rules do not read. Asked only when the text contains "pesel".

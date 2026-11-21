@@ -154,12 +154,27 @@ def ocr_digits(s: str) -> str | None:
     return digits(s.translate(str.maketrans("oOlI|", "00111")))
 
 
+# OCR drops the space between two name words: "HalinaBaran" -> "Halina Baran". Both parts start upper-case and have at
+# least two letters. Only the `person` normaliser does this: company names ("BudMax"), e-mails and URLs keep theirs.
+_UP, _LOW = "A-ZĄĆĘŁŃÓŚŹŻ", "a-ząćęłńóśźż"
+_GLUED_NAME = re.compile(rf"(?:[{_UP}][{_LOW}]+){{2,}}")
+_NAME_WORD = re.compile(rf"[{_UP}][{_LOW}]+")
+
+
+def _split_glued(token: str) -> str:
+    if not _GLUED_NAME.fullmatch(token) or token.startswith(("Mc", "Mac")):
+        return token
+    return " ".join(_NAME_WORD.findall(token))
+
+
 @register_normaliser("person")
 def person(s: str) -> str | None:
     """A person's name: whitespace collapsed; ALL-CAPS ("JAN KOWALSKI-NOWAK") -> "Jan Kowalski-Nowak"."""
     v = strip(s)
-    if not v or v != v.upper():
+    if not v:
         return v
+    if v != v.upper():
+        return " ".join("-".join(_split_glued(t) for t in w.split("-")) for w in v.split(" "))
     return re.sub(r"[^\W\d_]+", lambda m: m[0][0] + m[0][1:].lower(), v)
 
 

@@ -17,7 +17,8 @@ classify:
     - {pattern: 'sygn\.? ?akt:? ?kio.{0,200}?(?:postanowienie|wyrok)|(?:postanowienie|wyrok)\b.{0,200}?sygn\.? ?akt|krajowa izba odwolawcza\s*-?\s*w skladzie|przewodniczac\w*\s*:', head: 1200}
 
 sections:
-  - {name: odwolujacy, start: "^odwo\\w{0,3}ujac\\w*\\s*:", end: "^(zamawiajac\\w*\\s*:|odwolanie\\s*$|o d w o l a n i e|dotyczy|prezes)"}
+  # ends at the next party's heading too (selected contractor / participant / intervener): its KRS is not the appellant's
+  - {name: odwolujacy, start: "^odwo\\w{0,3}ujac\\w*\\s*:", end: "^(zamawiajac\\w*\\s*:|wykonawca\\s+wybran|uczestnik\\w*\\s*(?:\\(|postepowania|po stronie)|przystepujac|odwolanie\\s*$|o d w o l a n i e|dotyczy|prezes)"}
   - {name: zamawiajacy, start: "^zamawiajac\\w*\\s*:", end: "^(odwo\\w{0,3}ujac\\w*\\s*:|odwolanie\\s*$|o d w o l a n i e|dotyczy|prezes)"}
   - {name: zamawiajacy_wspolnie, start: 'wspolnie\s+(?:udzielajac|przeprowadzajac|prowadzac)', end: '^(odwo\w{0,3}ujac\w*\s*:|odwolanie\s*$|o d w o l a n i e|dotyczy|prezes)'}
   - {name: czynnosc, start: '(?:\bwnos\w*\s+odwolanie\s+wobec\s*:|\bpolegajac\w*\s+na\s*:|zamawiajac\w* w dniu|\bodwolani\w*\s+(?:bwnosz\w*\s+|wnosi\s+)?(?:od|wobec|na)\s+czynnosc|\bzaskarz\w*\s+czynnosc|\bwobec\s+(?:tresci|postanowien|zapisow)\s+(?:dokumentow zamowienia|specyfikacji|swz))', end: "zarzu[tc]"}
