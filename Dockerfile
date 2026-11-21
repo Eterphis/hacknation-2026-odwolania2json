@@ -15,6 +15,7 @@ RUN python -c "from rapidocr import RapidOCR; RapidOCR()"
 
 COPY odw2json/ odw2json/
 COPY recipes/ recipes/
+COPY profiles/ profiles/
 COPY dictionaries/ dictionaries/
 COPY schemas/ schemas/
 COPY web/ web/
