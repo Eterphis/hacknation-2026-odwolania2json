@@ -98,7 +98,7 @@ Daje to regułę ogólną z precyzyjną regułą na wierzchu.
 ### Strategie (`use:`)
 | Strategia | Klucze | Co robi |
 |---|---|---|
-| `regex` | `pattern`, `all` | dopasowanie wzorca; wartość to grupa `v` (albo grupa 1, albo całe dopasowanie) |
+| `regex` | `pattern`, `all`, `raw` | dopasowanie wzorca; wartość to grupa `v` (albo grupa 1, albo całe dopasowanie); `raw: true` *(gałąź T013)* = z wielkością liter na oryginalnym tekście |
 | `after_label` | `labels`, `value`, `max_lines`, `below` | wartość na prawo od etykiety (do przerwy kolumnowej) albo w linii pod etykietą w tej samej kolumnie (siatki bankowe); `value` = wymagany kształt wartości |
 | `between` | `start`, `end` | tekst między dwoma wzorcami (domyślnie do pustej linii), łączy przeniesienia wierszy |
 | `lookup` | `dictionary`, `return` | wpis słownika z najwcześniej występującą frazą; zwraca `id` (lub `label`, ...) |
@@ -123,6 +123,9 @@ grupy podpisów „W imieniu X:” do mocodawców).
 | `strip` | pojedyncze spacje, bez przecinków/dwukropków na brzegach |
 | `unquote` | jak `strip` i bez cudzysłowów |
 | `upper`, `title` | wielkie litery / każde słowo wielką literą |
+| `person` | *(gałąź T013)* imię i nazwisko; zapis WERSALIKAMI zamieniony na „Jan Kowalski-Nowak” |
+| `company` | *(gałąź T013)* nazwa firmy z poprawką typowych błędów OCR w formie prawnej („Sp. z 0.o.” → „Sp. z o.o.”) |
+| `ocr_digits` | *(gałąź T013)* cyfry identyfikatora po OCR: `o`/`O` → 0, `l`/`I` → 1 |
 
 ### Walidatory (`validate:`)
 `nip`, `regon` (9 lub 14 cyfr), `pesel`, `krs` (10 cyfr), `iban` (mod 97).
