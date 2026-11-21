@@ -1,9 +1,9 @@
 ---
 id: T004
 title: Generic recipe engine and classifier with reject (zero class-specific code)
-status: todo
+status: review
 owner: teammate-session
-branch: null
+branch: task/T004-recipe-engine
 depends_on: [T001, T003]
 review: always
 capabilities: [python]

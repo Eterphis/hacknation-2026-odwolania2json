@@ -38,5 +38,38 @@
     "protected": {}
   },
   "frozen_at": "2026-11-21T11:59:44+01:00",
-  "results": {}
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": ".INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 422 Unprocessable Entity\"\nINFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 400 Bad Request\"\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/zip \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/zip \"HTTP/1.1 400 Bad Request\"\n............\n----------------------------------------------------------------------\nRan 98 tests in 38.374s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T13:10:42+01:00",
+      "commit": "0d6a3e64e6285586cfd1e93b80d76633ab1b1d72"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "copied 182 pdfs to .acc\\input\n61 cases, 182 pdfs, 181 json written, 1 rejected/failed\nok: 181 files",
+      "ran_at": "2026-11-21T13:11:25+01:00",
+      "commit": "0d6a3e64e6285586cfd1e93b80d76633ab1b1d72"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "",
+      "ran_at": "2026-11-21T13:11:25+01:00",
+      "commit": "0d6a3e64e6285586cfd1e93b80d76633ab1b1d72"
+    },
+    "AC-4": {
+      "id": "AC-4",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "3 recipes valid",
+      "ran_at": "2026-11-21T13:11:26+01:00",
+      "commit": "0d6a3e64e6285586cfd1e93b80d76633ab1b1d72"
+    }
+  }
 }

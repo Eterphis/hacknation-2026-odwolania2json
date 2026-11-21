@@ -1,9 +1,9 @@
 ---
 id: T010
 title: Noisy scanned held-out set as a proxy for the real test cases
-status: todo
+status: review
 owner: teammate-session
-branch: null
+branch: task/T010-noisy-heldout
 depends_on: [T002, T003]
 capabilities: [python]
 acceptance:

@@ -30,5 +30,30 @@
     "protected": {}
   },
   "frozen_at": "2026-11-21T11:59:54+01:00",
-  "results": {}
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": ".INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 422 Unprocessable Entity\"\nINFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 400 Bad Request\"\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/zip \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/zip \"HTTP/1.1 400 Bad Request\"\n............\n----------------------------------------------------------------------\nRan 87 tests in 31.551s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T13:12:11+01:00",
+      "commit": "aef9f1005a5d3d56585db7bafe8e9ae727858f3c"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "przyklad_41: done\nprzyklad_42: done\nprzyklad_43: done\nprzyklad_44: done\nprzyklad_45: done\nprzyklad_46: done\nprzyklad_47: done\nprzyklad_48: done\nprzyklad_49: done\nprzyklad_50: done\nwrote 30 noisy pdfs, 30 gold files to C:/Users/jasiu/workspace/uzp-data-noisy\n30 0 30",
+      "ran_at": "2026-11-21T13:13:44+01:00",
+      "commit": "aef9f1005a5d3d56585db7bafe8e9ae727858f3c"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "10 cases, 30 pdfs, 0 json written, 30 rejected/failed\ncases scored: 10\n  odwolanie       P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=203)\n  pelnomocnictwo  P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=100)\n  przelew         P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=60)\nnormalized: 0.0000\nscore: 0.0000",
+      "ran_at": "2026-11-21T13:13:45+01:00",
+      "commit": "aef9f1005a5d3d56585db7bafe8e9ae727858f3c"
+    }
+  }
 }
