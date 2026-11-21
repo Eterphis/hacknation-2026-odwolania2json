@@ -1,0 +1,42 @@
+{
+  "task": "T008",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "test -f Dockerfile && test -f docker-compose.yml && docker compose config -q",
+        "expect": null,
+        "text": null,
+        "timeout": 120
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "test -f docs/ARCHITECTURE.md && test -f docs/ADDING_A_DOCUMENT_CLASS.md && test -f docs/EXTERNAL_COMPONENTS.md && test -f .github/workflows/ci.yml && test -f start.bat && grep -qi 'recipes/' docs/ADDING_A_DOCUMENT_CLASS.md && grep -qi 'licen' docs/EXTERNAL_COMPONENTS.md",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "rm -rf .acc/venv && py -3.13 -m venv .acc/venv && .acc/venv/Scripts/python.exe -m pip install -q -r requirements.txt && .acc/venv/Scripts/python.exe -m odw2json --help && .acc/venv/Scripts/python.exe -c 'import web.app'",
+        "expect": null,
+        "text": null,
+        "timeout": 1500
+      },
+      {
+        "id": "AC-4",
+        "kind": "manual",
+        "run": null,
+        "expect": null,
+        "text": "Judge on a clean checkout: `docker compose up --build` serves the web UI on localhost and `docker compose run --rm cli` (or the documented equivalent) processes ./input into ./output; start.bat does the same on Windows with Python 3.13; README quick start works without reading the code.",
+        "timeout": 600
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T11:59:51+01:00",
+  "results": {}
+}
