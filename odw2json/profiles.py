@@ -21,7 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PROFILE = "ocr"
 KEYS = {"description", "ocr", "ingest", "reader"}
-READERS: set[str] = set()  # reader kinds the factory can build; T016 adds "llm"
+READERS: set[str] = {"llm"}  # reader kinds the factory can build (odw2json/llm, T016)
 
 
 class ProfileError(ValueError):

@@ -115,3 +115,16 @@ fields:
     strategies:
       - {use: regex, all: true, raw: true, pattern: '(?<![\w.])(?P<v>[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?\s+[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?|[A-ZĄĆĘŁŃÓŚŹŻ]{2,}(?:-[A-ZĄĆĘŁŃÓŚŹŻ]{2,})?\s+[A-ZĄĆĘŁŃÓŚŹŻ]{2,}(?:-[A-ZĄĆĘŁŃÓŚŹŻ]{2,})?)(?![\w])'}
     normalize: person
+
+# Optional local-LLM reader (profile `llm`, docs/LLM.md): the PESEL of each attorney is printed beside the name in the
+# attorney list, in a layout the rules do not read. Asked only when the text contains "pesel".
+llm:
+  context: {pages: 1, max_chars: 3500}
+  groups:
+    - path: pelnomocnicy
+      question: "The persons who are granted the power of attorney (pelnomocnicy), not the principal and not the signatories."
+      key: imie_nazwisko
+      when: "pesel"
+      fields:
+        - {path: imie_nazwisko, question: "Full name without professional titles (no adw., radca prawny).", normalize: [strip, person]}
+        - {path: pesel, question: "The PESEL number (11 digits) printed for this person, or null.", normalize: digits, validate: pesel}

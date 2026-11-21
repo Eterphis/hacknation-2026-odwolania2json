@@ -40,12 +40,35 @@ def default_classifier() -> Classifier:
     return recipe_engine()
 
 
+@cache
+def _llm_extractor(engine, model: str, n_ctx: int, threads) -> Extractor:
+    from .llm import make_extractor
+
+    return make_extractor(engine, model, n_ctx=n_ctx, threads=threads)
+
+
+def extractor_for(profile: str) -> Extractor:
+    """The recipe engine, wrapped by the grounded local-LLM reader when the profile asks for it
+    (`reader: {kind: llm, model: ..}`); the model loads on first use and a missing model leaves the recipe output as is.
+    Keyed by the engine, so clearing `recipe_engine`'s cache (new recipes directory) also renews the wrapper."""
+    from . import profiles
+
+    engine = recipe_engine()
+    reader = profiles.load_profile(profile).reader
+    if reader and reader.get("kind") == "llm":
+        return _llm_extractor(engine, reader.get("model", "models/Qwen3-1.7B-Q8_0.gguf"), int(reader.get("n_ctx", 4096)), reader.get("threads"))
+    return engine
+
+
 def default_extractor() -> Extractor:
-    return recipe_engine()
+    from . import profiles
+
+    return extractor_for(profiles.resolve_name())
 
 
 def build_components(profile: str | None = None) -> tuple[Ingestor, Classifier, Extractor]:
     """(ingestor, classifier, extractor) for a profile; what every pool worker builds once."""
     from . import profiles
 
-    return ingestor_for(profiles.resolve_name(profile)), default_classifier(), default_extractor()
+    name = profiles.resolve_name(profile)
+    return ingestor_for(name), default_classifier(), extractor_for(name)

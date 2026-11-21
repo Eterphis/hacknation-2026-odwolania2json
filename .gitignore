@@ -49,3 +49,6 @@ input/*
 output/*
 !output/.gitkeep
 uzp-data-noisy/
+
+# local LLM weights (T016), never committed
+models/

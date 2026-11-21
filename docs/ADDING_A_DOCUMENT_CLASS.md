@@ -170,3 +170,39 @@ grupy podpisów „W imieniu X:” do mocodawców).
 ### Własne rozszerzenia (programista)
 `register_strategy`, `register_normaliser`, `register_validator` w `odw2json/engine/`. Nowa nazwa staje się
 dostępna w YAML. Test `tests/test_docs_recipe_reference.py` pilnuje, żeby każda zarejestrowana nazwa była opisana tutaj.
+
+### Czytelnik LLM (`llm:`, opcjonalny)
+Receptura może poprosić lokalny mały model (profil `llm`, opis w [LLM.md](LLM.md)) o pola, których reguły nie odczytały.
+Bez profilu `llm` blok jest ignorowany, a wynik się nie zmienia. Zasady: model przepisuje tekst tak, jak jest wydrukowany,
+normalizatory z receptury robią z niego wartość, każda wartość musi mieć cytat znaleziony w tekście strony, a wartości
+odczytanej przez regułę z pełną pewnością model nigdy nie nadpisuje.
+
+```yaml
+fields:
+  - path: faktura.numer
+    strategies: [...]
+    llm: {question: "Numer faktury, tak jak jest wydrukowany.", hint: "Nie numer zamówienia."}   # pole z receptury
+llm:                                       # blok klasy: pola po ścieżce w JSON-ie wyjściowym, listy, kontekst
+  context: {pages: 2, max_chars: 4500}     # co widzi model (domyślnie 2 strony, 6000 znaków)
+  fields:
+    - path: faktura.rodzaj
+      type: integer
+      question: "Jaki to rodzaj faktury?"
+      choices: {dictionary: rodzaje}       # model wybiera id ze słownika (albo lista {id, label})
+      also: {path: faktura.rodzaj_opis, key: label}   # ustaw też drugie pole z wybranego wpisu
+    - path: faktura.nip_nabywcy
+      question: "NIP nabywcy."
+      normalize: digits
+      validate: nip
+      when: "nabywca"                      # regex na tekście bez diakrytyków: pytaj tylko, gdy pasuje (oszczędza czas)
+  groups:                                  # lista osób/stron: element dopasowany po polu `key`
+    - path: strony
+      key: nazwa
+      question: "Strony umowy."
+      fields:
+        - {path: nazwa, question: "Pełna nazwa."}
+        - {path: pesel, question: "PESEL.", normalize: digits, validate: pesel}
+```
+Opcje pola: `question`, `hint`, `type` (`string`/`integer`), `choices`, `override` (domyślnie `false`: pole wypełniane
+tylko gdy puste albo o niskiej pewności; `true` pozwala też zastąpić odczyt OCR o pewności poniżej 1,0), `when`,
+`section` (pokaż modelowi tylko tę sekcję receptury), `also`. W kodzie silnika i w `odw2json/llm/` nie ma nazw klas.

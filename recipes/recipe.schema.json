@@ -37,7 +37,8 @@
         }
       }
     },
-    "fields": {"$ref": "#/$defs/fields"}
+    "fields": {"$ref": "#/$defs/fields"},
+    "llm": {"$ref": "#/$defs/llmBlock"}
   },
   "$defs": {
     "signal": {
@@ -51,6 +52,8 @@
         "squash": {"type": "boolean", "default": false, "description": "Match with all whitespace removed from text and pattern (letter-spaced headings, OCR without spaces)."}
       }
     },
+    "llmAsk": {"type": "object", "additionalProperties": false, "description": "Opt this field in to the optional local-LLM reader (profile llm). The model transcribes the value as printed, the recipe's normalize/validate turn it into the output value, and a quote that is not in the page text drops it.", "properties": {"question": {"type": "string", "description": "What to read, in plain words (the prompt is built from it)."}, "hint": {"type": "string", "description": "Extra guidance: where it usually stands, what it is not."}, "type": {"enum": ["string", "integer"], "default": "string"}, "choices": {"description": "The model picks one id: {dictionary: <name>} (dictionaries/<name>.yaml) or a list of {id, label}.", "oneOf": [{"type": "object", "required": ["dictionary"], "additionalProperties": false, "properties": {"dictionary": {"type": "string"}}}, {"type": "array", "items": {"type": "object", "required": ["id", "label"], "properties": {"id": {}, "label": {"type": "string"}}}}]}, "override": {"type": "boolean", "default": false, "description": "May also replace a value the recipe read with less than full confidence (OCR). A full-confidence value is never replaced."}, "when": {"type": "string", "description": "Regex on the folded document text; ask the model only when it matches (saves time)."}, "section": {"type": "string", "description": "Show the model only this recipe section."}, "also": {"type": "object", "required": ["path", "key"], "additionalProperties": false, "description": "Choices only: also set this output path to the chosen entry's key (e.g. its label).", "properties": {"path": {"type": "string"}, "key": {"type": "string"}}}}},
+    "llmBlock": {"type": "object", "additionalProperties": false, "description": "Class-level LLM reading: extra fields addressed by output JSON path, lists of items, and the context shown to the model.", "properties": {"context": {"type": "object", "additionalProperties": false, "properties": {"pages": {"type": "integer", "minimum": 1, "default": 2}, "max_chars": {"type": "integer", "minimum": 500, "default": 6000}}}, "fields": {"type": "array", "items": {"type": "object", "required": ["path"], "additionalProperties": false, "properties": {"path": {"type": "string", "description": "Output JSON path, lists as name[0]."}, "normalize": {"oneOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]}, "validate": {"type": "string"}, "question": {"type": "string"}, "hint": {"type": "string"}, "type": {"enum": ["string", "integer"]}, "choices": {}, "override": {"type": "boolean"}, "when": {"type": "string"}, "section": {"type": "string"}, "also": {"type": "object"}}}}, "groups": {"type": "array", "items": {"type": "object", "required": ["path", "key", "fields"], "additionalProperties": false, "properties": {"path": {"type": "string", "description": "Output path of the list."}, "question": {"type": "string"}, "hint": {"type": "string"}, "key": {"type": "string", "description": "Item field that identifies the item (aligns the model's items with the recipe's)."}, "when": {"type": "string"}, "fields": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["path"], "additionalProperties": false, "properties": {"path": {"type": "string", "description": "Relative to the item."}, "normalize": {"oneOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]}, "validate": {"type": "string"}, "question": {"type": "string"}, "hint": {"type": "string"}, "type": {"enum": ["string", "integer"]}, "override": {"type": "boolean"}}}}}}}}},
     "patternOrSignal": {"oneOf": [{"type": "string"}, {"$ref": "#/$defs/signal"}]},
     "fields": {"type": "array", "items": {"$ref": "#/$defs/field"}},
     "field": {
@@ -63,6 +66,7 @@
         "strategies": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/strategy"}},
         "normalize": {"oneOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]},
         "validate": {"type": "string"},
+        "llm": {"$ref": "#/$defs/llmAsk"},
         "list_of_blocks": {
           "type": "object",
           "required": ["start"],

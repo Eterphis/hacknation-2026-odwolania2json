@@ -34,11 +34,15 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         profile = profiles.resolve_name(args.profile)
-        profiles.load_profile(profile)  # fail loudly before processing anything
+        prof = profiles.load_profile(profile)  # fail loudly before processing anything
     except profiles.ProfileError as e:
         print(f"profile error: {e}", file=sys.stderr)
         return 2
     os.environ["ODW2JSON_PROFILE"] = profile  # inherited by worker processes
+    if prof.reader and prof.reader.get("kind") == "llm":
+        from .llm.fetch import ensure_model  # first run: download the weights once (sha256 checked); offline = skipped
+
+        ensure_model(prof.reader)
     try:
         factory.recipe_engine()  # fail loudly before processing anything
     except RecipeError as e:

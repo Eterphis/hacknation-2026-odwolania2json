@@ -217,3 +217,29 @@ fields:
       # scans: the opening quote is often lost and the title wraps over lines: pn. Title", nr referencyjny
       - {use: regex, pattern: 'pn\.?:?\s*[„”",\s]*(?P<v>[^"„”\n][^"„”]{8,}?)["”„]?\s*,\s*(?:nr|numer)\s*(?:referencyjn|postepowania|sprawy)'}
     normalize: [strip, ocr_text, restore_diacritics]
+
+# Optional local-LLM reader (profile `llm`, docs/LLM.md): asked only for fields the rules above left empty. The model
+# transcribes, the normalisers below turn it into the output value, a quote not found in the page text drops the value.
+llm:
+  context: {pages: 2, max_chars: 4500}
+  fields:
+    - path: OdwolanieKIO.czynnosc_powod_id
+      type: integer
+      question: "Which act of the contracting authority does the appeal challenge first (the first charge: the act or omission the appeal is lodged against)?"
+      choices: {dictionary: czynnosc_powod}
+      also: {path: OdwolanieKIO.czynnosc_opis, key: label}
+    - path: ZamowieniePubliczne.numer_bzp
+      question: "Number of the notice in the Biuletyn Zamowien Publicznych (BZP), such as 2026/BZP00123456/01."
+      normalize: bzp
+      when: "bzp"   # the notice number is only worth a question when the text mentions BZP
+    - path: ZamowieniePubliczne.numer_postepowania
+      question: "The contracting authority's own reference number of the procedure (numer postepowania / znak sprawy / nr referencyjny)."
+      normalize: strip
+    - path: Odwolujacy[0].nazwa
+      question: "Full name of the appellant (Odwolujacy), the contractor that files the appeal, with its legal form."
+      hint: "Not the contracting authority (Zamawiajacy) and not the attorney."
+      normalize: strip
+    - path: Zamawiajacy[0].nazwa
+      question: "Full name of the contracting authority (Zamawiajacy), the buyer whose act is challenged."
+      hint: "Not the appellant and not the attorney."
+      normalize: strip
