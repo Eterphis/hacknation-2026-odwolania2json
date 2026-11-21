@@ -32,6 +32,10 @@ class LinesToWordsTests(unittest.TestCase):
         self.assertEqual(ws[0].conf, 0.8)
         self.assertLess(ws[0].x1, ws[1].x0)
 
+    def test_low_confidence_dropped(self):
+        self.assertEqual(lines_to_words([("n on nn", (0, 0, 10, 5), 0.5)], 1.0, min_conf=0.6), [])
+        self.assertEqual(len(lines_to_words([("ok", (0, 0, 10, 5), 0.9)], 1.0, min_conf=0.6)), 1)
+
     def test_blank_line_skipped(self):
         self.assertEqual(lines_to_words([("  ", (0, 0, 1, 1), 1.0)], 1.0), [])
 

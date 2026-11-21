@@ -13,15 +13,17 @@ from .layout import build_text, is_garbage_text
 from .ocr import OcrBackend, OcrLine, get_backend
 
 DEFAULT_DPI = 200
+DEFAULT_MIN_CONF = 0.6  # OCR lines below this are noise (e.g. black redaction bars read as 'n on nn')
+MAX_SIDE_PX = 2400  # cap the rendered bitmap (a 150-dpi A4 scan is already 1240 pt wide)
 _CACHE_VERSION = 1
 
 
-def lines_to_words(lines: list[OcrLine], scale: float) -> list[Word]:
+def lines_to_words(lines: list[OcrLine], scale: float, min_conf: float = 0.0) -> list[Word]:
     """Split OCR lines into words; box x-extent is shared out by character count. Pixels -> PDF points."""
     words: list[Word] = []
     for text, (x0, y0, x1, y1), conf in lines:
         parts = text.split()
-        if not parts:
+        if not parts or conf < min_conf:
             continue
         total = sum(len(p) for p in parts) + (len(parts) - 1)
         span = x1 - x0
@@ -51,6 +53,11 @@ class PdfIngestor:
         self._config = config
         self._backend = backend
         self.dpi = int(cfg.get("dpi", DEFAULT_DPI))
+        self.min_conf = float(((config or {}).get("ocr") or {}).get("min_conf", DEFAULT_MIN_CONF))
+        self._backend_id = (
+            type(backend).__name__ if backend is not None
+            else os.environ.get("ODW2JSON_OCR") or ((config or {}).get("ocr") or {}).get("backend") or "rapidocr"
+        )
         self.cache_dir: Path | None = None
         if cfg.get("cache", True):
             self.cache_dir = Path(cfg.get("cache_dir") or Path(tempfile.gettempdir()) / "odw2json-ocr-cache")
@@ -98,13 +105,13 @@ class PdfIngestor:
         cached = self._cache_read(key)
         if cached is not None:
             return _clamp(cached, width, height)
-        scale = self.dpi / 72.0
+        scale = min(self.dpi / 72.0, MAX_SIDE_PX / max(width, height))
         page = pdfium_doc[index]
         try:
             image = page.render(scale=scale).to_pil().convert("RGB")
         finally:
             page.close()
-        words = lines_to_words(self.backend.ocr(image), scale)
+        words = lines_to_words(self.backend.ocr(image), scale, self.min_conf)
         # map by the real pixel/point ratio so rounding of the bitmap size never shifts boxes
         words = _clamp(words, width, height)
         self._cache_write(key, words)
@@ -117,8 +124,8 @@ class PdfIngestor:
         with open(pdf_path, "rb") as f:
             for chunk in iter(lambda: f.read(1 << 20), b""):
                 h.update(chunk)
-        backend = type(self._backend).__name__ if self._backend is not None else os.environ.get("ODW2JSON_OCR", "")
-        h.update(f"|{index}|{self.dpi}|{backend}|{_CACHE_VERSION}".encode())
+        backend = self._backend_id
+        h.update(f"|{index}|{self.dpi}|{self.min_conf}|{backend}|{_CACHE_VERSION}".encode())
         return h.hexdigest()
 
     def _cache_read(self, key: str | None) -> list[Word] | None:

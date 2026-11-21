@@ -44,19 +44,21 @@ def get_backend(config: dict | None = None) -> OcrBackend:
 
 
 class RapidOcrBackend:
-    """RapidOCR (Apache-2.0) on onnxruntime, CPU only; PP-OCR Latin recognition model for Polish diacritics."""
+    """RapidOCR (Apache-2.0) on onnxruntime, CPU only.
+
+    Default: the PP-OCRv6 detection/recognition models bundled inside the ``rapidocr`` wheel, so a plain
+    ``pip install -r requirements.txt`` works offline (no model download) and reads Polish diacritics.
+    Config ``ocr.rec_lang`` (e.g. "latin") switches to a downloadable language-specific recognition model.
+    """
 
     def __init__(self, cfg: dict):
         from rapidocr import LangRec, ModelType, OCRVersion, RapidOCR
 
-        params = {
-            "Global.log_level": "error",
-            "Rec.lang_type": LangRec(cfg.get("rec_lang", "latin")),
-            "Rec.ocr_version": OCRVersion(cfg.get("ocr_version", "PP-OCRv5")),
-            "Rec.model_type": ModelType(cfg.get("model_type", "mobile")),
-            "Det.ocr_version": OCRVersion(cfg.get("det_version", "PP-OCRv5")),
-            "Det.model_type": ModelType(cfg.get("model_type", "mobile")),
-        }
+        params: dict = {"Global.log_level": "error"}
+        if cfg.get("rec_lang"):
+            params["Rec.lang_type"] = LangRec(cfg["rec_lang"])
+            params["Rec.ocr_version"] = OCRVersion(cfg.get("ocr_version", "PP-OCRv5"))
+            params["Rec.model_type"] = ModelType(cfg.get("model_type", "mobile"))
         self._engine = RapidOCR(params=params)
 
     def ocr(self, image: Any) -> list[OcrLine]:
