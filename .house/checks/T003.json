@@ -38,5 +38,38 @@
     "protected": {}
   },
   "frozen_at": "2026-11-21T11:59:42+01:00",
-  "results": {}
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": ".....................\n----------------------------------------------------------------------\nRan 21 tests in 1.384s\n\nOK",
+      "ran_at": "2026-11-21T12:28:00+01:00",
+      "commit": "c0cefd828845397074ac5dddb5625af6c2ab12d7"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "docs 180 polish 180 boxed 180",
+      "ran_at": "2026-11-21T12:28:33+01:00",
+      "commit": "c0cefd828845397074ac5dddb5625af6c2ab12d7"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "chars 16158 ok True",
+      "ran_at": "2026-11-21T12:28:34+01:00",
+      "commit": "c0cefd828845397074ac5dddb5625af6c2ab12d7"
+    },
+    "AC-4": {
+      "id": "AC-4",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "True",
+      "ran_at": "2026-11-21T12:28:35+01:00",
+      "commit": "c0cefd828845397074ac5dddb5625af6c2ab12d7"
+    }
+  }
 }
