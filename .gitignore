@@ -42,3 +42,9 @@ uzp-data/
 
 # acceptance-check scratch dirs
 .acc/
+
+# runtime I/O folders (keep the folders, ignore contents)
+input/*
+!input/.gitkeep
+output/*
+!output/.gitkeep
