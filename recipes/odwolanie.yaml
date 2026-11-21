@@ -19,23 +19,25 @@ classify:
 sections:
   - {name: odwolujacy, start: "^odwo\\w{0,3}ujac\\w*\\s*:", end: "^(zamawiajac\\w*\\s*:|odwolanie\\s*$|o d w o l a n i e|dotyczy|prezes)"}
   - {name: zamawiajacy, start: "^zamawiajac\\w*\\s*:", end: "^(odwo\\w{0,3}ujac\\w*\\s*:|odwolanie\\s*$|o d w o l a n i e|dotyczy|prezes)"}
-  - {name: czynnosc, start: '(?:zamawiajac\w* w dniu|\bodwolani\w*\s+(?:wnosz\w*\s+|wnosi\s+)?(?:od|wobec|na)\s+czynnosc|\bzaskarz\w*\s+czynnosc|\bwobec\s+(?:tresci|postanowien|zapisow)\s+(?:dokumentow zamowienia|specyfikacji|swz))', end: "zarzut"}
+  - {name: zamawiajacy_wspolnie, start: 'wspolnie\s+(?:udzielajac|przeprowadzajac|prowadzac)', end: '^(odwo\w{0,3}ujac\w*\s*:|odwolanie\s*$|o d w o l a n i e|dotyczy|prezes)'}
+  - {name: czynnosc, start: '(?:\bwnos\w*\s+odwolanie\s+wobec\s*:|\bpolegajac\w*\s+na\s*:|zamawiajac\w* w dniu|\bodwolani\w*\s+(?:bwnosz\w*\s+|wnosi\s+)?(?:od|wobec|na)\s+czynnosc|\bzaskarz\w*\s+czynnosc|\bwobec\s+(?:tresci|postanowien|zapisow)\s+(?:dokumentow zamowienia|specyfikacji|swz))', end: "zarzu[tc]"}
 
 fields:
   - path: OdwolanieKIO.miejscowosc
     strategies:
       - {use: regex, pattern: "^(?P<v>[a-z][a-z.-]+(?: [a-z.-]+){0,3}),\\s*(?:dnia\\s+)?\\d{1,2}(?:\\.\\d{1,2}\\.\\d{4}| [a-z]+ \\d{4})"}
       - {use: regex, pattern: "^(?P<v>[a-z][a-z-]+)\\s+(?:dnia\\s+)?\\d{1,2}\\.\\d{1,2}\\.\\d{4}"}
-    normalize: strip
+    normalize: [strip, restore_diacritics]
   - path: OdwolanieKIO.data
     strategies:
       - {use: regex, pattern: "^[a-z][a-z.-]+(?: [a-z.-]+){0,3},\\s*(?:dnia\\s+)?(?P<v>\\d{1,2}(?:\\.\\d{1,2}\\.\\d{4}| [a-z]+ \\d{4}))"}
       - {use: regex, pattern: "^[a-z][a-z-]+\\s+(?:dnia\\s+)?(?P<v>\\d{1,2}\\.\\d{1,2}\\.\\d{4})"}
     normalize: date_pl
   - path: OdwolanieKIO.czynnosc_dzien
-    section: czynnosc
     strategies:
-      - {use: regex, pattern: '(?<!ustawy )(?<!ustawa )(?:w dniu|z dnia|\bdnia) (?P<v>\d{1,2} [a-z]+ \d{4}|\d{1,2}\.\d{2}\.\d{4})'}
+      # the filing's own timeliness paragraph: "Informacja o zaskarżonej czynności została przekazana ... w dniu 01.04.2026"
+      - {use: regex, pattern: 'informacj\w*\s+o\s+zaskarzon\w*\s+czynnosc\w*[^.]{0,80}?\s(?:w dniu|dnia)\s+(?P<v>[o\d]{1,2}\s?[./]\s?\d{2}\s?[./]\s?\d{4}|\d{1,2} [a-z]+ \d{4})'}
+      - {use: regex, section: czynnosc, pattern: '(?<!ustawy )(?<!ustawa )(?<!ustawy z )(?<!ustawa z )(?<!odwolawczej z )(?<!wyroku z )(?<!wyrok z )(?:w dniu|z dnia|\bdnia) (?P<v>\d{1,2} [a-z]+ \d{4}|\d{1,2}\.\d{2}\.\d{4})'}
     normalize: date_pl
   - path: OdwolanieKIO.czynnosc_powod_id
     section: czynnosc
@@ -79,8 +81,14 @@ fields:
   - path: Odwolujacy.nazwa
     section: odwolujacy
     strategies:
+      # a sole trader: "Odwołujący: Jan Kowalski prowadzący działalność gospodarczą pod firmą" / "<trade name>"
+      - {use: regex, pattern: '^odwo\w{0,3}ujac\w*\s*:[^\n]*?\bpod\s+firma\s+(?P<v>[\s\S]+?)(?=\s*,?\s*(?:ul\.|al\.|pl\.|os\.|aleje\b|\d{2}-\d{3}\b|nip\b|krs\b|regon\b|tel\b|e-?mail\b))'}
+      # a consortium listing its members: "1) Lider Konsorcjum:" / "<name>" (the first member, on the next line)
+      - {use: regex, pattern: '^odwo\w{0,3}ujac\w*\s*:\s*konsorcjum[\s\S]{0,300}?(?:lider\w*|partner\w*)\s+konsorcjum\w*\s*:[ \t]*\n\s*(?P<v>[^\n]+)'}
+      # a consortium: "Odwołujący: Konsorcjum wykonawców:" / "1) Lider sp. k. (Lider Konsorcjum)": the first member
+      - {use: regex, pattern: '^odwo\w{0,3}ujac\w*\s*:\s*konsorcjum[^\n]*\n\s*(?:1[.)]\s*)?(?P<v>[^\n(]+?)\s*(?:\(|,\s|\n)'}
       - {use: regex, pattern: "^odwo\\w{0,3}ujac\\w*\\s*:[ \\t]*\\n*\\s*(?P<v>[^\\n]+)"}
-    normalize: strip
+    normalize: company
   - path: Odwolujacy.krs
     section: odwolujacy
     strategies:
@@ -99,22 +107,24 @@ fields:
   - path: Odwolujacy.pelnomocnik.imie_nazwisko
     section: odwolujacy
     strategies:
-      - {use: regex, pattern: "reprezentowan\\w* przez:?\\s*(?:r\\.\\s?pr\\.|adw\\.|radc[a-z]+ prawn[a-z]+|adwokat[a-z]*)?\\s*(?P<v>[a-z]+\\s+[a-z-]+)"}
+      - {use: regex, pattern: 'reprezentowan\w*\s+przez[.:]?\s*(?:p\w{2,3}nomocnik\w*[.:]?\s*)?(?:(?:r\.\s?pr\.|adw\.|radc\w*\s+prawn\w*|adwokat\w*|mec\.)\s*)?(?P<v>[a-z]+\s+[a-z-]+)'}
     normalize: strip
   - path: Odwolujacy.pelnomocnik.nazwa
     section: odwolujacy
     strategies:
-      - {use: regex, pattern: "adres do korespondencji:?\\s*(?P<v>[^,\\n]+(?:\\n[^,\\n]+)?)"}
+      # the firm's name runs up to the address ("ul. ...", a postcode) or the phone/e-mail line; it may wrap or hold commas
+      - {use: regex, pattern: 'adres\s+do\s+korespondenc\w*:?\s*(?P<v>[\s\S]+?)(?=\s*,?\s*(?:ul\.|al\.|pl\.|os\.|aleje\b|\d{2}-\d{3}\b|nip\b|krs\b|regon\b|tel\b|e-?mail\b))'}
     normalize: strip
   - path: Odwolujacy.pelnomocnik.mail
     section: odwolujacy
     strategies:
       # the attorney's address, not the appellant's own: an e-mail after the attorney/law-firm mention first
       - {use: regex, pattern: '(?:pelnomocni\w*|reprezentowan\w*|adw\.|r\.\s?pr\.|radc\w*|adwokat\w*|kancelari\w*)[^@]{0,300}?(?P<v>[\w.+-]+@[\w-]+(?:\.[\w-]+)+)'}
-      - {use: regex, pattern: "(?P<v>[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+)"}
   - path: Odwolujacy.przez-pelnomocnika
     strategies:
-      - {use: derived, if_set: Odwolujacy.pelnomocnik.imie_nazwisko, value: 1, else: 0}
+      # represented as soon as ANY attorney field was found (the name itself may be unreadable in a scan)
+      - {use: derived, if_set: Odwolujacy.pelnomocnik.imie_nazwisko, value: 1}
+      - {use: derived, if_set: Odwolujacy.pelnomocnik.nazwa, value: 1, else: 0}
 
   # prose intro "... (dalej: „Zamawiający”)"; a labelled "Zamawiający:" block below overwrites it
   - path: Zamawiajacy.nazwa
@@ -136,8 +146,9 @@ fields:
   - path: Zamawiajacy.nazwa
     section: zamawiajacy
     strategies:
-      - {use: regex, pattern: "^zamawiajac\\w*\\s*:[ \\t]*\\n*\\s*(?P<v>[^\\n]+)"}
-    normalize: strip
+      # the name may wrap onto a second line that does not look like an address / contact line
+      - {use: regex, pattern: '^zamawiajac\w*\s*:[ \t]*\n*\s*(?P<v>[^\n]+(?:\n(?!\s*(?:ul\.|al\.|pl\.|os\.|\d{2}-\d{3}|nip\b|krs\b|regon\b|tel\b|e-?mail\b|dotyczy))[^\n]+)?)'}
+    normalize: company
   - path: Zamawiajacy.krs
     section: zamawiajacy
     strategies:
@@ -154,19 +165,55 @@ fields:
       - {use: regex, pattern: "regon:?\\s*(?P<v>\\d{9}(\\d{5})?)"}
     validate: regon
 
+  # Several contracting authorities ("Zamawiający wspólnie udzielający zamówienia: 1) X ... 2) Y ..."): one item
+  # each; the one marked "prowadzący postępowanie" gets 1, the others 0. Only evaluated when that wording exists.
+  - path: Zamawiajacy
+    section: zamawiajacy_wspolnie
+    list_of_blocks:
+      start: '^[ \t]*\d{1,2}[.)][ \t]*\S'
+      min_blocks: 2
+    fields:
+      - path: nazwa
+        strategies:
+          # "1) Zamawiający – Lider, prowadzący postępowanie:" / "<name>" (the name on the next line)
+          - {use: regex, pattern: '^[ \t]*\d{1,2}[.)][ \t]*zamawiajac\w*\s*[-–][^\n]*:[ \t]*\n\s*(?P<v>[^\n]+)'}
+          - {use: regex, pattern: '^[ \t]*\d{1,2}[.)][ \t]*(?P<v>[^\n]+)'}
+        normalize: company
+      - path: krs
+        strategies:
+          - {use: regex, pattern: 'krs\D{0,15}?(?P<v>\d{10})(?!\d)'}
+      - path: nip
+        strategies:
+          - {use: regex, pattern: 'nip\W{0,3}(?:nr\W{0,3})?(?P<v>\d{10}|\d{3}[ -]\d{3}[ -]\d{2}[ -]\d{2}|\d{3}[ -]\d{2}[ -]\d{2}[ -]\d{3})(?![\d-])'}
+        normalize: digits
+        validate: nip
+      - path: regon
+        strategies:
+          - {use: regex, pattern: 'regon:?\s*(?P<v>\d{9}(\d{5})?)'}
+        validate: regon
+      - path: prowadzacy_postepowanie
+        strategies:
+          - {use: regex, pattern: 'prowadzac\w*\s+postepowanie'}
+          - {use: const, value: 0}
+        normalize: flag
+
+  # The notice numbers of THIS procedure stand in the header ("dotyczy: ..."); later text may cite other tenders,
+  # so only the first 3500 characters are searched.
   - path: ZamowieniePubliczne.numer_bzp
     strategies:
-      - {use: regex, pattern: "(?P<v>\\d{4}\\s*/\\s*bzp\\s*\\d{8}(?:/\\d{2})?)"}
+      - {use: regex, pattern: '\A[\s\S]{0,3500}?(?P<v>\d{4}\s*/\s*bzp\s*\d{8}(?:/\d{2})?)'}
     normalize: bzp
   - path: ZamowieniePubliczne.numer_ted
     strategies:
-      - {use: regex, pattern: "(?P<v>\\d{4}\\s*/\\s*s\\s*\\d{1,3}\\s*-\\s*\\d{6})"}
-      - {use: regex, pattern: "(?:ted|dzienniku urzedowym ue|dz\\.\\s*urz\\.\\s*ue)\\w*:?\\s*(?:nr\\s*)?(?P<v>\\d{6}-\\d{4})"}
+      - {use: regex, pattern: '\A[\s\S]{0,3500}?(?P<v>\d{4}\s*/\s*s\s*\d{1,3}\s*-\s*\d{6})'}
+      - {use: regex, pattern: '\A[\s\S]{0,3500}?(?:ted|dzienniku\s+urzedowym\s+(?:ue|unii\s+europejskiej)|dz\.\s*urz\.\s*ue)\w*:?\s*(?:nr\s*)?(?P<v>\d{6}-\d{4})'}
     normalize: ted
   - path: ZamowieniePubliczne.numer_postepowania
     strategies:
-      - {use: regex, pattern: "(?:nr\\s+referencyjny(?:\\s+sprawy)?|numer\\s+postepowania|nr\\s+postepowania|postepowanie\\s+nr|znak\\s+sprawy)\\s*:?\\s*(?P<v>[a-z0-9][\\w./-]*[a-z0-9])"}
+      - {use: regex, pattern: "(?:nr\\s*referencyjn\\w*(?:\\s+sprawy)?|numer\\s+postepowania|nr\\s+postepowania|postepowanie\\s+nr|znak\\s+sprawy)\\s*:?\\s*(?P<v>[a-z0-9][\\w./-]*[a-z0-9])"}
   - path: ZamowieniePubliczne.tytul
     strategies:
       - {use: regex, pattern: "pn\\.?:?\\s*[\"„”](?P<v>[^\"”]+)[\"”]"}
-    normalize: strip
+      # scans: the opening quote is often lost and the title wraps over lines: pn. Title", nr referencyjny
+      - {use: regex, pattern: 'pn\.?:?\s*[„”",\s]*(?P<v>[^"„”\n][^"„”]{8,}?)["”„]?\s*,\s*(?:nr|numer)\s*(?:referencyjn|postepowania|sprawy)'}
+    normalize: [strip, ocr_text, restore_diacritics]

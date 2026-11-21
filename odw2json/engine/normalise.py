@@ -53,6 +53,9 @@ def date_pl(s: str) -> str | None:
     m = re.search(r"(\d{1,2})\s*[./-]\s*(\d{1,2})\s*[./-]\s*(\d{4})", t)
     if m:
         return _iso(int(m[3]), int(m[2]), int(m[1]))
+    m = re.search(r"(?<!\d)(\d{1,2})\s+(\d{1,2})\s+(\d{4})(?!\d)", t)  # "20 04 2026" (separators lost by OCR)
+    if m:
+        return _iso(int(m[3]), int(m[2]), int(m[1]))
     m = re.search(r"(\d{1,2})[\s.]*([a-z]+)[\s.]*(\d{4})", t)
     if m:
         word = m[2]
@@ -126,6 +129,12 @@ def unquote(s: str) -> str | None:
     if v.endswith(".") and any(q in s for q in "\"„”“»«"):  # „title”. -> title (a sentence-final dot after the quote)
         v = v.rstrip(".").strip(quotes)
     return v or None
+
+
+@register_normaliser("flag")
+def flag(s: str) -> int | None:
+    """1 when a marker phrase was found (the matched text is irrelevant), e.g. "prowadzący postępowanie"."""
+    return 1 if s and s.strip() else None
 
 
 @register_normaliser("upper")
@@ -203,3 +212,57 @@ def iban_ok(v: Any) -> bool:
     if len(d) != 26:
         return False
     return int(d[2:] + "2521" + d[:2]) % 97 == 1  # PL = 25 21
+
+
+_OCR_LETTERS = str.maketrans("ñÑ", "ńŃ")  # OCR reads the acute accent as a tilde
+_PL_LETTERS = "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ"
+_FOLD_PL = str.maketrans("ąćęłńóśźżĄĆĘŁŃÓŚŹŻ", "acelnoszzACELNOSZZ")
+_words_cache: dict[tuple[str, float], dict[str, str]] = {}
+
+
+@register_normaliser("ocr_text")
+def ocr_text(s: str) -> str | None:
+    """Free text read by OCR: tilde letters -> Polish letters (Ñ -> Ń); a colon misread for the dot inside a
+    case number ("DA.ZP:242.13.2026" -> "DA.ZP.242.13.2026")."""
+    v = strip(s.translate(_OCR_LETTERS))
+    if not v:
+        return v
+    return re.sub(r"\S+", lambda m: re.sub(r"(?<=[A-Za-z]):(?=\d)", ".", m[0]) if "." in m[0] else m[0], v)
+
+
+def _polish_words() -> dict[str, set[str]]:
+    """folded lower-case word -> its Polish spellings (usually one), from dictionaries/polish_words.txt (see build_polish_words.py)."""
+    from .recipes import dictionaries_dir
+
+    path = dictionaries_dir() / "polish_words.txt"
+    try:
+        key = (str(path), path.stat().st_mtime)
+    except OSError:
+        return {}
+    if key not in _words_cache:
+        words = path.read_text(encoding="utf-8").split()
+        _words_cache.clear()
+        table: dict[str, set[str]] = {}
+        for w in words:
+            table.setdefault(w.translate(_FOLD_PL), set()).add(w)
+        _words_cache[key] = table
+    return _words_cache[key]
+
+
+@register_normaliser("restore_diacritics")
+def restore_diacritics(s: str) -> str | None:
+    """Text whose Polish letters OCR dropped ("odwolania"): every plain-ASCII word that the domain word list knows
+    with diacritics gets them back, keeping its case (ALL CAPS, Capitalised, lower); a word with wrong accents is
+    repaired the same way. Unknown words stay as they are."""
+    words = _polish_words()
+
+    def fix(m: re.Match) -> str:
+        w = m[0]
+        key = w.lower().translate(_FOLD_PL)  # also repairs wrong accents ("Lódź" -> "Łódź")
+        forms = words.get(key) or (words.get(key.replace("q", "a")) if "q" in key else None)  # OCR: ogonek read as q
+        if not forms or w.lower() in forms or len(forms) > 1:  # unknown, already right, or ambiguous (usługa / usługą)
+            return w
+        good = next(iter(forms))
+        return good.upper() if len(w) > 1 and w.isupper() else good.capitalize() if w[0].isupper() else good
+
+    return re.sub(r"[^\W\d_]+", fix, s) if s else s
