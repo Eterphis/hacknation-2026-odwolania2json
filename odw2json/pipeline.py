@@ -10,6 +10,7 @@ from functools import partial
 from pathlib import Path
 
 from . import factory
+from .case import apply_case
 from .model import CaseResult, Classification, Classifier, DocumentResult, Extractor, Ingestor
 from .write import complete, write_json
 
@@ -45,7 +46,7 @@ def process_case(case_dir, ingestor=None, classifier=None, extractor=None) -> Ca
     for extra in sorted(p for p in case_dir.rglob("*") if p.is_file() and p.suffix.lower() == ".pdf" and p.parent != case_dir):
         log.warning("skipping %s: PDFs must lie directly in the case folder", extra)
     docs = [_process_pdf(p, ingestor, classifier, extractor) for p in _pdfs(case_dir)]
-    return CaseResult(case_dir.name, docs)
+    return apply_case(CaseResult(case_dir.name, docs))
 
 
 REJECTED_JSON = ("{}", "empty", "none")
