@@ -114,13 +114,9 @@ def load_recipe(path: Path) -> Recipe:
     return Recipe(spec["class"], path, spec)
 
 
-RESERVED = {"case"}  # configuration files in the recipes folder that are not document-class recipes
-
-
 def load_recipes(directory: str | os.PathLike | None = None) -> list[Recipe]:
     d = recipes_dir(directory)
-    files = [p for p in sorted(d.glob("*.yaml")) + sorted(d.glob("*.yml")) if p.stem not in RESERVED]  # case.yaml: see odw2json/case
-    recipes = [load_recipe(p) for p in files]
+    recipes = [load_recipe(p) for p in sorted(d.glob("*.yaml")) + sorted(d.glob("*.yml"))]
     names = [r.name for r in recipes]
     dup = {n for n in names if names.count(n) > 1}
     if dup:
