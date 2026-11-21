@@ -1,7 +1,7 @@
 ---
 id: T014
 title: Recipes robust on real scans - odwolanie and przelew fields that break on changed layouts
-status: review
+status: done
 owner: coder
 branch: task/T014-scan-recipes
 depends_on: [T013]
