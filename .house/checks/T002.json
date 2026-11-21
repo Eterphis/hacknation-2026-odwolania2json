@@ -43,33 +43,33 @@
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": "  File \"C:\\Users\\jasiu\\workspace\\tests\\test_pipeline.py\", line 25, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\nevery PDF failed; check the log above (dependencies installed? pip install -r requirements.txt)\n..ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmperwtukhf\\in\\c1\\a.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 20, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_pipeline.py\", line 25, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.WARNING input directory C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpgwnfe26b\\nope does not exist\n..........warning: skipping unreadable pred C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpswy5pqbw\\pred\\przyklad_01\\bad.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n........................................\n----------------------------------------------------------------------\nRan 75 tests in 42.845s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-21T12:32:54+01:00",
-      "commit": "53abb0e9ca61a680a309eb3739d3dce42d2f9e86"
+      "output_tail": ".INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\pelnomocnictwo.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\nC:\\Users\\jasiu\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\case.py:606: ResourceWarning: unclosed file <_io.BufferedReader name='C:\\\\Users\\\\jasiu\\\\workspace\\\\uzp-data\\\\dane\\\\przyklad_07\\\\odwolanie.pdf'>\n  if method() is not None:\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 422 Unprocessable Entity\"\nINFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 400 Bad Request\"\n.INFO HTTP Request: POST http://testserver/api/process \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/zip \"HTTP/1.1 200 OK\"\n.INFO HTTP Request: POST http://testserver/api/zip \"HTTP/1.1 400 Bad Request\"\n............\n----------------------------------------------------------------------\nRan 82 tests in 28.865s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T12:38:00+01:00",
+      "commit": "a4dc6034b093d7e01a0374e3e574b206873f4b9c"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
       "output_tail": "cases scored: 60\n  odwolanie       P=1.0000 R=1.0000 F1=1.0000 (TP=1214 FP=0 FN=0)\n  pelnomocnictwo  P=1.0000 R=1.0000 F1=1.0000 (TP=458 FP=0 FN=0)\n  przelew         P=1.0000 R=1.0000 F1=1.0000 (TP=360 FP=0 FN=0)\nnormalized: 1.0000\nscore: 1.0000",
-      "ran_at": "2026-11-21T12:32:55+01:00",
-      "commit": "53abb0e9ca61a680a309eb3739d3dce42d2f9e86"
+      "ran_at": "2026-11-21T12:38:01+01:00",
+      "commit": "a4dc6034b093d7e01a0374e3e574b206873f4b9c"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
       "output_tail": "cases scored: 20\n  odwolanie       P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=411)\n  pelnomocnictwo  P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=175)\n  przelew         P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=120)\nnormalized: 0.0000\nscore: 0.0000",
-      "ran_at": "2026-11-21T12:32:55+01:00",
-      "commit": "53abb0e9ca61a680a309eb3739d3dce42d2f9e86"
+      "ran_at": "2026-11-21T12:38:01+01:00",
+      "commit": "a4dc6034b093d7e01a0374e3e574b206873f4b9c"
     },
     "AC-4": {
       "id": "AC-4",
       "passes": true,
       "exit": 0,
       "output_tail": "cases scored: 1\n  odwolanie       P=1.0000 R=1.0000 F1=1.0000 (TP=19 FP=0 FN=0)\n  pelnomocnictwo  P=1.0000 R=1.0000 F1=1.0000 (TP=7 FP=0 FN=0)\n  przelew         P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=6)\nnormalized: 0.8966\nscore: 0.8966",
-      "ran_at": "2026-11-21T12:32:56+01:00",
-      "commit": "53abb0e9ca61a680a309eb3739d3dce42d2f9e86"
+      "ran_at": "2026-11-21T12:38:02+01:00",
+      "commit": "a4dc6034b093d7e01a0374e3e574b206873f4b9c"
     }
   }
 }
