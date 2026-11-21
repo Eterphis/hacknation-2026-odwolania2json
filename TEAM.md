@@ -15,6 +15,15 @@ We work on **two tasks**, one repo each:
 After the setup below, get the Radar repo with `house sync` and `house adapt radar-innowacji`, then open Claude
 Code in `house/contests/radar-innowacji`. Each repo has its own `.house/`, coordinator and submission.
 
+## Repo layout (team view)
+
+- [`README.md`](README.md): the product (public, Polish).
+- [`.house/`](.house/): shared contest state (spec, tasks, decisions, questions, progress). Committed.
+- [`house/`](house/README.md): AI Software House toolkit (agents, playbooks, guardrails), vendored with a
+  small Windows-compatibility patch.
+- Our second task, Radar Innowacji, lives in
+  [Eterphis/hacknation-2026-innovation-radar](https://github.com/Eterphis/hacknation-2026-innovation-radar).
+
 ## Key times
 
 | When | What |
