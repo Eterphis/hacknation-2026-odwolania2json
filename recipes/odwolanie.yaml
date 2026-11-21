@@ -17,7 +17,7 @@ classify:
 sections:
   - {name: odwolujacy, start: "^odwo\\w{0,3}ujac\\w*\\s*:", end: "^(zamawiajac\\w*\\s*:|odwolanie\\s*$|o d w o l a n i e|dotyczy|prezes)"}
   - {name: zamawiajacy, start: "^zamawiajac\\w*\\s*:", end: "^(odwo\\w{0,3}ujac\\w*\\s*:|odwolanie\\s*$|o d w o l a n i e|dotyczy|prezes)"}
-  - {name: czynnosc, start: "zamawiajac\\w* w dniu", end: "zarzut"}
+  - {name: czynnosc, start: '(?:zamawiajac\w* w dniu|\bodwolani\w*\s+(?:wnosz\w*\s+|wnosi\s+)?(?:od|wobec|na)\s+czynnosc|\bzaskarz\w*\s+czynnosc|\bwobec\s+(?:tresci|postanowien|zapisow)\s+(?:dokumentow zamowienia|specyfikacji|swz))', end: "zarzut"}
 
 fields:
   - path: OdwolanieKIO.miejscowosc
@@ -33,7 +33,7 @@ fields:
   - path: OdwolanieKIO.czynnosc_dzien
     section: czynnosc
     strategies:
-      - {use: regex, pattern: "w dniu (?P<v>\\d{1,2} [a-z]+ \\d{4}|\\d{1,2}\\.\\d{2}\\.\\d{4})"}
+      - {use: regex, pattern: '(?<!ustawy )(?<!ustawa )(?:w dniu|z dnia|\bdnia) (?P<v>\d{1,2} [a-z]+ \d{4}|\d{1,2}\.\d{2}\.\d{4})'}
     normalize: date_pl
   - path: OdwolanieKIO.czynnosc_powod_id
     section: czynnosc
@@ -44,6 +44,36 @@ fields:
     strategies:
       - {use: lookup, dictionary: czynnosc_powod, return: label}
 
+  # Prose party intro of real appeals: "X sp. z o.o. z siedzibą w Y, KRS ..., NIP ... (dalej: „Odwołujący”)".
+  # These run first; the labelled "Odwołujący:" header block below overwrites them when the document has one.
+  - path: Odwolujacy.nazwa
+    strategies:
+      - {use: regex, pattern: '\bw imieniu\s+(?P<v>[^,(\n]{3,}?)\s*(?:,|\(|\bz siedzib)[^()]{0,300}?\(\s*(?:dalej|zwan\w*)[^)]{0,40}?odwo\w{0,3}ujac'}
+      - {use: regex, pattern: '(?P<v>\b[^\n„"(;:,.]{2,}?\s(?:sp\. z o\.\s?o\.|s\.\s?a\.|sp\.\s?[jkp]\.|spolka [^\n,(]{3,40}?))\s*(?:,|\bz siedzib)[^()]{0,300}?\(\s*(?:dalej|zwan\w*)[^)]{0,40}?odwo\w{0,3}ujac'}
+      - {use: regex, pattern: '^(?:\d{1,2}[.)]\s*)?(?P<v>[^\n„"(;:,]{3,}?)\s*(?:,|\bz siedzib)[^()]{0,300}?\(\s*(?:dalej|zwan\w*)[^)]{0,40}?odwo\w{0,3}ujac'}
+    normalize: strip
+  - path: Odwolujacy.krs
+    strategies:
+      - {use: regex, pattern: 'krs\D{0,15}?(?P<v>\d{10})(?!\d)(?=[^()]{0,300}?\(\s*(?:dalej|zwan\w*)[^)]{0,40}?odwo\w{0,3}ujac)'}
+  - path: Odwolujacy.nip
+    strategies:
+      - {use: regex, pattern: 'nip\W{0,3}(?:nr\W{0,3})?(?P<v>\d{10}|\d{3}[ -]\d{3}[ -]\d{2}[ -]\d{2}|\d{3}[ -]\d{2}[ -]\d{2}[ -]\d{3})(?![\d-])(?=[^()]{0,300}?\(\s*(?:dalej|zwan\w*)[^)]{0,40}?odwo\w{0,3}ujac)'}
+    normalize: digits
+    validate: nip
+
+  - path: Odwolujacy.regon
+    strategies:
+      - {use: regex, pattern: 'regon\W{0,3}(?P<v>\d{9}(?:\d{5})?)(?!\d)(?=[^()]{0,300}?\(\s*(?:dalej|zwan\w*)[^)]{0,40}?odwo\w{0,3}ujac)'}
+    validate: regon
+  # "... (dalej: „Odwołujący”), reprezentowany przez adw. Jan Nowak, ... e-mail: ..."
+  - path: Odwolujacy.pelnomocnik.imie_nazwisko
+    strategies:
+      - {use: regex, pattern: '\(\s*(?:dalej|zwan\w*)[^)]{0,40}?odwo\w{0,3}ujac[^)]*\)[^()]{0,80}?reprezentowan\w* przez:?\s*(?:pelnomocnika:?\s*)?(?:r\.\s?pr\.|adw\.|radc\w* prawn\w*|adwokat\w*|mec\.)\s*(?P<v>[a-z]+\s+[a-z-]+)'}
+    normalize: strip
+  - path: Odwolujacy.pelnomocnik.mail
+    strategies:
+      - {use: regex, pattern: '\(\s*(?:dalej|zwan\w*)[^)]{0,40}?odwo\w{0,3}ujac[^)]*\)[^()]{0,80}?reprezentowan\w* przez[^@]{0,300}?(?P<v>[\w.+-]+@[\w-]+(?:\.[\w-]+)+)'}
+
   - path: Odwolujacy.nazwa
     section: odwolujacy
     strategies:
@@ -52,11 +82,11 @@ fields:
   - path: Odwolujacy.krs
     section: odwolujacy
     strategies:
-      - {use: regex, pattern: "krs:?\\s*(?P<v>\\d{10})"}
+      - {use: regex, pattern: 'krs\D{0,15}?(?P<v>\d{10})(?!\d)'}
   - path: Odwolujacy.nip
     section: odwolujacy
     strategies:
-      - {use: regex, pattern: "nip:?\\s*(?P<v>\\d[\\d -]{8,12}\\d)"}
+      - {use: regex, pattern: 'nip\W{0,3}(?:nr\W{0,3})?(?P<v>\d{10}|\d{3}[ -]\d{3}[ -]\d{2}[ -]\d{2}|\d{3}[ -]\d{2}[ -]\d{2}[ -]\d{3})(?![\d-])'}
     normalize: digits
     validate: nip
   - path: Odwolujacy.regon
@@ -77,11 +107,30 @@ fields:
   - path: Odwolujacy.pelnomocnik.mail
     section: odwolujacy
     strategies:
+      # the attorney's address, not the appellant's own: an e-mail after the attorney/law-firm mention first
+      - {use: regex, pattern: '(?:pelnomocni\w*|reprezentowan\w*|adw\.|r\.\s?pr\.|radc\w*|adwokat\w*|kancelari\w*)[^@]{0,300}?(?P<v>[\w.+-]+@[\w-]+(?:\.[\w-]+)+)'}
       - {use: regex, pattern: "(?P<v>[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+)"}
   - path: Odwolujacy.przez-pelnomocnika
     strategies:
       - {use: derived, if_set: Odwolujacy.pelnomocnik.imie_nazwisko, value: 1, else: 0}
 
+  # prose intro "... (dalej: „Zamawiający”)"; a labelled "Zamawiający:" block below overwrites it
+  - path: Zamawiajacy.nazwa
+    strategies:
+      - {use: regex, pattern: '^(?:\d{1,2}[.)]\s*)?(?P<v>[^\n„"(;:,]{3,}?)\s*(?:,|\bz siedzib)[^()]{0,300}?\(\s*(?:dalej|zwan\w*)[^)]{0,40}?zamawiajac'}
+    normalize: strip
+  - path: Zamawiajacy.krs
+    strategies:
+      - {use: regex, pattern: 'krs\D{0,15}?(?P<v>\d{10})(?!\d)(?=[^()]{0,300}?\(\s*(?:dalej|zwan\w*)[^)]{0,40}?zamawiajac)'}
+  - path: Zamawiajacy.nip
+    strategies:
+      - {use: regex, pattern: 'nip\W{0,3}(?:nr\W{0,3})?(?P<v>\d{10}|\d{3}[ -]\d{3}[ -]\d{2}[ -]\d{2}|\d{3}[ -]\d{2}[ -]\d{2}[ -]\d{3})(?![\d-])(?=[^()]{0,300}?\(\s*(?:dalej|zwan\w*)[^)]{0,40}?zamawiajac)'}
+    normalize: digits
+    validate: nip
+  - path: Zamawiajacy.regon
+    strategies:
+      - {use: regex, pattern: 'regon\W{0,3}(?P<v>\d{9}(?:\d{5})?)(?!\d)(?=[^()]{0,300}?\(\s*(?:dalej|zwan\w*)[^)]{0,40}?zamawiajac)'}
+    validate: regon
   - path: Zamawiajacy.nazwa
     section: zamawiajacy
     strategies:
@@ -90,11 +139,11 @@ fields:
   - path: Zamawiajacy.krs
     section: zamawiajacy
     strategies:
-      - {use: regex, pattern: "krs:?\\s*(?P<v>\\d{10})"}
+      - {use: regex, pattern: 'krs\D{0,15}?(?P<v>\d{10})(?!\d)'}
   - path: Zamawiajacy.nip
     section: zamawiajacy
     strategies:
-      - {use: regex, pattern: "nip:?\\s*(?P<v>\\d[\\d -]{8,12}\\d)"}
+      - {use: regex, pattern: 'nip\W{0,3}(?:nr\W{0,3})?(?P<v>\d{10}|\d{3}[ -]\d{3}[ -]\d{2}[ -]\d{2}|\d{3}[ -]\d{2}[ -]\d{2}[ -]\d{3})(?![\d-])'}
     normalize: digits
     validate: nip
   - path: Zamawiajacy.regon

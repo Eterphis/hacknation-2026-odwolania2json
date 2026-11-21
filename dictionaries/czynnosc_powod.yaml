@@ -5,16 +5,16 @@
 entries:
   - id: 1
     label: "Decyzja o odrzuceniu oferty"
-    triggers: ["poinformował o odrzuceniu oferty", "odrzucił ofertę", "odrzuceniu oferty"]
+    triggers: ["poinformował o odrzuceniu oferty", "odrzucił ofertę", "odrzuceniu oferty", "odrzucenia oferty odwołującego"]
   - id: 2
     label: "Ogłoszenie wyboru oferty"
-    triggers: ["ogłosił wybór oferty", "wyboru oferty najkorzystniejszej", "wyborze oferty najkorzystniejszej", "wybrał ofertę"]
+    triggers: ["ogłosił wybór oferty", "wyboru oferty najkorzystniejszej", "wyborze oferty najkorzystniejszej", "wybrał ofertę", "wyboru jako najkorzystniejszej", "wyborze jako najkorzystniejszej", "uznaniu za najkorzystniejszą"]
   - id: 3
     label: "Decyzja o wykluczeniu wykonawcy"
-    triggers: ["poinformował o wykluczeniu", "wykluczył z postępowania", "wykluczeniu odwołującego"]
+    triggers: ["poinformował o wykluczeniu", "wykluczył z postępowania", "wykluczeniu odwołującego", "wykluczenia odwołującego"]
   - id: 4
     label: "Publikacja specyfikacji warunków zamówienia (SWZ)"
-    triggers: ["opublikował specyfikację warunków zamówienia", "opublikował swz", "publikacji specyfikacji warunków zamówienia"]
+    triggers: ["opublikował specyfikację warunków zamówienia", "opublikował swz", "publikacji specyfikacji warunków zamówienia", "wobec treści dokumentów zamówienia", "wobec treści specyfikacji warunków zamówienia", "wobec postanowień swz", "wobec treści swz"]
   - id: 5
     label: "Modyfikacja treści SWZ"
     triggers: ["zmodyfikował treść specyfikacji", "zmodyfikował treść swz", "modyfikacji treści swz", "zmienił treść specyfikacji"]
@@ -23,16 +23,16 @@ entries:
     triggers: ["przekazał wykonawcom odpowiedzi", "odpowiedzi i wyjaśnienia do treści", "udzielił odpowiedzi"]
   - id: 7
     label: "Zaniechanie odrzucenia oferty"
-    triggers: ["nie odrzucił oferty", "zaniechał odrzucenia", "zaniechania odrzucenia"]
+    triggers: ["nie odrzucił oferty", "zaniechał odrzucenia", "zaniechania odrzucenia", "zaniechaniu odrzucenia"]
   - id: 8
     label: "Zaniechanie wykluczenia wykonawcy"
-    triggers: ["nie wykluczył", "zaniechał wykluczenia", "zaniechania wykluczenia"]
+    triggers: ["nie wykluczył", "zaniechał wykluczenia", "zaniechania wykluczenia", "zaniechaniu wykluczenia"]
   - id: 9
     label: "Decyzja o unieważnieniu postępowania"
     triggers: ["unieważni\\w*ł postępowanie", "unieważnieniu postępowania"]
   - id: 10
     label: "Zaniechanie unieważnienia postępowania"
-    triggers: ["zaniechał unieważnienia", "nie unieważnił", "zaniechania unieważnienia"]
+    triggers: ["zaniechał unieważnienia", "nie unieważnił", "zaniechania unieważnienia", "zaniechaniu unieważnienia"]
   - id: 11
     label: "Opis przedmiotu zamówienia (OPZ)"
     triggers: ["udostępnił opis przedmiotu zamówienia", "opublikował opis przedmiotu zamówienia"]
