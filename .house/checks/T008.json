@@ -44,24 +44,24 @@
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T17:15:59+01:00",
-      "commit": "83d22ded515214f91f21f77788ad924667c553eb"
+      "ran_at": "2026-11-21T18:18:44+01:00",
+      "commit": "5acd19e516c1508cfe27246b6721b3a9e197e6e3"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T17:16:00+01:00",
-      "commit": "83d22ded515214f91f21f77788ad924667c553eb"
+      "ran_at": "2026-11-21T18:18:44+01:00",
+      "commit": "5acd19e516c1508cfe27246b6721b3a9e197e6e3"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
       "output_tail": "[notice] A new release of pip is available: 26.2.2 -> 26.3\n[notice] To update, run: C:\\Users\\jasiu\\workspace\\.acc\\venv\\Scripts\\python.exe -m pip install --upgrade pip\nusage: odw2json [-h] [--input INPUT] [--output OUTPUT] [--recipes RECIPES]\n                [--rejected-json {{},empty,none}]\n\nPDF cases -> JSON (UZP contract)\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT         folder with <case>/*.pdf (default ./input)\n  --output OUTPUT       folder for <case>/<name>.json (default ./output)\n  --recipes RECIPES     folder with <class>.yaml recipes (default ./recipes or\n                        env ODW2JSON_RECIPES)\n  --rejected-json {{},empty,none}\n                        output for a document of no class: '{}' (default, UZP:\n                        empty .json), 'empty' (0 bytes) or 'none' (no file)",
-      "ran_at": "2026-11-21T17:18:31+01:00",
-      "commit": "83d22ded515214f91f21f77788ad924667c553eb"
+      "ran_at": "2026-11-21T18:22:07+01:00",
+      "commit": "5acd19e516c1508cfe27246b6721b3a9e197e6e3"
     }
   }
 }

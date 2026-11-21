@@ -20,3 +20,5 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - 2026-11-21 · coordinator · fala 3 scalona (T005, T006, T008); odpowiedzi mentorów zapisane (Q-002, D-015..D-018), nowe pytania Q-004; stan wyjściowy na nowych danych UZP: skany 0,58 F1, negatywy 11/12 odrzuconych (fałszywie przyjęty wyrok KIO)
 - 2026-11-21 · coder · T015 gotowe: zakładka „Klasy dokumentów” (lista, edytor z numerami linii, sprawdzanie z linią błędu, próba na PDF, zapis z .bak, usuwanie, tryb tylko do odczytu), nowa klasa działa bez restartu · reports/T015.md
 - 2026-11-21 · coder · T014 gotowe: skany 0,73 -> 0,96 F1 (odwołania 0,99, przelewy 0,94), 41–60: 0,9986, negatywy 12/12 puste; nowe ogólne reguły silnika (sekcja per strategia, nth, słownik znaków diakrytycznych) · reports/T014.md
+- T009: krok sprawy (relacje w recipes/case.yaml): sprawdzenia spójności, naprawy OCR-confusable z walidacją sum; 41-60 bez zmian 0,9986, skany 0,9639 (do przeglądu)
+- T012 gotowe do przeglądu: profile text/ocr, --workers (domyślnie 4, wynik identyczny), eval.bench z bramką; F1 heldout 0,944, skany 0,734, skany na zimno 4,5 dok./min przy 2,3 GB RAM.
