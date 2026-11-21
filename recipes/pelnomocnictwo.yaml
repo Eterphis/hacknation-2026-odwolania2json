@@ -53,7 +53,7 @@ fields:
 
       - path: data.nip
         strategies:
-          - {use: regex, pattern: 'nip\W{0,3}(?:nr\W{0,3})?(?P<v>\d[\d -]{8,12}\d)'}
+          - {use: regex, pattern: 'nip\W{0,3}(?:nr\W{0,3})?(?P<v>\d{10}|\d{3}[ -]\d{3}[ -]\d{2}[ -]\d{2}|\d{3}[ -]\d{2}[ -]\d{2}[ -]\d{3})(?![\d-])'}
         normalize: digits
         validate: nip
 

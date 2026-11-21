@@ -112,5 +112,23 @@ class SegmentsAndBlocksTests(unittest.TestCase):
         self.assertTrue(any(p.startswith("czlonek[1].podpisy[0]") for p in paths), paths)
 
 
+class ShippedPelnomocnictwoTests(unittest.TestCase):
+    def test_nip_stops_at_ten_digits_and_consortium_members(self):
+        text = (
+            "PEŁNOMOCNICTWO\nWykonawcy wspólnie ubiegający się (Konsorcjum): 1) Alfa Bud sp. z o.o., ul. Polna 1, "
+            "KRS 0000123456, NIP 1234567890 00-950 Warszawa; 2) Beta S.A., ul. Leśna 2, KRS 0000654321, "
+            "NIP 987-654-32-10 (dalej łącznie: „Mocodawca”), udzielają pełnomocnictwa adw. Jan Nowak.\n"
+            "W imieniu Alfa Bud sp. z o.o.:\n............\nEwa Lis\nPrezes Zarządu\n"
+            "W imieniu Beta S.A.:\n............\nOla Kot\nProkurent\n"
+        )
+        d = Document("p.pdf", [Page(1, 600, 800, [], text, "text")])
+        data = RecipeEngine("recipes").extract(d, "pelnomocnictwo").data
+        self.assertEqual([m["data"]["nip"] for m in data["mocodawca"]], ["1234567890", "9876543210"])
+        self.assertEqual([m["data"]["nazwa"] for m in data["mocodawca"]], ["Alfa Bud sp. z o.o.", "Beta S.A."])
+        self.assertEqual([[p["imie_nazwisko"] for p in m["podpisujacy"]] for m in data["mocodawca"]],
+                         [["Ewa Lis"], ["Ola Kot"]])
+        self.assertEqual([p["imie_nazwisko"] for p in data["pelnomocnicy"]], ["Jan Nowak"])
+
+
 if __name__ == "__main__":
     unittest.main()
