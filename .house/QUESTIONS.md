@@ -34,7 +34,8 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
   - Schematy: `oczekiwane-json/{odwolanie,pelnomocnictwo,przelew}.json` (komentarze `//` = reguły pól). Prawda referencyjna = JSON-y w `dane/przyklad_NN/` (60 spraw); `ground_truth.yaml` nie istnieje.
   - Słownik `czynnosc_powod_id`: id 1–11 odtworzone z danych treningowych (lista w raporcie).
   - Zgłoszenie: tytuł + link do GitHub działającego prototypu z wgrywaniem dokumentów i podglądem wyników; opcjonalnie dokumentacja i własne wyniki testów jakości.
-  - Prawa autorskie: ogólny regulamin (§6.1) zostawia je uczestnikom; przeniesienie tylko regulaminem zadania, którego brak.
+  - Prawa autorskie (regulamin zadania §4, PDF z Downloads): zwycięzcy **muszą** podpisać umowę przeniesienia autorskich praw majątkowych na UZP (wszyscy współautorzy, forma pisemna), inaczej tracą nagrodę; komponenty zewnętrzne trzeba wprost wymienić w prezentacji. Nagroda po przekazaniu kodu, instrukcji, Docker Compose i dokumentacji (architektura, konfiguracja klasy dokumentu, dodanie nowej klasy).
+  - Zbiór testowy: co najmniej 10 **realnych** spraw (treningowe są syntetyczne); do finału wchodzą maks. 3 drużyny.
   **Zostaje do zapytania na stoisku UZP (kolejność wg wagi):**
   1. Czy sprawdzarka ma sieć i nasz klucz API? Czy „LLM po API” może być zewnętrznym hostingiem otwartego modelu (np. Llama/Qwen u dostawcy), czy tylko serwerem lokalnym (Ollama/llama.cpp)?
   2. Dokładna definicja F1: na poziomie pól-liści? exact match czy normalizacja (wielkość liter, spacje, daty, kwoty)? jak liczone listy (Odwolujacy, pelnomocnicy) i wartości null? błąd klasyfikacji = zero dla dokumentu?
@@ -42,7 +43,8 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
   4. Jak sprawdzarka uruchamia kod (komenda, limit czasu na sprawę, system operacyjny)? Czy w zbiorze testowym będą skany bez warstwy tekstowej (OCR) i inne typy dokumentów niż trzy znane?
   5. Jaki jest opis dla `czynnosc_powod_id` = 12?
   6. Licencja danych treningowych: czy wolno je umieścić w publicznym repo (np. w testach)?
-  7. Czy będzie regulamin zadania (przeniesienie praw na UZP, kod przygotowany przed eventem)? Czy wymagane są wideo/slajdy, czy tylko link do repo?
+  7. Wagi finału: PDF z treścią podaje 50% F1 / 30% elastyczność / 20% architektura i jakość, a regulamin zadania 50% F1 / 50% elastyczność — które obowiązują? Czy wymagane są wideo/slajdy, czy tylko link do repo? Czy wolno użyć kodu przygotowanego przed eventem?
+  8. Czy realne sprawy testowe mają tę samą strukturę wejścia (jeden odwołanie, ≥1 pełnomocnictwo, przelew na sprawę), czy mogą zawierać inne dokumenty (np. dowody, załączniki), które mamy pominąć?
 - **Opcje:** A) ktoś z drużyny pyta na stoisku UZP i wpisuje odpowiedzi tutaj B) pytamy na Discordzie wyzwania
 - **Rekomendacja:** A — odpowiedź od razu; do tego czasu budujemy ścieżkę bez LLM (D-005), lokalną sprawdzarkę z naszą definicją F1 (pola-liście, lekka normalizacja) i obsługujemy obie konwencje nazw plików.
 - **Blokuje:** ostateczną definicję F1 w lokalnej sprawdzarce (pyt. 2); wybór hostingu LLM (pyt. 1) — nic z tego nie blokuje startu prac

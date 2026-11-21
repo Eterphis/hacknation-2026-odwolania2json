@@ -23,20 +23,29 @@ task:               # facts from the brief + training data (checked by coordinat
     przelew: {schema: oczekiwane-json/przelew.json, top_keys: [przelew_bankowy], note: "training input file is potwierdzenie_przelewu.pdf, gold file is przelew.json"}
   schemas_are_annotated: "schema files are JSON with // comments that define each field's extraction rule (e.g. czynnosc_powod_id = int 1-12 decided ONLY from the first zarzut; numer_ted normalised to NNNNNN-YYYY; numer_bzp without spaces). Treat the comments as the field spec."
   dictionary: "czynnosc_powod_id -> czynnosc_opis is a fixed 1:1 code list; ids 1-11 seen in training (12 not seen, its label unknown); full list in reports/rules-check.md"
+  local_copy: "C:/Users/jasiu/workspace/uzp-data (git clone of the UZP repo, gitignored; dane/przyklad_NN, oczekiwane-json/)"
   training_data: "60 cases (not 39 as in the deck), each odwolanie.pdf + pelnomocnictwo.pdf + potwierdzenie_przelewu.pdf with gold odwolanie.json / pelnomocnictwo.json / przelew.json. No ground_truth.yaml in the repo: the gold JSONs are the ground truth. Data is synthetic (KRS/NIP/REGON start with 999); all 180 training PDFs have a text layer, but the brief says real cases include scans."
-  test_data: "hidden; 'complete administrative cases prepared by the organiser'; compared against expert reference data"
+  test_data: "hidden; at least 10 appeal cases (task regulamin §2.4a); full-brief PDF s.6: 'realne sprawy odwoławcze' = REAL cases, while the training set is synthetic (brief s.7) -> expect real layouts, scans and noise not seen in training; generalisation beats overfitting to the 60 synthetic cases"
+  sources:
+    full_brief_pdf: "C:/Users/jasiu/Downloads/UZP - Pełna treść zadania konkursowego.pdf"   # differs from the repo README: Stage 2 = 50/30/20, real test cases, s.9 universal PDF->data tool
+    task_regulamin_pdf: "C:/Users/jasiu/Downloads/UZP - Regulamin zadania konkursowego.pdf"   # binding over the event regulamin (§5.2); signed 2026-11-18
+  deployment_context: "Brief s.9: UZP wants a basis for pilot deployments; special value for solutions that grow into a UNIVERSAL tool for getting structured data out of PDF documents."
 
 scoring:            # build: rubryka; optimize: metryka + sprawdzarka — z regulaminu
-  rubric:           # from the brief section 7 (confirmed); levels are our proposed mapping
+  rubric:           # Stage 2 weights from the full-brief PDF s.8 (50/30/20); the task regulamin §2.4b says 50/50 (F1 + flexibility judged on architecture description, source code and presentation) -> conflict asked in Q-002; levels are our proposed mapping
     - name: Jakosc ekstrakcji danych (F1 Score)
-      what: "Agreement of our JSONs with the reference data on the hidden test set, measured with F1. Stage 1 (preselection) = 100%; Stage 2 (final) = 50%."
+      what: "Agreement of our JSONs with the real data on the documents, hidden test set of >= 10 real cases, measured with F1. Stage 1 (preselection) = 100%; Stage 2 (final) = 50%."
       weight: 0.5
-      levels: "1 = F1 < 0.5; 3 = F1 ~ 0.75; 5 = F1 >= 0.9 on our held-out training cases (proposed mapping)"
+      levels: "1 = F1 < 0.5; 3 = F1 ~ 0.75; 5 = F1 >= 0.9 on our held-out cases, incl. a few realistic/noisy ones we build ourselves (proposed mapping)"
     - name: Elastycznosc i mozliwosc rozbudowy
-      what: "Ease of adding new document types and new data classes without rebuilding the whole system. Premiowane (brief s.5): new document classes configured only through config files, transparency of the extraction process."
-      weight: 0.5
-      levels: "1 = hardcoded per type; 3 = new field via config; 5 = new document type via config only, with per-field evidence (page/snippet/confidence) shown in the UI (proposed mapping)"
-  stages: "Stage 1 preselection: 100% F1 on the hidden test set. Stage 2 final: 50% F1 + 50% flexibility; HackNation regulamin: top 5 per task, 5 min pitch + 5 min Q&A."
+      what: "Ease of adding new document types and data classes without rebuilding the system. Premiowane (brief s.5): new document classes configured only via config files, transparency of extraction. Regulamin: judged from the architecture description, source code and presentation."
+      weight: 0.3
+      levels: "1 = hardcoded per type; 3 = new field via config; 5 = new document type via config only, demonstrated live, with per-field evidence (page/snippet/confidence) shown in the UI (proposed mapping)"
+    - name: Architektura i jakosc techniczna
+      what: "Clarity of the project, modularity, maintainability and documentation (brief PDF s.8). Prize handover (regulamin §3.5) requires source code, run instructions, Docker Compose, documentation with architecture, how a document class's extraction is configured and how to add a new class."
+      weight: 0.2
+      levels: "1 = one script, no docs; 3 = modules + README + tests; 5 = deep modules behind small interfaces, docs/ARCHITECTURE + ADDING_A_DOCUMENT_CLASS, docker compose up works, CI tests green (proposed mapping)"
+  stages: "Stage 1 preselection: 100% F1 on the hidden test set (>= 10 real cases). Stage 2 final: at most 3 teams (task regulamin §2.4b, overrides the event's top 5), 5 min pitch + 5 min Q&A; jury picks one winner (20 000 PLN gross)."
   metric: extraction F1 (max)   # F1 granularity (per field? exact match? normalisation? list matching?) NOT defined in the brief; see Q-002
   direction: max
   local_scorer: null   # proposed: `python eval/score.py --pred output/ --gold <cases>/` printing `score: <F1>`, field-level micro F1 over leaf values with light normalisation; first task, revised once UZP defines F1
@@ -51,7 +60,7 @@ timeline:           # z regulaminu
     - {at: "2026-11-22T00:00+01:00", what: "judge round; wow feature chosen"}
     - {at: "2026-11-22T09:30+01:00", what: "feature freeze: only bugs, fallback demo video, README, pitch"}
     - {at: "2026-11-22T10:30+01:00", what: "Hacktribe submission done (30 min buffer)"}
-    - {at: "2026-11-22T14:45+01:00", what: "Stage I results: top 5 per task go to the pitch"}
+    - {at: "2026-11-22T14:45+01:00", what: "Stage I results: top 3 go to the final (task regulamin)"}
     - {at: "2026-11-22T15:15+01:00", what: "Stage II: 5 min live pitch + 5 min jury Q&A"}    # np. {at: "19:00", what: "golden path end-to-end"}, feature freeze
 
 rules:              # sprawdza researcher PRZED startem
@@ -59,6 +68,7 @@ rules:              # sprawdza researcher PRZED startem
   allowed_ai: null              # general rules say nothing; check the task's own regulamin at 11:00
   allowed_autonomous_agents: null
   task_requirements: "Brief s.5 (confirmed): Python 3.13+; requirements.txt for a quick pip install; ONLY open-source components, including open-source language models; runs locally (on-premise) without GPU ('LLM po API'). Brief s.3: CLI, wrapper script (e.g. start.bat) or similar; folders ./input and ./output in the app root; ./output/<case>/<name of the input PDF>.json. Reading (coordinator): closed hosted models (Claude, GPT, Gemini) are out; an open-weights model reached over an API is in. Unclear: whether a third-party hosted endpoint counts as 'on-premise', and whether the grader gives us network or an API key -> the pipeline must score without any LLM (Q-002)."
+  task_regulamin: "UZP task regulamin (PDF, signed 2026-11-18, binding over the event regulamin): jury of >= 3 appointed by UZP; Stage 1 F1 on >= 10 hidden appeal cases vs the real data on the documents; Stage 2 max 3 teams, 50% F1 + 50% extensibility to new document classes (from architecture description, source code, presentation); one prize 20 000 PLN gross. §4: winners MUST sign a transfer of author's economic rights to UZP (all co-authors; written form) or lose the prize; every external solution used must be named explicitly in the presentation. §3.5: prize paid after handing over source code, run instructions, Docker Compose config, documentation (architecture, configuring extraction for a document class, adding a new class). Nothing on AI coding tools or pre-event code."
   notes: "Teams up to 6. Per-task criteria come with the full brief (Sat 11:00). Stage I = jury (3+) scores Hacktribe submissions, top 5 per task go to Stage II = 5 min pitch + 5 min Q&A. Jury may award nothing below 50% of points. Prize per task 11-34k PLN. Task regulamin may transfer IP to the partner (art. 921 par. 3 kc): check it."
 
 deliverables:       # co trzeba oddać — researcher sprawdza w regulaminie; nie zakładaj niczego (null = nieznane)
@@ -67,7 +77,9 @@ deliverables:       # co trzeba oddać — researcher sprawdza w regulaminie; ni
   live_demo: true              # Stage II is a live pitch to the jury
   slides: null
   repo_submission: true         # brief s.4: required = project title + GitHub link to a working prototype that lets you upload documents and read the extraction results; optional = project repo, technical docs, own quality test results
-  upload_ui: true               # "wgranie dokumentów i odczytanie rezultatów" -> a simple upload/view UI on top of the CLI
+  docker_compose: true          # regulamin §3.5: prize handover needs a Docker Compose config; ship it in the repo from the start
+  docs_required: "docs: architecture, how extraction of a document class is configured, how to add a new document class (regulamin §3.5); external components listed in the pitch (§4.1)"
+  upload_ui: true              # "wgranie dokumentów i odczytanie rezultatów" -> a simple upload/view UI on top of the CLI
   starter_code_allowed: null    # czy wolno użyć kodu przygotowanego przed eventem
   ai_apis_allowed: "open-source models only (brief s.5); closed commercial APIs not allowed"
   external_data_allowed: null

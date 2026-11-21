@@ -36,3 +36,6 @@ CLAUDE.md
 # backups `house adapt` makes of hand-edited generated files
 *.orig
 *.orig-*
+
+# UZP challenge data clone (licence unclear, never committed): C:/Users/jasiu/workspace/uzp-data
+uzp-data/

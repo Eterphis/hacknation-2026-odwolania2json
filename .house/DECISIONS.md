@@ -39,3 +39,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** preselekcja to 100% F1 z automatycznej sprawdzarki UZP; nie wiemy, czy da nam sieć i klucz API (Q-002). Dane treningowe mają warstwę tekstową i powtarzalny układ, więc reguły są realne; zamknięte modele (Claude/GPT) są wykluczone treścią zadania.
 - **Kto:** coordinator
 - **Data:** 2026-11-21 11:30
+
+## D-006 Pełna treść (PDF) i regulamin zadania: realne sprawy testowe, finał 50/30/20, Docker Compose od początku
+- **Decyzja:** Do spec.yaml dochodzą: (1) zbiór testowy = co najmniej 10 realnych spraw, a treningowe są syntetyczne, więc liczy się uogólnianie (skany, inne układy), nie dopasowanie do 60 przykładów; (2) rubryka finału wg PDF: F1 50%, elastyczność 30%, architektura i jakość techniczna 20% (regulamin mówi 50/50 — pytanie w Q-002, projekt pokrywa oba warianty); (3) finał dla maks. 3 drużyn; (4) od pierwszego dnia w repo: `docker compose`, dokumentacja architektury, opis konfiguracji klasy dokumentu i dodawania nowej klasy, lista komponentów zewnętrznych (warunki wypłaty nagrody i §4.1 regulaminu); (5) zwycięzca przenosi prawa majątkowe na UZP — w repo tylko nasz kod i zależności open source z licencjami pozwalającymi na to.
+- **Dlaczego:** `UZP - Pełna treść zadania konkursowego.pdf` i `UZP - Regulamin zadania konkursowego.pdf` (Downloads) różnią się od README; regulamin zadania ma pierwszeństwo przed regulaminem wydarzenia. PDF z treścią dodaje też §9: UZP szuka podstawy uniwersalnego narzędzia PDF → dane.
+- **Kto:** coordinator
+- **Data:** 2026-11-21 12:10
