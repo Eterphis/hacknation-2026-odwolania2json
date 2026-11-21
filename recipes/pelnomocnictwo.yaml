@@ -8,7 +8,7 @@ classify:
   signals:
     - {pattern: "pelnomocnictw", weight: 3, head: 300, squash: true}
     - {pattern: "mocodaw", weight: 1}
-    - {pattern: "ustanawiam|udzielam|upowazniam|umocowan", weight: 1}
+    - {pattern: 'ustanawia\w*|udziela\w*|upowaznia\w*|umocowan', weight: 1}  # all persons: "udzielają" (consortia)
     - {pattern: "pelnomocnik", weight: 1}
   forbidden:
     - {pattern: "see the notice on ted website|ogloszenie o zamowieniu lub ogloszenie o koncesji", head: 600}
