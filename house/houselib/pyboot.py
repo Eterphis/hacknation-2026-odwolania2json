@@ -40,12 +40,13 @@ def _find_python():
 
 def ensure(script):
     """Re-run `script` under Python 3.11+ (UTF-8 mode on Windows) if the current interpreter does not qualify."""
+    relaunched = os.environ.pop(_GUARD, None)  # only for this process; child scripts check for themselves
     old = sys.version_info < (3, 11)
     no_utf8 = os.name == "nt" and not sys.flags.utf8_mode
     if not (old or no_utf8):
         return
     if old:
-        cmd = None if os.environ.get(_GUARD) else _find_python()
+        cmd = None if relaunched else _find_python()
         if cmd is None:
             sys.stderr.write("house: needs Python 3.11+ (this is %s at %s)\n"
                              % (sys.version.split()[0], sys.executable))

@@ -32,3 +32,7 @@ CLAUDE.md
 .house/generated.json
 .house/tmp/
 .worktrees/
+
+# backups `house adapt` makes of hand-edited generated files
+*.orig
+*.orig-*

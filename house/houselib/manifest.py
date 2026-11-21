@@ -172,7 +172,7 @@ def apply(contest: Path, generated: dict[str, str], old: dict[str, str] | None,
             res.backed_up.append(rel)
             res.backups.append(backup.relative_to(contest).as_posix())
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text)
+        path.write_text(text, newline="\n")  # LF everywhere, so the manifest hash matches on Windows too
         res.written.append(rel)
     for rel in sorted(set(old or {}) - set(generated)):
         path = contest / rel
