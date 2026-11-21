@@ -1,7 +1,7 @@
 ---
 id: T007
 title: Web prototype - upload a case, see classes, JSON and per-field evidence
-status: doing
+status: review
 owner: coder
 branch: task/T007-web-ui
 depends_on: [T001]
