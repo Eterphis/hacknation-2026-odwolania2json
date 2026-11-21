@@ -11,7 +11,7 @@ from odw2json.model import Document, Page, Word
 
 from .layout import build_text, is_garbage_text
 from .ocr import OcrBackend, OcrLine, get_backend
-from .preprocess import NAMES as PREPROCESS_NAMES, merge_lines, needs_retry, preprocess_image
+from .preprocess import NAMES as PREPROCESS_NAMES, merge_lines, needs_retry, preprocess_image, shaky_bands
 
 DEFAULT_DPI = 200
 DEFAULT_PREPROCESS = "auto"
@@ -136,7 +136,12 @@ class PdfIngestor:
             return self.backend.ocr(preprocess_image(image, "levels"))
         lines = self.backend.ocr(image)
         if mode == "auto" and needs_retry(lines):
-            lines = merge_lines(lines, self.backend.ocr(preprocess_image(image, "levels")))
+            # second, cleaned pass only over the horizontal bands that held the shaky lines (cheaper than a page)
+            cleaned: list[OcrLine] = []
+            for y0, y1 in shaky_bands(lines, image.size[1]):
+                crop = preprocess_image(image.crop((0, y0, image.size[0], y1)), "levels")
+                cleaned += [(t, (b[0], b[1] + y0, b[2], b[3] + y0), c) for t, b, c in self.backend.ocr(crop)]
+            lines = merge_lines(lines, cleaned)
         return lines
 
     def _cache_key(self, pdf_path, index: int) -> str | None:

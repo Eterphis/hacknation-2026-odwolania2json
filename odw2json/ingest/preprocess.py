@@ -51,6 +51,20 @@ def _same_line(a: tuple, b: tuple) -> float:
     return inter / (max(a[3], b[3]) - min(a[1], b[1]))
 
 
+def shaky_bands(lines: list, height: int, good: float = GOOD_CONF, gap: int = 40) -> list[tuple[int, int]]:
+    """Merged (y0, y1) pixel bands around the shaky lines, padded by half a line, clipped to the page."""
+    spans = sorted((l[1][1], l[1][3]) for l in lines if l[2] < good)
+    bands: list[list[int]] = []
+    for y0, y1 in spans:
+        pad = int((y1 - y0) / 2)
+        y0, y1 = max(0, int(y0) - pad), min(height, int(y1) + pad)
+        if bands and y0 <= bands[-1][1] + gap:
+            bands[-1][1] = max(bands[-1][1], y1)
+        else:
+            bands.append([y0, y1])
+    return [(a, b) for a, b in bands]
+
+
 def merge_lines(base: list, cleaned: list, good: float = GOOD_CONF) -> list:
     """Keep trusted baseline lines; a cleaned line replaces the shaky baseline lines it overlaps if it reads better.
 

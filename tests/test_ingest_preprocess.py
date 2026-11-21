@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 
 from odw2json.ingest import PdfIngestor
-from odw2json.ingest.preprocess import PREPROCESSORS, merge_lines, needs_retry, preprocess_image
+from odw2json.ingest.preprocess import PREPROCESSORS, merge_lines, needs_retry, preprocess_image, shaky_bands
 
 SCAN = Path("C:/Users/jasiu/workspace/uzp-data/dane/skany/odwolania/0005/0005.pdf")
 
@@ -66,6 +66,13 @@ class MergeTests(unittest.TestCase):
         base = [("a", (0, 0, 100, 40), 0.99)]
         out = merge_lines(base, [("b", (0, 60, 100, 90), 0.9), ("c", (0, 30, 100, 70), 0.9)])
         self.assertEqual({t for t, _, _ in out}, {"a", "b", "c"})
+
+
+class BandTests(unittest.TestCase):
+    def test_bands_merge_and_clip(self):
+        lines = [("a", (0, 100, 50, 120), 0.5), ("b", (0, 130, 50, 150), 0.5), ("c", (0, 500, 50, 520), 0.5),
+                 ("ok", (0, 300, 50, 320), 0.99)]
+        self.assertEqual(shaky_bands(lines, 515), [(90, 160), (490, 515)])
 
 
 class AutoModeTests(unittest.TestCase):
