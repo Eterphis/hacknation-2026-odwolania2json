@@ -264,3 +264,50 @@ def derived(ctx: Context, spec: dict, scope: Scope) -> Iterator[Candidate]:
     v = spec.get("value", 1) if get_path(ctx.item, spec["if_set"]) is not None else spec.get("else")
     if v is not None:
         yield Candidate(v, snippet=f"derived from {spec['if_set']}")
+
+
+def _segments(ln) -> list[tuple[int, int]]:
+    """Char spans of a line's column segments: split at big word gaps (word boxes) or at 2+ spaces/tabs."""
+    if ln.words:
+        gap, spans, pos, a = _col_gap(ln.words), [], 0, 0
+        for j, w in enumerate(ln.words):
+            if j and w.x0 - ln.words[j - 1].x1 > gap:
+                spans.append((a, pos - 1))
+                a = pos
+            pos += len(w.text) + 1
+        spans.append((a, len(ln.text)))
+        return spans
+    return [(m.start(), m.end()) for m in re.finditer(r"\S+(?: \S+)*", ln.text)]
+
+
+def _match(pat: str, text: str, raw: bool, start: bool = False):
+    p = re.compile(pat, re.MULTILINE) if raw else compile_pattern(pat)
+    s = text if raw else fold(text)
+    return p.match(s) if start else p.search(s)
+
+
+@register_strategy("segments")
+def segments(ctx: Context, spec: dict, scope: Scope) -> Iterator[Candidate]:
+    """Values inside the column segments of each line in scope (signature blocks, tables without labels).
+
+    Every match of `value` in a segment is a candidate (named group 'v' or the whole match) unless the segment
+    matches one of `exclude` at its start or one of `not_after` matches the text right before the value.
+    `raw: true` matches `value` case-sensitively on the original text (e.g. capitalised person names)."""
+    t = ctx.text
+    raw = bool(spec.get("raw"))
+    excl = spec.get("exclude", [])
+    not_after = [compile_pattern(p + r"\s*$") for p in spec.get("not_after", [])]
+    val = re.compile(spec["value"], re.MULTILINE) if raw else compile_pattern(spec["value"])
+    for i in _lines_in(t, scope):
+        ln = t.lines[i]
+        if not ln.text.strip() or ln.start + len(ln.text) <= scope.start or ln.start >= scope.end:
+            continue
+        for a, b in _segments(ln):
+            seg = ln.text[a:b]
+            if not seg.strip() or any(_match(p, seg.lstrip(" .…_"), False, start=True) for p in excl):
+                continue
+            for m in val.finditer(seg if raw else fold(seg)):
+                va, vb = _group_span(m)
+                if vb <= va or any(p.search(fold(seg[:va])) for p in not_after):
+                    continue
+                yield _span_candidate(t, ln.start + a + va, ln.start + a + vb)

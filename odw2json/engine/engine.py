@@ -122,12 +122,21 @@ class RecipeEngine:
             end = m.start() if m else end
         starts = [m.start() for m in compile_pattern(spec["start"]).finditer(text.low, scope.start, end)]
         starts = starts[: spec.get("max", len(starts))]
+        if len(starts) < spec.get("min_blocks", 0):  # e.g. one principal, not a list: the whole scope is one item
+            starts, end = [scope.start], scope.end
         items: list[dict[str, Any]] = []
         for i, a in enumerate(starts):
             b = starts[i + 1] if i + 1 < len(starts) else end
             sub: dict[str, Any] = {}
             self._fields(f["fields"], text, sections, Scope(a, b), sub, f"{prefix}{f['path']}[{i}].", evidence)
             items.append(sub)
+        existing = _get(item, f["path"])
+        if spec.get("merge") and isinstance(existing, list) and existing:
+            for i, sub in enumerate(items):  # extra blocks join the last existing item
+                target = existing[min(i, len(existing) - 1)]
+                for k, v in sub.items():
+                    target.setdefault(k, v) if not isinstance(target.get(k), list) else target[k].extend(v)
+            return
         _set(item, f["path"], items)
 
     def _field(self, f, text, scope, item, prefix, evidence) -> None:
@@ -268,6 +277,14 @@ def _evidence(path: str, value: Any, c: Candidate, strat: dict, f: dict, text: T
     if c.page is not None and text.sources.get(c.page) == "ocr":
         conf *= OCR_CONFIDENCE
     return Evidence(path, value, c.page, c.snippet, strat["use"], conf, c.bbox)
+
+
+def _get(obj: dict[str, Any], path: str) -> Any:
+    for p in path.split("."):
+        if not isinstance(obj, dict):
+            return None
+        obj = obj.get(p)
+    return obj
 
 
 def _set(obj: dict[str, Any], path: str, value: Any) -> None:

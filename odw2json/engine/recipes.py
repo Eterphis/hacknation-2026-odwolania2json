@@ -76,7 +76,7 @@ def _where(err) -> str:
 
 
 def _check_regexes(spec: Any, where: str, name: str) -> None:
-    keys = {"pattern", "start", "end"}
+    keys = {"pattern", "start", "end", "exclude", "not_after"}
     if isinstance(spec, dict):
         for k, v in spec.items():
             is_value = k == "value" and spec.get("use") == "after_label" and isinstance(v, str)
