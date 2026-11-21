@@ -1,0 +1,34 @@
+{
+  "task": "T015",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "! grep -rnE '#[0-9A-Fa-f]{6}\\b|#[0-9A-Fa-f]{3}\\b|border-radius: *[1-9]|box-shadow|backdrop-filter|filter: *blur' web --include=*.css --include=*.html --include=*.js --exclude-dir=coldtrace",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      },
+      {
+        "id": "AC-3",
+        "kind": "manual",
+        "run": null,
+        "expect": null,
+        "text": "Judge in `python -m web`: opens 'Klasy dokumentów', creates a new class (e.g. 'wezwanie' with two fields) from the built-in template, sees a validation error with file/JSON path for a broken regex, fixes it, tests it on an uploaded PDF (classification score, extracted fields with evidence), saves it; the next upload and `python -m odw2json` on ./input use the new class without restart; editing and deleting a class work; the screen follows Cold Trace in night and daylight and at 375px.",
+        "timeout": 600
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T16:56:52+01:00",
+  "results": {}
+}
