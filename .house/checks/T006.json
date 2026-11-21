@@ -1,0 +1,34 @@
+{
+  "task": "T006",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/prep_input.py .acc/input 41-60 && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/input --output .acc/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred .acc/output --gold C:/Users/jasiu/workspace/uzp-data/dane --cases 41-60 --types odwolanie",
+        "expect": "score >= 0.85",
+        "text": null,
+        "timeout": 1800
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "! grep -rniE 'odwolanie|odwołanie|OdwolanieKIO|Zamawiajacy|Odwolujacy' odw2json/engine",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T11:59:47+01:00",
+  "results": {}
+}
