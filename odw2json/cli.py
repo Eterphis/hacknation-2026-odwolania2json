@@ -17,6 +17,10 @@ def main(argv: list[str] | None = None) -> int:
     total = sum(len(r.documents) for r in results)
     written = sum(1 for r in results for d in r.documents if d.output_name)
     print(f"{len(results)} cases, {total} pdfs, {written} json written, {total - written} rejected/failed")
+    failed = sum(1 for r in results for d in r.documents if d.warnings)
+    if total and failed == total:
+        print("every PDF failed; check the log above (dependencies installed? pip install -r requirements.txt)", file=sys.stderr)
+        return 1
     return 0
 
 

@@ -1,4 +1,5 @@
 import unittest
+from pathlib import Path
 
 from odw2json import stubs
 from odw2json.model import Document, Page
@@ -39,3 +40,31 @@ class LetterSpacedTests(unittest.TestCase):
     def test_letter_spaced_heading(self):
         r = stubs.KeywordClassifier().classify(doc("P E Ł N O M O C N I C T W O\nMocodawca X"))
         self.assertEqual(r.doc_class, "pelnomocnictwo")
+
+
+class TieAndPriorityTests(unittest.TestCase):
+    def test_odwolanie_mentioning_pelnomocnictwo(self):
+        text = "Lublin, dnia 9 listopada\nPrezes Krajowej Izby Odwoławczej\nOdwołujący: X\nZałączniki: pełnomocnictwo"
+        self.assertEqual(stubs.KeywordClassifier().classify(doc(text)).doc_class, "odwolanie")
+
+    def test_przelew_without_potwierdzenie_word(self):
+        text = "Bank\nwykonano przelew krajowy\nopłata od pełnomocnictwa"
+        self.assertEqual(stubs.KeywordClassifier().classify(doc(text)).doc_class, "przelew")
+
+
+DATA = Path("C:/Users/jasiu/workspace/uzp-data/dane")
+
+
+@unittest.skipUnless(DATA.is_dir(), "UZP training data not available")
+class TrainingDataTests(unittest.TestCase):
+    def test_class_matches_file_name(self):
+        ing, clf = stubs.PdfplumberIngestor(), stubs.KeywordClassifier()
+        want = {"odwolanie": "odwolanie", "pelnomocnictwo": "pelnomocnictwo", "potwierdzenie_przelewu": "przelew"}
+        bad = []
+        pdfs = sorted(DATA.glob("przyklad_*/*.pdf"))
+        self.assertGreaterEqual(len(pdfs), 150)
+        for pdf in pdfs:
+            got = clf.classify(ing.ingest(str(pdf))).doc_class
+            if got != want.get(pdf.stem):
+                bad.append(f"{pdf.parent.name}/{pdf.name}: {got}")
+        self.assertEqual(bad, [])

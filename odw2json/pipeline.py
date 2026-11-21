@@ -24,6 +24,8 @@ def _process_pdf(pdf: Path, ingestor: Ingestor, classifier: Classifier, extracto
         ext = extractor.extract(doc, cls.doc_class)
         ext.data = complete(ext.data, cls.doc_class)
         return DocumentResult(str(pdf), pdf.stem + ".json", cls, ext)
+    except ImportError:  # broken environment, not a bad document: fail loudly
+        raise
     except Exception as e:  # one broken PDF must never kill the batch
         log.exception("failed on %s", pdf)
         return DocumentResult(str(pdf), None, Classification(None, 0.0, reason="error"), None, [f"{type(e).__name__}: {e}"])
@@ -35,6 +37,8 @@ def process_case(case_dir, ingestor=None, classifier=None, extractor=None) -> Ca
     ingestor = ingestor or factory.default_ingestor()
     classifier = classifier or factory.default_classifier()
     extractor = extractor or factory.default_extractor()
+    for extra in sorted(p for p in case_dir.rglob("*") if p.is_file() and p.suffix.lower() == ".pdf" and p.parent != case_dir):
+        log.warning("skipping %s: PDFs must lie directly in the case folder", extra)
     docs = [_process_pdf(p, ingestor, classifier, extractor) for p in _pdfs(case_dir)]
     return CaseResult(case_dir.name, docs)
 
@@ -49,6 +53,8 @@ def process_input(input_dir, output_dir, ingestor=None, classifier=None, extract
     ingestor = ingestor or factory.default_ingestor()
     classifier = classifier or factory.default_classifier()
     extractor = extractor or factory.default_extractor()
+    for loose in sorted(p for p in input_dir.iterdir() if p.is_file() and p.suffix.lower() == ".pdf"):
+        log.warning("skipping %s: PDFs must lie in <input>/<case>/", loose)
     results: list[CaseResult] = []
     for case_dir in sorted(p for p in input_dir.iterdir() if p.is_dir()):
         res = process_case(case_dir, ingestor, classifier, extractor)

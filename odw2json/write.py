@@ -3,21 +3,27 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 SCHEMA_DIR = Path(__file__).resolve().parent.parent / "schemas"
-CLASSES = ("odwolanie", "pelnomocnictwo", "przelew")
 
 _cache: dict[str, Any] = {}
 
 
+def classes() -> list[str]:
+    """Known classes = schemas/<class>.json (a new class needs only a schema file, no code)."""
+    return sorted(p.stem for p in SCHEMA_DIR.glob("*.json"))
+
+
 def skeleton(doc_class: str) -> Any:
     """Fresh copy of the null skeleton for a class. Raises KeyError for unknown classes."""
-    if doc_class not in CLASSES:
-        raise KeyError(doc_class)
     if doc_class not in _cache:
-        _cache[doc_class] = json.loads((SCHEMA_DIR / f"{doc_class}.json").read_text(encoding="utf-8"))
+        path = SCHEMA_DIR / f"{doc_class}.json"
+        if not re.fullmatch(r"[\w-]+", doc_class) or not path.is_file():
+            raise KeyError(doc_class)
+        _cache[doc_class] = json.loads(path.read_text(encoding="utf-8"))
     return copy.deepcopy(_cache[doc_class])
 
 
@@ -27,6 +33,8 @@ def _fill(value: Any, template: Any) -> Any:
         return {k: _fill(src.get(k), t) for k, t in template.items()}
     if isinstance(template, list):
         item_t = template[0]
+        if isinstance(value, dict):  # a single entity given as an object
+            value = [value]
         items = value if isinstance(value, list) and value else [None]
         return [_fill(i, item_t) for i in items]
     return None if isinstance(value, (dict, list)) else value

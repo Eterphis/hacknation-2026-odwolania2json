@@ -8,12 +8,16 @@ from odw2json import write
 
 class SkeletonTests(unittest.TestCase):
     def test_classes(self):
-        self.assertEqual(set(write.CLASSES), {"odwolanie", "pelnomocnictwo", "przelew"})
+        self.assertEqual(set(write.classes()), {"odwolanie", "pelnomocnictwo", "przelew"})
 
     def test_skeleton_is_fresh_copy(self):
         a = write.skeleton("przelew")
         a["przelew_bankowy"]["kwota"] = 1
         self.assertIsNone(write.skeleton("przelew")["przelew_bankowy"]["kwota"])
+
+    def test_unsafe_class(self):
+        with self.assertRaises(KeyError):
+            write.skeleton("../README")
 
     def test_unknown_class(self):
         with self.assertRaises(KeyError):
@@ -45,6 +49,10 @@ class CompleteTests(unittest.TestCase):
         out = write.complete({"przelew_bankowy": {"foo": 1}, "bar": 2}, "przelew")
         self.assertEqual(set(out), {"przelew_bankowy"})
         self.assertNotIn("foo", out["przelew_bankowy"])
+
+    def test_dict_for_list_is_wrapped(self):
+        out = write.complete({"Odwolujacy": {"nazwa": "X"}}, "odwolanie")
+        self.assertEqual(out["Odwolujacy"][0]["nazwa"], "X")
 
     def test_none_for_object_gives_skeleton(self):
         out = write.complete({"OdwolanieKIO": None}, "odwolanie")

@@ -86,3 +86,25 @@ class CliTests(unittest.TestCase):
             rc = cli.main(["--input", str(inp), "--output", str(out)])
             self.assertEqual(rc, 0)
             self.assertTrue(out.exists())
+
+
+class FailureTests(unittest.TestCase):
+    def test_import_error_propagates(self):
+        class Missing:
+            def ingest(self, p):
+                raise ImportError("no pdfplumber")
+
+        with tempfile.TemporaryDirectory() as t:
+            make(Path(t) / "in", ["c1/a.pdf"])
+            with self.assertRaises(ImportError):
+                pipeline.process_input(Path(t) / "in", Path(t) / "out", Missing(), FakeClassifier(), FakeExtractor())
+
+    def test_exit_code_1_when_all_fail(self):
+        from unittest import mock
+
+        from odw2json import cli
+        with tempfile.TemporaryDirectory() as t:
+            make(Path(t) / "in", ["c1/a.pdf"])
+            with mock.patch("odw2json.factory.default_ingestor", return_value=BoomIngestor()):
+                rc = cli.main(["--input", str(Path(t) / "in"), "--output", str(Path(t) / "out")])
+            self.assertEqual(rc, 1)

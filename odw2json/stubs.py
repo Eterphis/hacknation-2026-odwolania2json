@@ -10,8 +10,13 @@ from .write import skeleton
 class PdfplumberIngestor:
     """STUB: pdfplumber page text only, no OCR, no word boxes."""
 
+    def __init__(self) -> None:
+        import pdfplumber  # a missing dependency must fail at start-up, not per document
+
+        self._pdfplumber = pdfplumber
+
     def ingest(self, pdf_path: str) -> Document:
-        import pdfplumber
+        pdfplumber = self._pdfplumber
 
         pages: list[Page] = []
         with pdfplumber.open(pdf_path) as pdf:
@@ -25,20 +30,29 @@ def _norm(text: str) -> str:
 
 
 class KeywordClassifier:
-    """STUB: keyword scores on the text; rejects when nothing matches."""
+    """STUB: weighted keyword scores; signals near the document start weigh most.
+    Ties are broken by priority odwolanie > przelew > pelnomocnictwo; no signal -> reject."""
+
+    PRIORITY = ("odwolanie", "przelew", "pelnomocnictwo")
 
     def classify(self, doc: Document) -> Classification:
         t = _norm(doc.text)
         squashed = t.replace(" ", "")  # headings are sometimes letter-spaced: "P E Ł N O M O C N I C T W O"
-        przelew = float("potwierdzenie" in t) + float("przelew" in t)
-        odwolanie = float("odwołanie" in t or "odwolanie" in t) + float("krajowej izby" in t)
+        head, shead = t[:600], squashed[:600]
         scores = {
-            "przelew": przelew if przelew >= 2 else 0.0,
-            "pelnomocnictwo": 2.0 * float("pełnomocnictw" in squashed or "pelnomocnictw" in squashed),
-            "odwolanie": odwolanie if odwolanie >= 2 else 0.0,
+            "odwolanie": 3.0 * bool(re.search(r"(?m)^(prezes )?krajow(a|ej) izb", doc.text.lower()[:600]))
+            + 2.0 * ("odwołujący:" in head)
+            + 0.5 * ("krajowej izby" in t)
+            + 0.5 * ("odwołanie" in t or "odwolanie" in t),
+            "przelew": 3.0 * ("przelew" in head)
+            + 1.0 * ("potwierdzenie" in head)
+            + 1.0 * ("na rachunek" in t or "rachunek nadawcy" in t or "rachunek obciążany" in t)
+            + 1.0 * ("dane nadawcy" in t)
+            + 0.5 * ("kwota" in t),
+            "pelnomocnictwo": 2.0 * ("pełnomocnictw" in shead or "pelnomocnictw" in shead),
         }
-        best = max(scores, key=lambda k: scores[k])
-        if scores[best] <= 0:
+        best = max(self.PRIORITY, key=lambda k: scores[k])  # max keeps the first of equals
+        if scores[best] < 2:
             return Classification(None, 0.0, scores, "no keyword matched")
         return Classification(best, scores[best], scores, "keyword stub")
 
