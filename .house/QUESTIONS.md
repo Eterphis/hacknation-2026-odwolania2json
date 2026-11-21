@@ -26,7 +26,7 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
 - **Domyślnie:** A
 - **Odpowiedź:** A (człowiek, 2026-11-21 ~14:00): zatwierdzone; ewentualne poprawki później. (Uwaga: finał to 3 kryteria 50/30/20 wg PDF, D-006.)
 
-## Q-002 [open] Pytania do UZP (stoisko / Discord) przed zamrożeniem architektury
+## Q-002 [answered 2026-11-21] Pytania do UZP (stoisko / Discord) przed zamrożeniem architektury
 - **Kontekst:** Pełna treść zadania jest już w README repo UZP (github.com/Urzad-Zamowien-Publicznych/hacknation-2026). Regulaminu zadania nadal nie ma (karta na hacknation.pl ma puste pola zasad). Szczegóły i źródła: `.house/reports/rules-check.md`.
   **Zamknięte treścią zadania (2026-11-21):**
   - Modele: „wyłącznie komponenty open source (w tym otwarto-źródłowe modele językowe)”, „bez GPU (LLM po API)” → zamknięte modele (Claude/GPT/Gemini) odpadają; otwarty model przez API jest OK. Decyzja: D-005 (ścieżka bez LLM musi dać pełny wynik).
@@ -49,6 +49,31 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
 - **Opcje:** A) ktoś z drużyny pyta na stoisku UZP i wpisuje odpowiedzi tutaj B) pytamy na Discordzie wyzwania
 - **Rekomendacja:** A — odpowiedź od razu; do tego czasu budujemy ścieżkę bez LLM (D-005), lokalną sprawdzarkę z naszą definicją F1 (pola-liście, lekka normalizacja) i obsługujemy obie konwencje nazw plików.
 - **Blokuje:** ostateczną definicję F1 w lokalnej sprawdzarce (pyt. 2); wybór hostingu LLM (pyt. 1) — nic z tego nie blokuje startu prac
+- **Poziom:** zawsze człowiek
+- **Odpowiedź:** (człowiek od mentorów UZP, 2026-11-21 wieczorem; + aktualizacja repo UZP 8d0ef96)
+  1. LLM: model uruchamiany lokalnie na 16 GB RAM daje maksimum punktów; LLM zewnętrzny (API) odkładamy całkowicie. Basal jako lokalny też wchodzi w grę. (README nadal opisuje LLM po API w UE; mentorzy dopuszczają lokalny.)
+  2. Sprawdzanie: podmieniają folder `input` na swoje dane i oczekują poprawnego `output` z CLI; aplikacja web to dodatkowe punkty i ma używać tego samego kodu.
+  3. Nazwy plików to pomyłka organizatora, nic nie znaczą (mogą je poprawić); README: klasyfikacja wyłącznie po treści. W repo zmieniono `potwierdzenie_przelewu.pdf` → `przelew.pdf`.
+  5. Id 12 = „Projektowane postanowienia umowy”; pełny słownik 1–12 w `oczekiwane-json/czynnosc_powod_id_dict.md`. Imiona i nazwiska (pełnomocnik, mocodawca) w mianowniku.
+  6. Dane testowe i sprawdzające są generowane — wszystko można upublicznić.
+  7. Opis oceny w repo GitHub jest poprawny (zob. Q-004 pyt. 2: README pokazuje etap 2 = 50% F1 + 50% elastyczność z punktami 20/20/10).
+  9. Prawdziwy zbiór testowy ma tę samą strukturę, ale zmieniony układ dokumentów: wyzwaniem jest poprawny odczyt mimo innej struktury; tekst nie zawsze jest jednolity, a najtrudniejsze może być ustalenie nadawcy i odbiorcy (kto jest Odwołującym/Zamawiającym/mocodawcą).
+  - „Dodatkowe typy danych” z repo to nie inne formaty plików, tylko inne klasy dokumentów; dodawanie ich ma być możliwe przez UI lub plik konfiguracyjny.
+  - Nowe dane w repo: `dane/skany/{odwolania,pelnomocnictwa,potwierdzenia}/NNNN` (3×10 skanów ze złotymi JSON) i `dane/negatywne/` (12 dokumentów, które „powinny zwrócić pusty plik .json”).
+  → D-015..D-018; nowe pytania: Q-004.
+
+## Q-004 [open] Pytania uzupełniające do mentorów UZP
+- **Kontekst:** po odpowiedziach z Q-002 i aktualizacji repo UZP zostały sprzeczności, które zmieniają wynik F1 albo punkty finału.
+  1. **Dokument odrzucony:** README i `dane/negatywne/readme.md` mówią „zwrócić pusty plik .json”, a szablon `szablon-aplikacja/output/case1` nie ma żadnego pliku dla „negatywny przyklad.pdf”. Mamy zapisać pusty plik (0 bajtów? czy `{}`?), czy nie tworzyć pliku?
+  2. **Ocena finału:** README: etap 2 = 50% F1 + 50% elastyczność (do 20 pkt za „moc modelu LLM” — im mniejszy, tym więcej; do 20 pkt za łatwość dodawania typów dokumentów i klas danych; do 10 pkt za inne funkcje, np. GUI). Czy to obowiązuje (a nie 50/30/20 z PDF)? Ile punktów dostaje rozwiązanie bez LLM, a ile z małym lokalnym modelem (np. 1,5–4 mld parametrów)?
+  3. **Mianownik:** czy w referencji imię i nazwisko jest zawsze w mianowniku, nawet gdy dokument podaje tylko inną formę (np. „udzielam pełnomocnictwa Janowi Kowalskiemu”)?
+  4. **Porównanie wartości:** F1 liczone na polach-liściach z dokładnym dopasowaniem tekstu, czy z normalizacją (wielkość liter, spacje, cudzysłowy, myślniki)? Jak liczone są listy (kolejność Odwołujących, pełnomocników) i pola null?
+  5. **Uruchomienie u sprawdzającego:** czy laptop ma internet przy pierwszym starcie (pobranie wag modelu ~1–3 GB), czy wagi mają być w paczce? Czy jest limit czasu na sprawę (OCR skanu to ~5–7 s na stronę na CPU)?
+  6. **Nowe klasy w finale:** czy jury będzie na żywo dodawać nową klasę dokumentu (jaką, np. dowód/załącznik?) i czy ma ona trafić do `output` z CLI?
+  7. **Struktura sprawy testowej:** czy w folderze sprawy mogą być dokumenty negatywne obok trzech klas (jak w szablonie) i czy może być kilka pełnomocnictw / przelewów?
+- **Opcje:** A) pytasz mentorów (stoisko/Discord) i wpisujesz odpowiedzi tutaj B) zostajemy przy domyślnych założeniach (D-016: pusty plik dla odrzuconego, przełączalne w konfiguracji)
+- **Rekomendacja:** A dla pyt. 1, 2 i 5 (zmieniają wynik i paczkę); reszta może iść B.
+- **Blokuje:** nic nie blokuje pracy — domyślne założenia w D-016/D-017.
 - **Poziom:** zawsze człowiek
 - **Odpowiedź:** —
 

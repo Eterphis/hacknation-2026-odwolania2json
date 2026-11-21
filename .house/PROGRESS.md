@@ -16,3 +16,5 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - T011 (web UI w tożsamości Cold Trace / Eterphis: noc/dzień, lockup, własne fonty offline, tabela dowodów) gotowe do przeglądu, check GREEN (AC-4 ręcznie).
 - 2026-11-21 · coordinator · T010 scalone (zaszumiony zbiór skanów, poprawka domyślnej ścieżki danych); T004 po poprawkach z review GREEN, F1 odłożone 0,8737; fala 3 przekazana teammate'owi (.house/handoff/wave3-teammate.md)
 - 2026-11-21 13:48 T004 cofnięte po scaleniu: regresja w T011: AC-1 (exit 1)
+- 2026-11-21 · coordinator · T004 scalone (po poprawkach z review, naprawa niestabilnego testu T010 i błędu rebase w house merge); pomiar zaszumionych skanów 41–50: F1 0,77 vs 0,85 na czystych, OCR najbardziej psuje tytuły i nazwy stron · reports/T010.md
+- 2026-11-21 · coordinator · fala 3 scalona (T005, T006, T008); odpowiedzi mentorów zapisane (Q-002, D-015..D-018), nowe pytania Q-004; stan wyjściowy na nowych danych UZP: skany 0,58 F1, negatywy 11/12 odrzuconych (fałszywie przyjęty wyrok KIO)

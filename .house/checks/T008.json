@@ -38,5 +38,30 @@
     "protected": {}
   },
   "frozen_at": "2026-11-21T11:59:51+01:00",
-  "results": {}
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "",
+      "ran_at": "2026-11-21T16:31:46+01:00",
+      "commit": "9b9c2430de061ed293ed1813d4867da4c78aca22"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "",
+      "ran_at": "2026-11-21T16:31:47+01:00",
+      "commit": "9b9c2430de061ed293ed1813d4867da4c78aca22"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "[notice] A new release of pip is available: 26.2.2 -> 26.3\n[notice] To update, run: C:\\Users\\jasiu\\workspace\\.acc\\venv\\Scripts\\python.exe -m pip install --upgrade pip\nusage: odw2json [-h] [--input INPUT] [--output OUTPUT] [--recipes RECIPES]\n\nPDF cases -> JSON (UZP contract)\n\noptions:\n  -h, --help         show this help message and exit\n  --input INPUT      folder with <case>/*.pdf (default ./input)\n  --output OUTPUT    folder for <case>/<name>.json (default ./output)\n  --recipes RECIPES  folder with <class>.yaml recipes (default ./recipes or\n                     env ODW2JSON_RECIPES)",
+      "ran_at": "2026-11-21T16:32:44+01:00",
+      "commit": "9b9c2430de061ed293ed1813d4867da4c78aca22"
+    }
+  }
 }

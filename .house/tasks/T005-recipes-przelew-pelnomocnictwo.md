@@ -1,9 +1,9 @@
 ---
 id: T005
 title: Complete recipes for przelew and pelnomocnictwo to held-out F1 targets
-status: todo
+status: done
 owner: teammate-session
-branch: null
+branch: task/T005-recipes-przelew-pelnomocnictwo
 depends_on: [T002, T004]
 capabilities: [python]
 acceptance:
