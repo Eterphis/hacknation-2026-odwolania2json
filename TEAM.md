@@ -9,7 +9,7 @@ We work on **two tasks**, one repo each:
 
 | Task | Repo | Where it lives locally |
 |---|---|---|
-| ODWOŁANIA2JSON (UZP) | this repo, `Eterphis/hacknation-2026-odwolania2json` | the clone root (contest name `odwolania2json`) |
+| ODWOŁANIA2JSON (UZP) | this repo, `Eterphis/hacknation-2026-open2json` | the clone root (contest name `odwolania2json`) |
 | Radar Innowacji (PCI) | `Eterphis/hacknation-2026-innovation-radar` | `house/contests/radar-innowacji` (contest name `radar-innowacji`) |
 
 After the setup below, get the Radar repo with `house sync` and `house adapt radar-innowacji`, then open Claude
@@ -44,8 +44,8 @@ second pool of usage limits and for cross-review.
 ### macOS / Linux
 
 ```bash
-git clone git@github.com:Eterphis/hacknation-2026-odwolania2json.git   # keep the default folder name
-cd hacknation-2026-odwolania2json
+git clone git@github.com:Eterphis/hacknation-2026-open2json.git   # keep the default folder name
+cd hacknation-2026-open2json
 git config user.name "<your name>"; git config user.email "<your email>"   # local to this repo only
 python3 --version                                # must be 3.11+
 python3 house/bin/house doctor                   # what tools house sees on this machine
@@ -57,8 +57,8 @@ claude                                           # start Claude Code at the repo
 
 ```powershell
 winget install --id Python.Python.3.12 --scope user    # if `py -0` shows nothing 3.11+
-git clone git@github.com:Eterphis/hacknation-2026-odwolania2json.git
-cd hacknation-2026-odwolania2json
+git clone git@github.com:Eterphis/hacknation-2026-open2json.git
+cd hacknation-2026-open2json
 git config user.name "<your name>"; git config user.email "<your email>"
 py -3.12 house\bin\house doctor
 py -3.12 house\bin\house adapt odwolania2json

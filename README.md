@@ -1,4 +1,4 @@
-# hacknation-2026-odwolania2json
+# hacknation-2026-open2json
 
 Our HackNation 2026 project (Bydgoszcz, 21–22.11.2026): **ODWOŁANIA2JSON** (Urząd Zamówień Publicznych). Our second task, Radar Innowacji, lives in [Eterphis/hacknation-2026-innovation-radar](https://github.com/Eterphis/hacknation-2026-innovation-radar).
 
