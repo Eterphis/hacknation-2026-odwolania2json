@@ -70,7 +70,9 @@
           "properties": {
             "start": {"type": "string", "description": "Each match starts a new block (list item)."},
             "end": {"type": "string", "description": "Optional end of the whole list area."},
-            "max": {"type": "integer", "minimum": 1}
+            "max": {"type": "integer", "minimum": 1},
+            "merge": {"type": "boolean", "description": "Merge the items index-wise into the list already at this path (extra items join the last one) instead of replacing it."},
+            "min_blocks": {"type": "integer", "minimum": 1, "description": "Fewer block starts than this: one item over the whole scope (default: off, no starts = empty list)."}
           }
         },
         "fields": {"$ref": "#/$defs/fields"}
@@ -84,7 +86,7 @@
       "type": "object",
       "required": ["use"],
       "properties": {
-        "use": {"enum": ["regex", "after_label", "between", "lookup", "const", "derived"]},
+        "use": {"enum": ["regex", "after_label", "between", "lookup", "const", "derived", "segments"]},
         "pattern": {"type": "string", "description": "regex: named group 'v' (or group 1) is the value."},
         "all": {"type": "boolean", "description": "regex: every match becomes a list item (field inside a list)."},
         "labels": {"type": "array", "items": {"type": "string"}, "description": "after_label: label regexes; a space matches optional whitespace."},
@@ -93,6 +95,9 @@
         "below": {"type": "boolean", "description": "after_label: also look in the line below in the same column (default true)."},
         "start": {"type": "string"},
         "end": {"type": "string"},
+        "exclude": {"type": "array", "items": {"type": "string"}, "description": "segments: skip a column segment whose text (leading dots removed) starts with one of these regexes."},
+        "not_after": {"type": "array", "items": {"type": "string"}, "description": "segments: skip a value when one of these regexes ends right before it in its segment (e.g. a title such as 'adw.')."},
+        "raw": {"type": "boolean", "description": "segments: match 'value' case-sensitively on the original text (diacritics kept)."},
         "dictionary": {"type": "string", "description": "lookup: dictionaries/<name>.yaml with entries {id, label, triggers}; triggers are regular expressions (a space matches optional whitespace), so escape literal punctuation."},
         "return": {"type": "string", "description": "lookup: entry key to return (id, label, ...)."},
         "if_set": {"type": "string", "description": "derived: sibling path; value when it is non-null, else 'else'."},
@@ -104,7 +109,8 @@
         {"if": {"properties": {"use": {"const": "between"}}}, "then": {"required": ["start"]}},
         {"if": {"properties": {"use": {"const": "lookup"}}}, "then": {"required": ["dictionary"]}},
         {"if": {"properties": {"use": {"const": "const"}}}, "then": {"required": ["value"]}},
-        {"if": {"properties": {"use": {"const": "derived"}}}, "then": {"required": ["if_set"]}}
+        {"if": {"properties": {"use": {"const": "derived"}}}, "then": {"required": ["if_set"]}},
+        {"if": {"properties": {"use": {"const": "segments"}}}, "then": {"required": ["value"]}}
       ]
     }
   }

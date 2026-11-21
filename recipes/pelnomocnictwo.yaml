@@ -1,5 +1,5 @@
 # Power of attorney (pełnomocnictwo). Output: schemas/pelnomocnictwo.json.
-# First set of fields; T005 completes signatories and harder layouts.
+# Patterns run on folded text (lower case, no diacritics) unless a strategy says raw: true.
 class: pelnomocnictwo
 description: Pełnomocnictwo do reprezentowania wykonawcy przed KIO
 classify:
@@ -13,29 +13,81 @@ classify:
   forbidden:
     - {pattern: "see the notice on ted website|ogloszenie o zamowieniu lub ogloszenie o koncesji", head: 600}
 
+sections:
+  # signature block: from the first dotted signature line (with the "W imieniu X:" / "Za X" caption above it)
+  - name: podpisy
+    start: '^(?:[ \t]*(?:w imieniu|za)\b[^\n]*\n(?:[ \t]*\n)?)?[^\n]*(?:\.{6,}|…{3,}|_{6,})'
+
 fields:
-  - path: mocodawca.data.nazwa
-    strategies:
-      - {use: regex, pattern: "mocodawc\\w*\\s+jest\\s+(?P<v>[^,\\n]+)"}
-      - {use: regex, pattern: "^mocodawca:?[ \\t]+(?P<v>[^,\\n]+)$"}
-      - {use: regex, pattern: "w imieniu\\s+(?P<v>[^(,\\n]+?)\\s*\\("}
-    normalize: strip
+  # One item per principal. Consortium members are enumerated ("...(Konsorcjum): 1) X sp. z o.o., KRS ...;
+  # 2) Y S.A., ...") or named as leader/partner; with fewer than two such starts the whole document is one principal.
+  - path: mocodawca
+    list_of_blocks:
+      start: '(?:^|(?<=[:;])|(?<=[:;] ))[ \t]*(?:\d{1,2}[.)]|[a-e]\)|[-•–])[ \t]*(?=[^;]{0,250}?\b(?:krs|nip|regon|z siedziba)\b)|(?:lider\w*|partner\w*|czlon\w*|uczestnik\w*)\s+konsorcjum|^[ \t]*(?:wykonawca|mocodawca)\s+(?:nr\s*)?(?:\d|[ivx]+)\b'
+      end: '\b(?:ustanawia\w*|udziela\w*|upowaznia\w*)\b'
+      min_blocks: 2
+    fields:
+      - path: data.imie_nazwisko
+        strategies:
+          # a natural person (sole trader) as principal
+          - {use: regex, pattern: '\bja,?\s+(?:nizej podpisan\w*,?\s+)?(?P<v>[a-z-]{2,}\s+[a-z-]{2,}),?\s+(?:prowadzac|zamieszk|legitymuj|pesel|wykonujac|dzialajac we wlasnym)'}
+          - {use: regex, pattern: '(?P<v>\b[a-z-]{2,}\s+[a-z-]{2,}),?\s+prowadzac\w*\s+(?:jednoosobow\w+\s+)?dzialalnosc'}
+        normalize: strip
 
-  - path: mocodawca.data.krs
-    strategies:
-      - {use: regex, pattern: "krs\\D{0,30}?(?P<v>\\d{10})"}
+      - path: data.nazwa
+        strategies:
+          - {use: regex, pattern: '(?:lider\w*|partner\w*|czlon\w*|uczestnik\w*)\s+konsorcjum\w*\s*(?:\([^)]*\))?\s*[:-]?\s*(?P<v>[^\n,(:]+?)\s*(?:,|\(|z siedziba)'}
+          - {use: regex, pattern: 'mocodawc\w*\s+jest\s+(?P<v>[^,\n]+?)\s*,'}
+          - {use: regex, pattern: '(?:w imieniu|do reprezentacji)\s+(?!(?:wykonawc|mocodawc|spolk|zamawiajac|konsorcj)\w*\b)(?P<v>[^(,]+?)\s*(?:\(|,)'}
+          - {use: regex, pattern: 'pod (?:firma|nazwa)\s+["„”]?(?P<v>[^"”,(]+?)\s*(?:["”,(])'}
+          - {use: after_label, labels: ['^mocodawc\w*:?'], below: true,
+             value: '^(?!(?:ustanawiam|udzielam|upowazniam|pelnomocni|niniejszym)\w*\b)(?P<v>[^.\s].*[a-z].*)$'}
+          # an enumerated party: "1) X sp. z o.o., ul. ..., KRS ..."
+          - {use: regex, pattern: '(?<![\w./])(?:\d{1,2}[.)]|[a-e]\))\s+(?P<v>[^,(;]{3,}?)\s*(?:,|\(|\bz siedziba)(?=[^;]{0,250}?\b(?:krs|nip|regon)\b)'}
+          - {use: regex, pattern: '^[ \t]*(?:[-•–][ \t]*)?(?P<v>[^\n,(]{3,}?(?:sp\. z o\.\s?o\.|s\.\s?a\.|sp\.\s?[jkp]\.|spolka [^\n,(]+?))\s*(?:,|\(|z siedziba)'}
+        normalize: strip
 
-  - path: mocodawca.data.nip
-    strategies:
-      - {use: regex, pattern: "nip:?\\s*(?P<v>\\d[\\d -]{8,12}\\d)"}
-    normalize: digits
-    validate: nip
+      - path: data.krs
+        strategies:
+          - {use: regex, pattern: 'krs\D{0,30}?(?P<v>\d{10})'}
 
-  - path: mocodawca.data.typ
-    strategies:
-      - {use: derived, if_set: mocodawca.data.krs, value: osoba_prawna}
+      - path: data.nip
+        strategies:
+          - {use: regex, pattern: 'nip\W{0,3}(?:nr\W{0,3})?(?P<v>\d[\d -]{8,12}\d)'}
+        normalize: digits
+        validate: nip
+
+      - path: data.typ
+        strategies:
+          - {use: derived, if_set: data.imie_nazwisko, value: osoba_fizyczna}
+          - {use: derived, if_set: data.krs, value: osoba_prawna}
+          - {use: derived, if_set: data.nazwa, value: osoba_prawna}
+
+  # Signatories, grouped per principal by "W imieniu X:" / "Za X" captions (merged into the principals in order);
+  # without such groups every signatory belongs to the (first) principal.
+  - path: mocodawca
+    section: podpisy
+    list_of_blocks:
+      start: '^[ \t]*(?:w imieniu|za)\s+(?!mocodawc|wykonawc|spolk)\S'
+      min_blocks: 2
+      merge: true
+    fields:
+      - path: podpisujacy[].imie_nazwisko
+        strategies:
+          - use: segments
+            all: true
+            raw: true
+            value: '(?<![\w.])(?P<v>[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)? [A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?)(?![\w.])'
+            exclude:
+              - 'za\s'
+              - 'w imieniu'
+              - '(?:wice)?prezes|czlon\w* zarzadu|zarzad|dyrektor|prokurent|wspolnik|wlasciciel|kierownik|pelnomocni|mocodaw|likwidator|komplementariusz|przewodnicz|sekretarz|skarbnik'
+              - 'adw\.|adwokat|r\.\s?pr\.|radc'
+              - 'miejsce|podpis|pieczec|data\b|oplata|dowod|zalacznik'
+            not_after: ['adw\.?', 'r\.\s?pr\.?', 'radca prawny', 'adwokat', 'mec\.?']
+        normalize: strip
 
   - path: pelnomocnicy[].imie_nazwisko
     strategies:
-      - {use: regex, all: true, pattern: "(?:r\\.\\s?pr\\.|adw\\.|radca prawny|adwokat(?![a-z]))\\s+(?P<v>[a-z]+\\s+[a-z-]+)"}
+      - {use: regex, all: true, pattern: '(?:r\.\s?pr\.|adw\.|radca prawny|adwokat(?![a-z]))\s+(?P<v>[a-z]+\s+[a-z-]+)'}
     normalize: strip
