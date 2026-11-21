@@ -1,7 +1,7 @@
 ---
 id: T008
 title: Packaging and handover docs - start.bat, Docker Compose, CI, architecture and new-class guide
-status: review
+status: merged
 owner: teammate-session
 branch: task/T008-packaging-docs
 depends_on: [T004, T007]
