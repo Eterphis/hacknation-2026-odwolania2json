@@ -1,0 +1,50 @@
+{
+  "task": "T013",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/prep_input.py .acc/input 01-60 --template && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/input --output .acc/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/output_shape.py .acc/input .acc/output --expect-reject 'negatywny przyklad.pdf' --check-class",
+        "expect": "ok: 181 files",
+        "text": null,
+        "timeout": 1800
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.prep_skany .acc/sk && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/sk/input --output .acc/sk/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -c \"import glob,sys; fs=glob.glob('.acc/sk/input/negatywne/*.pdf'); bad=[f for f in fs if open(f.replace('input','output',1)[:-4]+'.json',encoding='utf-8').read().strip()!='{}']; print(len(fs),'negatives,',len(bad),'not rejected',bad); sys.exit(0 if len(fs)==12 and not bad else 1)\"",
+        "expect": null,
+        "text": null,
+        "timeout": 2400
+      },
+      {
+        "id": "AC-4",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.prep_skany .acc/sk2 && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/sk2/input --output .acc/sk2/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred .acc/sk2/output --gold .acc/sk2/gold",
+        "expect": "score >= 0.70",
+        "text": null,
+        "timeout": 2400
+      },
+      {
+        "id": "AC-5",
+        "kind": "run",
+        "run": "! grep -rniE 'odwolanie|odwołanie|pelnomocnictw|pełnomocnictw|przelew|mocodawca|OdwolanieKIO|Zamawiajacy' odw2json/engine",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      }
+    ],
+    "protected": {}
+  },
+  "frozen_at": "2026-11-21T16:55:00+01:00",
+  "results": {}
+}
