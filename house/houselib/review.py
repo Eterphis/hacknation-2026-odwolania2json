@@ -145,10 +145,13 @@ def _launch(cmd: list[str], cwd: Path, stdin_text: str | None, timeout: float) -
             code = proc.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
             code = None
-        try:
-            os.killpg(proc.pid, signal.SIGKILL)
-        except (ProcessLookupError, PermissionError):
-            pass
+        if os.name == "nt":  # no process groups / killpg on Windows: kill the process tree
+            subprocess.run(["taskkill", "/F", "/T", "/PID", str(proc.pid)], capture_output=True, check=False)
+        else:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                pass
         proc.wait()
         out.seek(0)
         return code, out.read()
