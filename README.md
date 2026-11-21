@@ -1,11 +1,13 @@
-# odw2json: od dokumentów do danych
+# Ślad: od dokumentów do danych
 
-Zamienia sprawę odwoławczą KIO, czyli PDF-y odwołania, pełnomocnictwa i potwierdzenia przelewu, w pliki JSON zgodne
+**Ślad** zamienia sprawę odwoławczą KIO, czyli PDF-y odwołania, pełnomocnictwa i potwierdzenia przelewu, w pliki JSON zgodne
 z modelem Urzędu Zamówień Publicznych. Rozpoznaje rodzaj dokumentu po treści, odrzuca dokumenty spoza tych klas,
-wyciąga dane i przy każdej wartości pokazuje dowód: stronę, fragment tekstu, regułę i pewność.
+wyciąga dane i przy każdej wartości zostawia ślad w dokumencie: stronę, fragment tekstu, regułę i pewność.
+Pakiet Pythona nazywa się `odw2json` (`python -m odw2json`).
 
 - **Lokalnie, na CPU:** dane nie opuszczają komputera. Domyślna ścieżka nie używa żadnego modelu językowego.
-- **Skany też:** strony bez warstwy tekstowej czyta OCR (RapidOCR, ONNX).
+- **Skany też:** strony bez warstwy tekstowej czyta OCR (RapidOCR, ONNX); linie zaszumione przebitką z drugiej strony
+  kartki są czytane drugi raz po oczyszczeniu obrazu.
 - **Nowy typ dokumentu = plik YAML,** bez programowania, także z interfejsu webowego:
   [docs/ADDING_A_DOCUMENT_CLASS.md](docs/ADDING_A_DOCUMENT_CLASS.md).
 - **Spójność sprawy:** po ekstrakcji porównuje dokumenty tej samej sprawy (np. NIP mocodawcy z NIP-em Odwołującego,
@@ -74,14 +76,18 @@ Zbiory z danych UZP:
 
 | Zbiór | Do czego | F1 (profil `ocr`) | odwołanie | pełnomocnictwo | przelew |
 |---|---|---|---|---|---|
-| `dane/skany` (30 skanów) | główna miara niezależna, najbliżej prawdziwego testu | **0,964** | 0,989 | 0,921 | 0,944 |
-| przykłady 41–60 | odłożone | 0,999 | 0,999 | 0,997* | 1,000 |
-| przykłady 01–40 | strojenie reguł | 1,000 | 1,000 | 1,000 | 0,998 |
+| `dane/skany` (30 skanów) | główna miara, najbliżej prawdziwego testu | **0,979** | 0,994 | 0,968 | 0,944 |
+| przykłady 41–60 | odłożone | 1,000 | 1,000 | 1,000* | 1,000 |
+| przykłady 01–40 | strojenie reguł | 1,000 | 1,000 | 1,000 | 1,000 |
 | `dane/negatywne` (12) | odrzucanie | 12/12 dokumentów dostaje `{}` | | | |
 
 \* Układ pełnomocnictw z 41–60 był oglądany przy strojeniu, więc ten wynik traktujemy jako zawyżony.
-Na skanach słownik polskich znaków zawiera też słowa ze skanów; zbudowany tylko z przykładów 01–60 daje 0,957.
-Profil `llm` podnosi wynik na skanach do 0,971, ale kosztuje 1-3 minuty na wywołanie modelu na CPU, dlatego jest
+Skany nie są już w pełni niezależne: ogólne reguły (PESEL pełnomocnika, koniec sekcji Odwołującego, scalanie
+duplikatów osób, druga próba OCR na zaszumionych liniach) powstały z analizy pomyłek na tych 30 dokumentach, a słownik
+polskich znaków zawiera też słowa ze skanów. Prawdziwy test UZP ma zmieniony układ, więc spodziewamy się wyniku niższego.
+Znane pomyłki na skanach: przedsiębiorca jednoosobowy jako mocodawca, zniekształcony przez OCR tytuł przelewu, prefiks
+`PL` w numerze rachunku (wzorce są tu niespójne). Profil `llm` daje dziś ten sam wynik co `ocr` (reguły czytają już
+pola, w których pomagał), a kosztuje 1-3 minuty na wywołanie modelu na CPU, dlatego jest
 opcjonalny. Czas i pamięć: [docs/PROFILES.md](docs/PROFILES.md) (OCR na zimno ok. 6 s mediany na dokument).
 
 ```

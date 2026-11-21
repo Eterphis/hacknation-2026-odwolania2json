@@ -18,7 +18,7 @@ function route() {
   $("#nav-classes").toggleAttribute("aria-current", classes);
   if (!classes) $("#nav-process").setAttribute("aria-current", "page");
   else { $("#nav-classes").setAttribute("aria-current", "page"); loadList(); }
-  document.title = (classes ? "Klasy dokumentów" : "Odwołania do JSON") + " · Eterphis";
+  document.title = (classes ? "Klasy dokumentów · Ślad" : "Ślad · odwołania KIO do JSON") + " · Eterphis";
 }
 window.addEventListener("hashchange", route);
 

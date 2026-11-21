@@ -25,7 +25,7 @@ STATIC = Path(__file__).parent / "static"
 MAX_FILES = 40
 MAX_BYTES = 60 * 1024 * 1024
 
-app = FastAPI(title="odwolania2json", docs_url="/api/docs", openapi_url="/api/openapi.json")
+app = FastAPI(title="Ślad (odw2json)", docs_url="/api/docs", openapi_url="/api/openapi.json")
 app.include_router(recipes_api.router)
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
