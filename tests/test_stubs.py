@@ -48,7 +48,7 @@ class TieAndPriorityTests(unittest.TestCase):
         self.assertEqual(stubs.KeywordClassifier().classify(doc(text)).doc_class, "odwolanie")
 
     def test_przelew_without_potwierdzenie_word(self):
-        text = "Bank\nwykonano przelew krajowy\nopłata od pełnomocnictwa"
+        text = "Bank Przykładowy S.A., oddział w Warszawie\nul. Bankowa 1, 00-001 Warszawa\nwykonano przelew krajowy\nopłata od pełnomocnictwa"
         self.assertEqual(stubs.KeywordClassifier().classify(doc(text)).doc_class, "przelew")
 
 
