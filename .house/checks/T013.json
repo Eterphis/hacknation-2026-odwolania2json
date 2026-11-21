@@ -51,41 +51,41 @@
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmp4y9ftz96\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 222 tests in 43.249s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-21T19:36:59+01:00",
-      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 25, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpoepm4lrt\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 25, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 232 tests in 38.020s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-21T20:07:36+01:00",
+      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
       "output_tail": "copied 186 pdfs to .acc\\input\nINFO profile ocr, 4 worker(s)\n61 cases, 186 pdfs, 181 json written, 5 rejected/failed\nok: 181 files",
-      "ran_at": "2026-11-21T19:36:59+01:00",
-      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+      "ran_at": "2026-11-21T20:07:37+01:00",
+      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
       "output_tail": "scans: 30 pdfs, negatives: 12 pdfs -> .acc/sk\nINFO profile ocr, 4 worker(s)\n31 cases, 42 pdfs, 30 json written, 12 rejected/failed\n12 negatives, 0 not rejected []",
-      "ran_at": "2026-11-21T19:37:09+01:00",
-      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+      "ran_at": "2026-11-21T20:07:45+01:00",
+      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
     },
     "AC-4": {
       "id": "AC-4",
       "passes": true,
       "exit": 0,
       "output_tail": "scans: 30 pdfs, negatives: 12 pdfs -> .acc/sk2\nINFO profile ocr, 4 worker(s)\n31 cases, 42 pdfs, 30 json written, 12 rejected/failed\nwarning: pred case folders with no gold folder (ignored): negatywne\ncases scored: 30\n  odwolanie       P=1.0000 R=0.9774 F1=0.9886 (TP=173 FP=0 FN=4)\n  pelnomocnictwo  P=0.9459 R=0.8974 F1=0.9211 (TP=70 FP=4 FN=8)\n  przelew         P=0.9444 R=0.9444 F1=0.9444 (TP=51 FP=3 FN=3)\nnormalized: 0.9639\nscore: 0.9639",
-      "ran_at": "2026-11-21T19:37:18+01:00",
-      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+      "ran_at": "2026-11-21T20:07:54+01:00",
+      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
     },
     "AC-5": {
       "id": "AC-5",
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T19:37:18+01:00",
-      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+      "ran_at": "2026-11-21T20:07:54+01:00",
+      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
     }
   }
 }

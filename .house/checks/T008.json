@@ -44,24 +44,24 @@
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T19:32:24+01:00",
-      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+      "ran_at": "2026-11-21T20:03:06+01:00",
+      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
       "output_tail": "",
-      "ran_at": "2026-11-21T19:32:25+01:00",
-      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+      "ran_at": "2026-11-21T20:03:06+01:00",
+      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
-      "output_tail": "\nPDF cases -> JSON (UZP contract)\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT         folder with <case>/*.pdf (default ./input)\n  --output OUTPUT       folder for <case>/<name>.json (default ./output)\n  --recipes RECIPES     folder with <class>.yaml recipes (default ./recipes or\n                        env ODW2JSON_RECIPES)\n  --rejected-json {{},empty,none}\n                        output for a document of no class: '{}' (default, UZP:\n                        empty .json), 'empty' (0 bytes) or 'none' (no file)\n  --profile PROFILE     processing profile from profiles/<name>.yaml (default\n                        env ODW2JSON_PROFILE, else ocr; available: ocr, text);\n                        see docs/PROFILES.md\n  --workers WORKERS     parallel worker processes (default env\n                        ODW2JSON_WORKERS, else min(4, cpu_count // 2) = 4\n                        here)\n  --stats STATS         write per-document timings (JSON) to this file (used\n                        by eval.bench)",
-      "ran_at": "2026-11-21T19:33:18+01:00",
-      "commit": "e9e20ccd8a0056d62d02f9dd3485cfd5d112b2a0"
+      "output_tail": "\nPDF cases -> JSON (UZP contract)\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT         folder with <case>/*.pdf (default ./input)\n  --output OUTPUT       folder for <case>/<name>.json (default ./output)\n  --recipes RECIPES     folder with <class>.yaml recipes (default ./recipes or\n                        env ODW2JSON_RECIPES)\n  --rejected-json {{},empty,none}\n                        output for a document of no class: '{}' (default, UZP:\n                        empty .json), 'empty' (0 bytes) or 'none' (no file)\n  --profile PROFILE     processing profile from profiles/<name>.yaml (default\n                        env ODW2JSON_PROFILE, else ocr; available: llm, ocr,\n                        text); see docs/PROFILES.md\n  --workers WORKERS     parallel worker processes (default env\n                        ODW2JSON_WORKERS, else min(4, cpu_count // 2) = 4\n                        here)\n  --stats STATS         write per-document timings (JSON) to this file (used\n                        by eval.bench)",
+      "ran_at": "2026-11-21T20:04:11+01:00",
+      "commit": "c57d59330da39f8171dd01a1e490ff28de0c753f"
     }
   }
 }
