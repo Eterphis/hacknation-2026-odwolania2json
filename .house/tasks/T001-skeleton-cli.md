@@ -1,9 +1,9 @@
 ---
 id: T001
 title: Package skeleton, schema-complete writer and CLI input/output contract
-status: todo
-owner: null
-branch: null
+status: review
+owner: coder
+branch: task/T001-skeleton-cli
 depends_on: []
 review: always
 capabilities: [python]

@@ -30,5 +30,30 @@
     "protected": {}
   },
   "frozen_at": "2026-11-21T11:59:39+01:00",
-  "results": {}
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": ".ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpw4qfbjb4\\in\\c1\\a.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\.worktrees\\T001-skeleton-cli\\odw2json\\pipeline.py\", line 20, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\.worktrees\\T001-skeleton-cli\\tests\\test_pipeline.py\", line 25, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.WARNING input directory C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpjz94o8f1\\nope does not exist\n..................\n----------------------------------------------------------------------\nRan 20 tests in 0.048s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed",
+      "ran_at": "2026-11-21T12:03:33+01:00",
+      "commit": "9b07de69a0568abb90ac60e4c05baf0812f57dc0"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "copied 180 pdfs to .acc\\input\n60 cases, 180 pdfs, 180 json written, 0 rejected/failed\nok: 180 files",
+      "ran_at": "2026-11-21T12:04:15+01:00",
+      "commit": "9b07de69a0568abb90ac60e4c05baf0812f57dc0"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "",
+      "ran_at": "2026-11-21T12:04:16+01:00",
+      "commit": "9b07de69a0568abb90ac60e4c05baf0812f57dc0"
+    }
+  }
 }

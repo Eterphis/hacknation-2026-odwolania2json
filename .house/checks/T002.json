@@ -38,5 +38,38 @@
     "protected": {}
   },
   "frozen_at": "2026-11-21T11:59:41+01:00",
-  "results": {}
+  "results": {
+    "AC-1": {
+      "id": "AC-1",
+      "passes": true,
+      "exit": 0,
+      "output_tail": ".......warning: skipping unreadable pred C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpt4vvmb1y\\pred\\przyklad_01\\bad.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n....................\n----------------------------------------------------------------------\nRan 27 tests in 0.504s\n\nOK",
+      "ran_at": "2026-11-21T12:11:14+01:00",
+      "commit": "7e412b01d3efd8abac800796cf07409e53a13271"
+    },
+    "AC-2": {
+      "id": "AC-2",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "cases scored: 60\n  odwolanie       P=1.0000 R=1.0000 F1=1.0000 (TP=1214 FP=0 FN=0)\n  pelnomocnictwo  P=1.0000 R=1.0000 F1=1.0000 (TP=458 FP=0 FN=0)\n  przelew         P=1.0000 R=1.0000 F1=1.0000 (TP=360 FP=0 FN=0)\nnormalized: 1.0000\nscore: 1.0000",
+      "ran_at": "2026-11-21T12:11:14+01:00",
+      "commit": "7e412b01d3efd8abac800796cf07409e53a13271"
+    },
+    "AC-3": {
+      "id": "AC-3",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "cases scored: 20\n  odwolanie       P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=411)\n  pelnomocnictwo  P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=175)\n  przelew         P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=120)\nnormalized: 0.0000\nscore: 0.0000",
+      "ran_at": "2026-11-21T12:11:15+01:00",
+      "commit": "7e412b01d3efd8abac800796cf07409e53a13271"
+    },
+    "AC-4": {
+      "id": "AC-4",
+      "passes": true,
+      "exit": 0,
+      "output_tail": "cases scored: 1\n  odwolanie       P=1.0000 R=1.0000 F1=1.0000 (TP=19 FP=0 FN=0)\n  pelnomocnictwo  P=1.0000 R=1.0000 F1=1.0000 (TP=7 FP=0 FN=0)\n  przelew         P=0.0000 R=0.0000 F1=0.0000 (TP=0 FP=0 FN=6)\nnormalized: 0.8966\nscore: 0.8966",
+      "ran_at": "2026-11-21T12:11:15+01:00",
+      "commit": "7e412b01d3efd8abac800796cf07409e53a13271"
+    }
+  }
 }

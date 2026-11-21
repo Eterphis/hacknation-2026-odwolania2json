@@ -1,9 +1,9 @@
 ---
 id: T003
 title: Ingest to word-box pages with per-page OCR fallback
-status: todo
-owner: null
-branch: null
+status: doing
+owner: coder
+branch: task/T003-ingest-ocr
 depends_on: []
 capabilities: [python]
 acceptance:
