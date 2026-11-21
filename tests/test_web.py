@@ -38,6 +38,18 @@ class WebTests(unittest.TestCase):
         rec = self.client.get("/api/recipes").json()
         self.assertIn("odwolanie", rec["classes"])
 
+    def test_cold_trace_kit_is_served_offline(self):
+        h = self.client.get("/").text
+        self.assertIn('class="ct"', h)
+        self.assertIn("<svg", h.split('class="eph-lockup')[1])  # Eterphis lockup inlined
+        self.assertNotIn("ETERPHIS_", h)
+        css = self.client.get("/static/coldtrace/bundle.css").text
+        self.assertNotIn("/_blob/", css)
+        self.assertNotIn("fonts.googleapis.com", css)
+        for path in ("bundle.js", "grit-dark.png", "grit-light.png", "fonts.css", "eterphis-mark.css",
+                     "fonts/anybody-latin-ext.woff2", "fonts/martian-mono-latin-ext.woff2"):
+            self.assertEqual(self.client.get("/static/coldtrace/" + path).status_code, 200, path)
+
     def test_process_shape(self):
         orig = webapp.process_case
         webapp.process_case = fake_case
