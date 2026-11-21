@@ -5,6 +5,16 @@ software house: one coordinator session plans, agents code in parallel git workt
 against the jury's criteria, and guard hooks stop agents from cheating (editing acceptance tests, committing
 secrets, force-pushing `main`). Full docs (in Polish): [`house/README.md`](house/README.md).
 
+We work on **two tasks**, one repo each:
+
+| Task | Repo | Where it lives locally |
+|---|---|---|
+| ODWOŁANIA2JSON (UZP) | this repo, `Eterphis/hacknation-2026-odwolania2json` | the clone root (contest name `odwolania2json`) |
+| Radar Innowacji (PCI) | `Eterphis/hacknation-2026-innovation-radar` | `house/contests/radar-innowacji` (contest name `radar-innowacji`) |
+
+After the setup below, get the Radar repo with `house sync` and `house adapt radar-innowacji`, then open Claude
+Code in `house/contests/radar-innowacji`. Each repo has its own `.house/`, coordinator and submission.
+
 ## Key times
 
 | When | What |
@@ -34,12 +44,12 @@ second pool of usage limits and for cross-review.
 ### macOS / Linux
 
 ```bash
-git clone git@github.com:Eterphis/hacknation-2026.git   # keep the default folder name
-cd hacknation-2026
+git clone git@github.com:Eterphis/hacknation-2026-odwolania2json.git   # keep the default folder name
+cd hacknation-2026-odwolania2json
 git config user.name "<your name>"; git config user.email "<your email>"   # local to this repo only
 python3 --version                                # must be 3.11+
 python3 house/bin/house doctor                   # what tools house sees on this machine
-python3 house/bin/house adapt hacknation-2026    # generates your agents, skills, hooks
+python3 house/bin/house adapt odwolania2json    # generates your agents, skills, hooks
 claude                                           # start Claude Code at the repo root
 ```
 
@@ -47,11 +57,11 @@ claude                                           # start Claude Code at the repo
 
 ```powershell
 winget install --id Python.Python.3.12 --scope user    # if `py -0` shows nothing 3.11+
-git clone git@github.com:Eterphis/hacknation-2026.git
-cd hacknation-2026
+git clone git@github.com:Eterphis/hacknation-2026-odwolania2json.git
+cd hacknation-2026-odwolania2json
 git config user.name "<your name>"; git config user.email "<your email>"
 py -3.12 house\bin\house doctor
-py -3.12 house\bin\house adapt hacknation-2026
+py -3.12 house\bin\house adapt odwolania2json
 claude
 ```
 
@@ -72,7 +82,7 @@ These files hold **absolute paths of your machine**, so they are gitignored and 
 their own machine. Re-run it after a `git pull` that changes `house/`. If you already have a `CLAUDE.md` habit,
 put your notes somewhere else: `adapt` owns that file.
 
-The contest name in commands (`hacknation-2026`) can be any valid name: house is vendored inside this repo, so
+The contest name in commands (`odwolania2json`) can be any valid name: house is vendored inside this repo, so
 every contest command points to this repo.
 
 ## Coordinator: the flow
@@ -99,7 +109,7 @@ git pull
 # pick a task in .house/tasks/ with status: todo and owner: null, set owner: <you>, status: doing, commit + push
 git worktree add .worktrees/T004-api -b task/T004-api      # or just: git switch -c task/T004-api
 # ... work ...
-python3 house/bin/house check hacknation-2026 T004 --worktree .worktrees/T004-api   # GREEN = done
+python3 house/bin/house check odwolania2json T004 --worktree .worktrees/T004-api   # GREEN = done
 # set status: review in the task file, push the branch, tell the coordinator
 ```
 
@@ -133,5 +143,5 @@ Don'ts (the hooks enforce most of these):
 ## Publishing
 
 The repo stays private. Whatever we publish or submit comes from a clean export:
-`python3 house/bin/house export hacknation-2026 ../hacknation-export`. Check the export and push **that**.
+`python3 house/bin/house export odwolania2json ../hacknation-export`. Check the export and push **that**.
 It leaves out `.house/`, agent configs and `.env*`.

@@ -1,6 +1,6 @@
-# hacknation-2026
+# hacknation-2026-odwolania2json
 
-Our HackNation 2026 hackathon project (Bydgoszcz, 21–22.11.2026).
+Our HackNation 2026 project (Bydgoszcz, 21–22.11.2026): **ODWOŁANIA2JSON** (Urząd Zamówień Publicznych). Our second task, Radar Innowacji, lives in [Eterphis/hacknation-2026-innovation-radar](https://github.com/Eterphis/hacknation-2026-innovation-radar).
 
 **New to the team? Start with [`TEAM.md`](TEAM.md)**: setup in about 10 minutes, how we work with the AI
 toolkit, and the timeline.
