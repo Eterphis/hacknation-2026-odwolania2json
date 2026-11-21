@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import dataclasses
+import functools
 import io
 import json
 import re
@@ -11,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -53,9 +54,23 @@ def _doc_json(d, originals: dict[str, str]) -> dict[str, Any]:
     }
 
 
+def _inline_logo(name: str) -> str:
+    """The Eterphis logo is inlined so it follows night/daylight through CSS variables (an <img> cannot)."""
+    svg = (STATIC / "coldtrace" / name).read_text(encoding="utf-8")
+    svg = svg.replace(' role="img" aria-label="Eterphis"', ' aria-hidden="true"')
+    return svg.replace('width="205" height="64" ', "")
+
+
+@functools.lru_cache(maxsize=1)
+def _index_html() -> str:
+    html = (STATIC / "index.html").read_text(encoding="utf-8")
+    html = html.replace("<!--ETERPHIS_MARK-->", _inline_logo("eterphis-mark-small.svg"))
+    return html.replace("<!--ETERPHIS_WORDMARK-->", _inline_logo("eterphis-wordmark.svg"))
+
+
 @app.get("/")
-def index() -> FileResponse:
-    return FileResponse(STATIC / "index.html")
+def index() -> HTMLResponse:
+    return HTMLResponse(_index_html())
 
 
 @app.get("/api/recipes")
