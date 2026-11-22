@@ -160,3 +160,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** zgłoszenie na Hacktribe wymaga linku GitHub do działającego prototypu; protokół export.md.
 - **Kto:** człowiek (zgoda na publikację) + coordinator
 - **Data:** 2026-11-22 06:18
+
+## D-026 Prefiks PL w numerze rachunku: jak we wzorcach
+- **Decyzja:** dokument czytany OCR-em (skan) zachowuje prefiks `PL` tak, jak go wydrukowano; dokument z warstwą tekstową (dane syntetyczne) dostaje same cyfry, jak dziś. Do zmiany po odpowiedzi mentorów (Q-005).
+- **Dlaczego:** wzorce UZP są tu rozbieżne między źródłami: na 10 skanach przelewów wzorzec ma `PL` dokładnie wtedy, gdy wydruk ma `PL`; syntetyczne przykłady (np. przyklad_03) obcinają `PL` mimo wydruku. Prawdziwy test jest częściowo skanowany.
+- **Kto:** człowiek
+- **Data:** 2026-11-22 06:25

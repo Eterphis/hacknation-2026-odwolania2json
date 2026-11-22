@@ -103,10 +103,11 @@ Format wpisu: nagłówek drugiego poziomu `Q-<kolejny numer, 3 cyfry> [open] <ty
 - **Domyślnie:** A
 - **Odpowiedź:** A (człowiek, 2026-11-21 ~13:45). Dodatkowo: sprzęt docelowy 16 GB RAM bez GPU; na koniec ewentualnie darmowy hosting (AWS free tier / Vercel); rozważyć modele Basal-mini/pico jako klasyfikator („system one”, prawdopodobnie z fine-tuningiem); research OCR robi sesja teammate'a. → D-007, D-008.
 
-## Q-005 [open] Prefiks PL w numerze rachunku (pytanie do mentorów)
+## Q-005 [answered 2026-11-22] Prefiks PL w numerze rachunku (pytanie do mentorów)
 - **Pytanie:** Gdy potwierdzenie przelewu drukuje rachunek z prefiksem „PL” (np. „PL62 2170 0008 …”), czy JSON ma zawierać „PL62217000…”, czy same cyfry „62217000…”?
 - **Dlaczego:** wzorcowe JSON-y są niespójne: skany 0001 i 0006 mają „PL…”, a syntetyczne przykłady (np. przyklad_03, gdzie wydruk też ma „PL”) mają same cyfry. Nie da się trafić w oba; dziś stosujemy konwencję syntetyczną (bez PL). Raport: reports/misses-1.md, wiersze 16-17.
 - **Opcje:** A) bez PL zawsze (obecnie), B) tak jak wydrukowano (z PL, jeśli jest), C) zawsze z PL.
 - **Blokuje:** nic (2 pola na 30 skanach)
 - **Poziom:** niski
 - **Domyślnie:** A
+- **Odpowiedź:** (człowiek, 2026-11-22 06:25) do czasu odpowiedzi mentorów: konwencja jak we wzorcach, czyli syntetyczne bez PL, skany z PL tak jak wydrukowano. Sprawdzone na 10 skanach przelewów: wzorzec ma PL dokładnie wtedy, gdy wydruk ma PL (z_rachunku w 0001 i 0006; na_rachunek nigdzie). → D-026, T020.
