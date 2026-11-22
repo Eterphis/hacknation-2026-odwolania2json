@@ -154,3 +154,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** Właściciel: próg +0,05 F1 na skanach był ustawiony przy ocr = 0,73; przy ocr = 0,96-0,98 jest nieosiągalny. Nowy warunek: llm nie traci względem ocr na żadnym zbiorze i zostaje opcjonalny
 - **Kto:** coordinator
 - **Data:** 2026-11-21 22:59
+
+## D-025 Publiczne repo zgłoszenia: Eterphis/slad
+- **Decyzja:** kopia z `house export` (bez `.house/`, `house/`, `CLAUDE.md`, `TEAM.md`; autor commita: adres noreply GitHuba) opublikowana jako publiczne https://github.com/Eterphis/slad. Repo konkursowe zostaje prywatne. Każda zmiana produktu po tym momencie wymaga ponownego eksportu i pushu do `slad`.
+- **Dlaczego:** zgłoszenie na Hacktribe wymaga linku GitHub do działającego prototypu; protokół export.md.
+- **Kto:** człowiek (zgoda na publikację) + coordinator
+- **Data:** 2026-11-22 06:18

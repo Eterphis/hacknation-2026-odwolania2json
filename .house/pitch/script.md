@@ -123,7 +123,7 @@ Kryteria: elastyczność (0,3), architektura (0,2), wymóg regulaminu §4.1 (wym
 >
 > Ślad: każda wartość ma swój ślad. Dziękujemy.
 
-Repozytorium: `[wpisać link GitHub przed pitchem]`.
+Repozytorium: https://github.com/Eterphis/slad
 
 ---
 
@@ -205,6 +205,6 @@ innych. Drugi kierunek z zadania to uniwersalne narzędzie PDF do danych: nowe k
 ## Do zrobienia przed wejściem na scenę (prowadzący)
 
 - Podmienić liczby z gwiazdką (tabela na górze, `NUMS` w `slides.html`).
-- Wpisać link do repozytorium w slajdzie 7 i w sekcji 7.
+- [zrobione] Link do repozytorium w slajdzie 7 i w sekcji 7: https://github.com/Eterphis/slad
 - Zdecydować, czy pokazujemy skan z OCR w części A (jest w `demo-plan.md`, krok A7).
 - Zrobić nagranie awaryjne (w `demo-plan.md`, Plan B), bo jeszcze go nie ma.
