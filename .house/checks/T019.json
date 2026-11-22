@@ -45,25 +45,25 @@
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpixt368zw\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 276 tests in 55.369s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-22T07:11:38+01:00",
-      "commit": "700fd3305095a23eda9b602e74c45eda2d47220c"
+      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpcct3bgst\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 276 tests in 49.630s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-22T07:42:34+01:00",
+      "commit": "57b4133ec414ea329d8cb37685cb49ac7dd2a221"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
       "output_tail": "scans: 30 pdfs, negatives: 12 pdfs -> .acc/skc\nINFO profile ocr, 4 worker(s)\n31 cases, 42 pdfs, 30 json written, 12 rejected/failed\nwarning: pred case folders with no gold folder (ignored): negatywne\ncases scored: 30\n  odwolanie       P=1.0000 R=0.9887 F1=0.9943 (TP=175 FP=0 FN=2)\n  pelnomocnictwo  P=0.9740 R=0.9615 F1=0.9677 (TP=75 FP=2 FN=3)\n  przelew         P=0.9815 R=0.9815 F1=0.9815 (TP=53 FP=1 FN=1)\nnormalized: 0.9854\nscore: 0.9854",
-      "ran_at": "2026-11-22T07:22:03+01:00",
-      "commit": "700fd3305095a23eda9b602e74c45eda2d47220c"
+      "ran_at": "2026-11-22T07:50:15+01:00",
+      "commit": "57b4133ec414ea329d8cb37685cb49ac7dd2a221"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
       "output_tail": "copied 60 pdfs to .acc\\input\nINFO profile ocr, 4 worker(s)\n20 cases, 60 pdfs, 60 json written, 0 rejected/failed\nwarning: pred case folders with no gold folder (ignored): template_case1\ncases scored: 20\n  odwolanie       P=1.0000 R=1.0000 F1=1.0000 (TP=411 FP=0 FN=0)\n  pelnomocnictwo  P=1.0000 R=1.0000 F1=1.0000 (TP=175 FP=0 FN=0)\n  przelew         P=1.0000 R=1.0000 F1=1.0000 (TP=120 FP=0 FN=0)\nnormalized: 1.0000\nscore: 1.0000",
-      "ran_at": "2026-11-22T07:22:03+01:00",
-      "commit": "700fd3305095a23eda9b602e74c45eda2d47220c"
+      "ran_at": "2026-11-22T07:50:15+01:00",
+      "commit": "57b4133ec414ea329d8cb37685cb49ac7dd2a221"
     }
   }
 }

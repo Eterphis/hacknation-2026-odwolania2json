@@ -166,3 +166,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** wzorce UZP są tu rozbieżne między źródłami: na 10 skanach przelewów wzorzec ma `PL` dokładnie wtedy, gdy wydruk ma `PL`; syntetyczne przykłady (np. przyklad_03) obcinają `PL` mimo wydruku. Prawdziwy test jest częściowo skanowany.
 - **Kto:** człowiek
 - **Data:** 2026-11-22 06:25
+
+## D-027 Hosting: Hugging Face Spaces
+- **Decyzja:** publiczne demo na Hugging Face Spaces (Docker, darmowe CPU basic), z tego samego kodu co `Eterphis/slad`; edytor klas w trybie tylko do odczytu (`ODW2JSON_READONLY_RECIPES=1`), profil `ocr`, bez LLM. Logowanie do HF i token robi człowiek; coordinator przygotowuje i wypycha pliki Space.
+- **Dlaczego:** decyzja właściciela; jury może kliknąć link bez instalacji. Read-only, bo publiczny edytor receptur mógłby zostać zepsuty przez odwiedzających.
+- **Kto:** człowiek
+- **Data:** 2026-11-22 07:40
