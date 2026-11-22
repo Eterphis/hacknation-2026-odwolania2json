@@ -154,6 +154,7 @@ grupy podpisów „W imieniu X:” do mocodawców).
 | `digits` | same cyfry |
 | `int` | liczba całkowita |
 | `iban_pl` | 26 cyfr rachunku bez `PL` i spacji |
+| `iban_pl_as_printed` | jak `iban_pl`, ale na stronie ze skanu (OCR) zachowuje wydrukowany prefiks `PL` (`PL62…`); ze strony z warstwą tekstową zawsze same cyfry. Normalizator „świadomy strony”: dostaje źródło strony (`text`/`ocr`) |
 | `ted` | numer TED jako `NNNNNN-RRRR` (także z `RRRR/S NNN-NNNNNN`) |
 | `bzp` | numer BZP bez spacji |
 | `strip` | pojedyncze spacje, bez przecinków/dwukropków na brzegach |
