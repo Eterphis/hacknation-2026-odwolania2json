@@ -1,7 +1,7 @@
 ---
 id: T020
 title: Account numbers keep the printed PL prefix on scanned (OCR) pages, digits only on text-layer pages
-status: review
+status: blocked
 owner: coder
 branch: task/T020-pl-prefix-scans
 depends_on: []

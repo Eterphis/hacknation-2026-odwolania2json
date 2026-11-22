@@ -35,25 +35,25 @@
       "id": "AC-1",
       "passes": true,
       "exit": 0,
-      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpd0ons_uq\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 270 tests in 53.259s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
-      "ran_at": "2026-11-22T00:08:08+01:00",
-      "commit": "ef524ab47a56c5f8eff01d07f125e6c6b5273d91"
+      "output_tail": "Traceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.ERROR failed on C:\\Users\\jasiu\\AppData\\Local\\Temp\\tmpfsggy5fq\\in\\c2\\boom.pdf\nTraceback (most recent call last):\n  File \"C:\\Users\\jasiu\\workspace\\odw2json\\pipeline.py\", line 26, in _process_pdf\n    doc = ingestor.ingest(str(pdf))\n  File \"C:\\Users\\jasiu\\workspace\\tests\\test_workers.py\", line 18, in ingest\n    raise RuntimeError(\"boom\")\nRuntimeError: boom\n.............\n----------------------------------------------------------------------\nRan 276 tests in 60.475s\n\nOK\n1 cases, 0 pdfs, 0 json written, 0 rejected/failed\n1 cases, 1 pdfs, 0 json written, 1 rejected/failed",
+      "ran_at": "2026-11-22T06:56:44+01:00",
+      "commit": "f8d71462ff5e8704391a8fe08a7459898dc6bc48"
     },
     "AC-2": {
       "id": "AC-2",
       "passes": true,
       "exit": 0,
       "output_tail": "przyklad_41: done\nprzyklad_42: done\nprzyklad_43: done\nprzyklad_44: done\nprzyklad_45: done\nprzyklad_46: done\nprzyklad_47: done\nprzyklad_48: done\nprzyklad_49: done\nprzyklad_50: done\nwrote 30 noisy pdfs, 30 gold files to C:/Users/jasiu/workspace/uzp-data-noisy\n30 0 30",
-      "ran_at": "2026-11-22T00:09:26+01:00",
-      "commit": "ef524ab47a56c5f8eff01d07f125e6c6b5273d91"
+      "ran_at": "2026-11-22T06:58:17+01:00",
+      "commit": "f8d71462ff5e8704391a8fe08a7459898dc6bc48"
     },
     "AC-3": {
       "id": "AC-3",
       "passes": true,
       "exit": 0,
-      "output_tail": "INFO profile ocr, 4 worker(s)\n10 cases, 30 pdfs, 30 json written, 0 rejected/failed\ncases scored: 10\n  odwolanie       P=0.7377 R=0.8867 F1=0.8054 (TP=180 FP=64 FN=23)\n  pelnomocnictwo  P=0.8243 R=0.6100 F1=0.7011 (TP=61 FP=13 FN=39)\n  przelew         P=0.9310 R=0.9000 F1=0.9153 (TP=54 FP=4 FN=6)\nnormalized: 0.7984\nscore: 0.7984",
-      "ran_at": "2026-11-22T00:18:26+01:00",
-      "commit": "ef524ab47a56c5f8eff01d07f125e6c6b5273d91"
+      "output_tail": "INFO profile ocr, 4 worker(s)\n10 cases, 30 pdfs, 30 json written, 0 rejected/failed\ncases scored: 10\n  odwolanie       P=0.7377 R=0.8867 F1=0.8054 (TP=180 FP=64 FN=23)\n  pelnomocnictwo  P=0.8243 R=0.6100 F1=0.7011 (TP=61 FP=13 FN=39)\n  przelew         P=0.6379 R=0.6167 F1=0.6271 (TP=37 FP=21 FN=23)\nnormalized: 0.7524\nscore: 0.7524",
+      "ran_at": "2026-11-22T06:58:21+01:00",
+      "commit": "f8d71462ff5e8704391a8fe08a7459898dc6bc48"
     }
   }
 }

@@ -171,9 +171,9 @@ wystarczą, programista dopisuje strategię (`register_strategy`), a jej nazwa j
 Z analizy 20 pomyłek (`reports/misses-1.md`) naprawiliśmy większość regułami (PESEL przy pełnomocniku, koniec sekcji Odwołującego,
 duplikaty i sklejone imiona). Linie gubione przez OCR przez prześwitujący druk z drugiej strony skanu czytamy drugi raz po oczyszczeniu obrazu (tylko
 zaszumione pasy strony, +23% czasu OCR); to odzyskało numer postępowania i BZP w skanie 0005. Zostały: tytuł przelewu
-zniekształcony przez słaby druk (OCR nie odzyskuje go żadnym wariantem), konsorcjum, gdzie nie czytamy podpisującego drugiego członka, mocodawca jako osoba fizyczna prowadząca działalność, oraz prefiks
-`PL` w numerze rachunku: w skanach UZP złoty JSON go zachowuje, w danych syntetycznych nie, więc wybraliśmy konwencję
-syntetyczną i zapytaliśmy mentorów.
+zniekształcony przez słaby druk (OCR nie odzyskuje go żadnym wariantem), konsorcjum, gdzie nie czytamy podpisującego drugiego członka, mocodawca jako osoba fizyczna prowadząca działalność oraz dwukolumnowy nagłówek odwołania (etykieta obok
+zawiniętej nazwy), gdzie strony bywają źle przypisane. Prefiks `PL` w numerze rachunku obsługujemy tak jak wzorce UZP:
+na skanach zostaje, jeśli jest wydrukowany, w danych syntetycznych nie; zapytaliśmy też mentorów.
 
 **7. Czy da się to wystawić jako usługę, gdzie to działa?**
 Tak, ale świadomie w trybie lokalnym. Lokalnie: `start.bat web` albo `docker compose up --build`, na CPU, w 16 GB RAM, bez GPU i

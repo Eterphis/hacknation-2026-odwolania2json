@@ -18,7 +18,7 @@ Wszystko w katalogu głównym repozytorium (`C:/Users/jasiu/workspace`).
    - `uzp-data/dane/przyklad_07/pelnomocnictwo.pdf`
    - `uzp-data/dane/przyklad_07/potwierdzenie_przelewu.pdf`
    - `uzp-data/szablon-aplikacja/input/case1/negatywny przyklad.pdf`
-   - opcjonalnie skan: `uzp-data/szablon-aplikacja/input/case1/przyklad odwolanie.pdf` (7 stron, OCR)
+   - opcjonalnie skan: `uzp-data/dane/skany/odwolania/0001/0001.pdf` (skan UZP, wynik zgodny ze wzorcem; NIE używać `szablon-aplikacja/.../przyklad odwolanie.pdf`: dwukolumnowy nagłówek daje tam błędne strony, reports/judge-1.md)
    - do części B: `.house/pitch/demo-assets/wezwanie.pdf` (wezwanie do zapłaty, nowa klasa)
 5. Próba generalna dokładnie tą ścieżką, dwa razy. Pierwszy przebieg rozgrzewa cache OCR (`%TEMP%/odw2json-ocr-cache`), przez co
    skan na scenie czyta się w sekundy zamiast około minuty. Po próbie usunąć klasę `wezwanie` (klawisz "Usuń", potwierdzenie) i skasować
@@ -37,7 +37,7 @@ Wszystko w katalogu głównym repozytorium (`C:/Users/jasiu/workspace`).
 | A5 | 0:32 | W karcie odwołania: zakładka "Dowody dla pól (N)" jest domyślnie otwarta. Przewinąć tabelę ("Pole", "Wartość", "Strona", "Fragment źródła", "Reguła", "Pewność"). W polu "Filtruj dowody" wpisać `nip` | wiersze z NIP-em Odwołującego, fragment źródła z podświetloną wartością, pewność 1 | "Każda wartość: strona, fragment, reguła, pewność. NIP przeszedł sumę kontrolną." |
 | A6 | 0:48 | Kliknąć zakładkę "JSON", potem "Kopiuj JSON" albo "Pobierz JSON" | JSON w stylu schematu UZP | "To jest plik, który trafia do `output`. Wartości takie, jak w dokumencie." |
 | A7 | 0:55 | Przewinąć do bloku sprawdzeń spójności (znaczniki nad kartami dokumentów) | wyniki: NIP mocodawcy zgodny z Odwołującym, numer postępowania w tytule przelewu | "Spójność sprawy: informacja dla człowieka, nie przeróbka wyniku." |
-| A8 | opcja, +10 s | Wgrać `przyklad odwolanie.pdf` (skan) jako osobną sprawę | karta z klasą odwołanie i tabelą dowodów, pewność pól z OCR mnożona przez 0,9 | "To skan bez warstwy tekstowej. Czyta go OCR, a dowody wyglądają tak samo." |
+| A8 | opcja, +10 s | Wgrać `skany/odwolania/0001/0001.pdf` (skan) jako osobną sprawę | karta z klasą odwołanie i tabelą dowodów, pewność pól z OCR mnożona przez 0,9 | "To skan bez warstwy tekstowej. Czyta go OCR, a dowody wyglądają tak samo." |
 | A9 | 1:10 | Kliknąć "Klasy dokumentów" w nawigacji | lista klas | przejście do części B |
 
 Ryzyka A: jeśli "Przetwórz sprawę" trwa dłużej niż 15 s, mówić dalej o tym, co robi (czyta warstwę tekstu, klasyfikuje); jeśli upłynie

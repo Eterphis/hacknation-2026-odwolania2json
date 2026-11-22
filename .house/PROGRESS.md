@@ -36,3 +36,6 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - 2026-11-21 · judge · T019 AC-4 PASS (zapisane): auto z pasmowym drugim przebiegiem, skany 0,9639 -> 0,9673, czas OCR +23% (p95 dokumentu ~+80%), wiersze 1-4 odzyskane (ZP/12/2026 potwierdzone), 18 nie · reports/judge-manual-1.md
 - 2026-11-22 00:54 T018, T019 scalone; T016 AC-4 zaliczone po zmianie kryterium (D-024); nazwa produktu Ślad (D-023); README: skany 0,979, 41-60 i 01-40 1,000; test świeżego klonu OK; eksport publiczny gotowy w C:/Users/jasiu/slad (nieopublikowany); pitch w .house/pitch
 - 2026-11-22 · coder · T020: prefiks PL zachowany na skanach (normalizator iban_pl_as_printed zalezny od zrodla strony), skany 0,9789 -> 0,9854, 01-60 1,000; check GREEN · .house/reports/T020.md
+- 2026-11-22 07:30 · judge · runda rubryki na publicznym repo slad: F1 4, elastyczność 4, architektura 4 → 4,0/5; skany 0,9789 i 41-60 1,000 potwierdzone, ale prawdziwe odwołanie z szablonu UZP ok. 0,73 (nagłówek w dwóch kolumnach, tytuł); najtańsza poprawka: w demie zamienić skan A8 na dane/skany/odwolania/0001 · reports/judge-1.md
+- 2026-11-22 07:20 · coder · T021: nagłówek dwukolumnowy (etykieta przed zawiniętą wartością) i tytuł 'pn.: ... (postępowanie nr', szablon 4/4, 01-60 1,000 · .house/reports/T021.md
+- 2026-11-22 07:22 T020 cofnięte po scaleniu: regresja w T020: AC-3 (exit 0)

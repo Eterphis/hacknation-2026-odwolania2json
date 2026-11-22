@@ -75,7 +75,7 @@ code, .mono { font-family: 'Martian Mono', ui-monospace, Consolas, monospace; fo
 
 /* quality traces */
 .traces { display: grid; gap: 4vh; align-content: center; }
-.tr { display: grid; grid-template-columns: 14em 1fr 5.5em; align-items: center; gap: 1.4vw; }
+.tr { display: grid; grid-template-columns: 14em 1fr auto; align-items: center; gap: 1.4vw; }
 .tr .name { font-size: 1.05em; }
 .tr .name small { display: block; color: var(--ct-ink-2); font-size: .72em; }
 .tr .rail { position: relative; height: 4px; background: var(--ct-rule); }
@@ -289,7 +289,7 @@ svg.diag text.s { fill: var(--ct-ink-2); font-size: 14px; }
     <div class="frame card"><div class="in">
       <h3><span class="v v--arc"></span>Decyzje i granice</h3>
       <ul>
-        <li>prefiks <code>PL</code> w rachunku: zbiory UZP różnie, przyjęliśmy konwencję syntetyczną</li>
+        <li>układ dwukolumnowy nagłówka (etykieta obok zawiniętej nazwy): strony bywają źle przypisane</li>
         <li>41-60: pełnomocnictwa częściowo oglądane przy strojeniu</li>
         <li>LLM opt-in: 1-3 min na wywołanie na CPU, zysk bliski zera</li>
         <li>interfejs lokalny, bez uwierzytelniania</li>
