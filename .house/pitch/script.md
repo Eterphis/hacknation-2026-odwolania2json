@@ -178,9 +178,9 @@ na skanach zostaje, jeśli jest wydrukowany, w danych syntetycznych nie; zapytal
 **7. Czy da się to wystawić jako usługę, gdzie to działa?**
 Tak, ale świadomie w trybie lokalnym. Lokalnie: `start.bat web` albo `docker compose up --build`, na CPU, w 16 GB RAM, bez GPU i
 bez sieci (poza jednorazowym pobraniem wag modelu, jeśli ktoś włączy profil `llm`). Pierwsze uruchomienie instaluje zależności
-(kilka minut), kolejne trwa około minuty. Publiczna instancja: `[wpisać, czy jest i pod jakim adresem; jeśli nie ma, powiedzieć:
-nie wystawiamy jej, bo dokumenty spraw nie powinny opuszczać urzędu]`. Darmowe instancje w chmurze mają około 1 GB RAM, więc
-tam uruchomilibyśmy tylko lekki profil `text`, bez OCR.
+(kilka minut), kolejne trwa około minuty. Publicznej instancji świadomie nie wystawiamy: dane urzędowe nie opuszczają organizacji. Ślad działa offline na
+zwykłym laptopie albo na serwerze UZP z gotowego obrazu Dockera (`docker compose up`), bez żadnej usługi zewnętrznej.
+Darmowe chmury mają około 1 GB RAM, więc i tak pokazałyby okrojoną wersję bez OCR.
 
 **8. Bezpieczeństwo i prywatność: co się dzieje z wgranymi dokumentami?**
 Nic nie wychodzi poza maszynę: brak zewnętrznych API, brak telemetrii, fonty hostowane lokalnie, interfejs działa offline.

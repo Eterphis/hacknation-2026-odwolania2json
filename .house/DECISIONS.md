@@ -172,3 +172,9 @@ Format wpisu: nagłówek drugiego poziomu `D-<kolejny numer, 3 cyfry> <krótki t
 - **Dlaczego:** decyzja właściciela; jury może kliknąć link bez instalacji. Read-only, bo publiczny edytor receptur mógłby zostać zepsuty przez odwiedzających.
 - **Kto:** człowiek
 - **Data:** 2026-11-22 07:40
+
+## D-028 Bez publicznego hostingu (zastępuje D-027)
+- **Decyzja:** nie wystawiamy publicznej instancji. Na pitchu i w Q&A: dane urzędowe nie opuszczają organizacji; Ślad działa offline lokalnie albo na serwerze UZP z obrazu Dockera.
+- **Dlaczego:** Hugging Face wymaga PRO dla Spaces Docker/Gradio nawet na darmowym CPU; darmowe hostingi bez Dockera (Render, Streamlit Cloud, PythonAnywhere) mają 0,5-1 GB RAM i nie uruchomią OCR, więc dałyby okrojone demo. Pliki Space zostają gotowe w C:/Users/jasiu/slad-space na wypadek zmiany decyzji.
+- **Kto:** człowiek
+- **Data:** 2026-11-22 07:55

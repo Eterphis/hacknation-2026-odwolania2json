@@ -1,7 +1,7 @@
 ---
 id: T021
 title: Real appeal layout - two-column party header (label beside a wrapped value) and the "pn.: <title>" wording
-status: review
+status: done
 owner: coder
 branch: task/T021-two-column-header
 depends_on: []
