@@ -39,3 +39,4 @@ Format: `- YYYY-MM-DD HH:MM · <kto> · <co jest gotowe / co się zmieniło> · 
 - 2026-11-22 07:30 · judge · runda rubryki na publicznym repo slad: F1 4, elastyczność 4, architektura 4 → 4,0/5; skany 0,9789 i 41-60 1,000 potwierdzone, ale prawdziwe odwołanie z szablonu UZP ok. 0,73 (nagłówek w dwóch kolumnach, tytuł); najtańsza poprawka: w demie zamienić skan A8 na dane/skany/odwolania/0001 · reports/judge-1.md
 - 2026-11-22 07:20 · coder · T021: nagłówek dwukolumnowy (etykieta przed zawiniętą wartością) i tytuł 'pn.: ... (postępowanie nr', szablon 4/4, 01-60 1,000 · .house/reports/T021.md
 - 2026-11-22 07:22 T020 cofnięte po scaleniu: regresja w T020: AC-3 (exit 0)
+- 2026-11-22 08:25 T020 (PL na skanach) i T021 (dwukolumnowy nagłówek) scalone; dokumentacja dla jury poprawiona; skany 0,985, 41-60 i 01-40 1,000; publiczne Eterphis/slad zsynchronizowane (d1202cc), CI zielone, test klonu OK; bez hostingu (D-028); PDF slajdów gotowy
