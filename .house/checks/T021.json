@@ -1,0 +1,53 @@
+{
+  "task": "T021",
+  "frozen": {
+    "criteria": [
+      {
+        "id": "AC-1",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m unittest discover -s tests -t .",
+        "expect": null,
+        "text": null,
+        "timeout": 900
+      },
+      {
+        "id": "AC-2",
+        "kind": "run",
+        "run": "rm -rf .acc/tpl && mkdir -p .acc/tpl/in/case1 && cp 'C:/Users/jasiu/workspace/uzp-data/szablon-aplikacja/input/case1/przyklad odwolanie.pdf' .acc/tpl/in/case1/ && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/tpl/in --output .acc/tpl/out --workers 1 && C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/template_case1.py .acc/tpl/out",
+        "expect": null,
+        "text": null,
+        "timeout": 1200
+      },
+      {
+        "id": "AC-3",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.prep_skany .acc/sk && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/sk/input --output .acc/sk/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred .acc/sk/output --gold .acc/sk/gold",
+        "expect": "score >= 0.9789",
+        "text": null,
+        "timeout": 2400
+      },
+      {
+        "id": "AC-4",
+        "kind": "run",
+        "run": "C:/Users/jasiu/workspace/.venv/Scripts/python.exe C:/Users/jasiu/workspace/.house/accept/prep_input.py .acc/input 01-60 && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m odw2json --input .acc/input --output .acc/output && C:/Users/jasiu/workspace/.venv/Scripts/python.exe -m eval.score --pred .acc/output --gold C:/Users/jasiu/workspace/uzp-data/dane --cases 01-60",
+        "expect": "score >= 0.9999",
+        "text": null,
+        "timeout": 1800
+      },
+      {
+        "id": "AC-5",
+        "kind": "run",
+        "run": "! grep -rniE 'odwolanie|odwołanie|pelnomocnictw|pełnomocnictw|przelew|mocodawca|OdwolanieKIO|Zamawiajacy|Odwolujacy|zamawiaj|odwoluj' odw2json/engine odw2json/ingest",
+        "expect": null,
+        "text": null,
+        "timeout": 60
+      }
+    ],
+    "protected": {
+      "eval/score.py": "f3465f3825279b7257669495bf3bf0148087b142831a1043f940023e0b074973",
+      ".house/accept/template_case1.py": "bf48cb57d817731870d011395a677dbc174954fc20b8840f609b038e99454f5b"
+    }
+  },
+  "frozen_at": "2026-11-22T07:00:41+01:00",
+  "results": {}
+}
